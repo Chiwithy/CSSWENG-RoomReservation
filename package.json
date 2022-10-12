@@ -19,6 +19,7 @@
   "homepage": "https://github.com/Chiwithy/CSSWENG-RoomReservation#readme",
   "dependencies": {
     "express": "^4.18.2",
-    "hbs": "^4.2.0"
+    "hbs": "^4.2.0",
+    "mongoose": "^6.6.5"
   }
 }
