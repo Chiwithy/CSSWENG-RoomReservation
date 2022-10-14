@@ -6,10 +6,6 @@ var UserSchema = new mongoose.Schema({
         type: Number,
         required: true
     },
-    username: {
-        type: String,
-        required: true
-    },
     firstName: {
         type: String,
         required: true
