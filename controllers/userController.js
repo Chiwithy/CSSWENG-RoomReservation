@@ -30,7 +30,7 @@ const userController = {
         }
         catch {
             //res.redirect('/register');
-            console.log(">>>   postRegister: Unsucessful");  
+            console.log(">>>   postRegister: Unsuccessful");  
         }
     }
     
