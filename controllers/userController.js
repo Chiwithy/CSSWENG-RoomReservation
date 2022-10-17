@@ -17,7 +17,7 @@ const userController = {
             var password = hashedPassword;
             var newUser = {
                 username: username,
-                password: password,
+                password: password
             }
             User.create(newUser, err => {
                 if (err) {
