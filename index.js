@@ -2,19 +2,16 @@ import "dotenv/config";
 import express from "express";
 import hbs from "hbs";
 import mongoose from "mongoose";
+import passport from "passport";
 import routes from "./routes/routes.js";
-
-//To be removed til routes/paths are established
-import path from 'path';
-import { fileURLToPath } from 'url';
-const __filename = fileURLToPath (import.meta.url);
-const __dirname = path.dirname(__filename);
+import session from "express-session";
 
 
 const app = express ();
 const port = process.env.PORT;
 const hostname = process.env.HOSTNAME;
 const dbURL = process.env.DB_URL;
+const secret = process.env.SESSION_SECRET;
 
 mongoose.connect (dbURL, {useNewURLParser: true, useUnifiedTopology: true}, (error) => {
     if (error) throw error;
@@ -23,20 +20,30 @@ mongoose.connect (dbURL, {useNewURLParser: true, useUnifiedTopology: true}, (err
 
 app.use (express.json());
 app.use (express.urlencoded ({extended: true}));
-
 app.use (express.static('public'));
-
+app.use (session ({
+    secret: secret,
+    resave: false,
+    saveUninitialized: true
+}));
 
 app.set ('view engine', 'hbs');
 hbs.registerPartials ( './views/partials');
-//app.use ('/', routes);     //TEMPORARILY DISABLED WHILE ROUTES HAVE NOT YET BEEN ESTABLISHED
+
+
+app.use (passport.initialize ());
+app.use (passport.session ());
+
+app.use ('/', routes);
+
 
 app.listen (port, hostname, function () {
     console.log ('Server is running at:');
     console.log ('http://' + hostname + ':' + port);
 });
 
-//TEMPORARY LANDING PAGE
+
+/*//TEMPORARY LANDING PAGE
 app.get ('/', function(req, res) {
     res.sendFile (__dirname + '\\index.html')
-});
+});//*/

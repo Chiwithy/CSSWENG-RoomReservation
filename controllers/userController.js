@@ -3,6 +3,15 @@ import User from "../models/UserModel.js";
 import passport from "passport";
 import { Strategy as LocalStrategy } from "passport-local";
 
+passport.serializeUser (function (user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser (function (id, done) {
+    User.findById(id, function (err, user) {
+        done(err, user);
+    });
+});
 
 passport.use (new LocalStrategy (function (username, password, done) {
     User.findOne ({username: username}, (err, user) => {
@@ -19,10 +28,11 @@ passport.use (new LocalStrategy (function (username, password, done) {
 }));
 
 const userController = {
-    postLogin: passport.authenticate('local', {
-        successRedirect: '/calendar',
+
+    postLogin: passport.authenticate ('local', {
+        successRedirect: '/',
         failureRedirect: '/login?err=true',
     }),
 };
 
-export default userController
+export default userController;
