@@ -38,6 +38,10 @@ const userController = {
         res.redirect ('/calendar');
     },
 
+    getLoginPage: (req, res) => {
+        res.render ('login');
+    },
+
     postLogin: passport.authenticate ('local', {
         successRedirect: '/',
         failureRedirect: '/login?err=true',
