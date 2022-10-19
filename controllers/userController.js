@@ -5,13 +5,14 @@ const userController = {
     checkUsername: async (req, res) => {
         if (req.query.username) {
             let username = (req.query.username).toUpperCase ();
-            let foundUser = await User.findone ({username: username});
+            let foundUser = await User.findOne ({username: username});
             let values = {
                 symbol: false,  //true if username contains invalid symbols
                 taken: false    //true if username is taken
             };
+            let i;
 
-
+            console.log (username);
             //Checks if username is already taken
             if (foundUser != null) {
                 values.taken = true;
