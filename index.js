@@ -6,14 +6,6 @@ const mongoose = require ('mongoose');
 const passport = require ('passport');
 const routes = require ('./routes/routes.js');
 
-import express from "express";
-import hbs from "hbs";
-import mongoose from "mongoose";
-import passport from "passport";
-import routes from "./routes/routes.js";
-import session from "express-session";
-
-
 
 dotenv.config ();
 
