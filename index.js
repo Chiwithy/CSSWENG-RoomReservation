@@ -26,13 +26,12 @@ app.use (session ({
     resave: false,
     saveUninitialized: true
 }));
+app.use (passport.initialize ());
+app.use (passport.session ());
 
 app.set ('view engine', 'hbs');
 hbs.registerPartials ( './views/partials');
 
-
-app.use (passport.initialize ());
-app.use (passport.session ());
 
 app.use ('/', routes);
 
@@ -41,9 +40,3 @@ app.listen (port, hostname, function () {
     console.log ('Server is running at:');
     console.log ('http://' + hostname + ':' + port);
 });
-
-
-/*//TEMPORARY LANDING PAGE
-app.get ('/', function(req, res) {
-    res.sendFile (__dirname + '\\index.html')
-});//*/
