@@ -1,4 +1,7 @@
 const User = require ('../models/UserModel.js');
+module.exports = userController;
+import bcrypt from "bcrypt";
+import User from "../models/UserModel.js";
 
 const userController = {
     checkUsername: async (req, res) => {
@@ -33,7 +36,60 @@ const userController = {
         }
 
         res.send (values);
-    }
-};
+    },
 
-module.exports = userController;
+    // getRegister: function (req, res) { //test of database 
+       
+    //     {var username = "Me";
+    //         var password = "Moi";
+    //         var newUser = {
+    //             username: username,
+    //             password: password
+    //         }
+    //         User.create(newUser, err => {
+    //             if (err) {
+    //                 console.log(err);
+    //                 return;
+    //             }
+    //         console.log("postRegister: Successfully added to DB");
+    //         })
+    //         //res.redirect('/login');}
+                
+    //     res.render("register");
+    //     }
+
+    //     //real code: res.render("register"); 
+    // }
+
+    //------------------------KYLA CODE---------------------------
+    // Adds a username to the datbase given a username and password
+    //  - does not implememt passowrd confirmation 
+    //  - does not check if username already exists
+    postRegister: async function (req, res) {
+        try {
+            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            var username = req.body.username;
+            var password = hashedPassword;
+            var newUser = {
+                username: username,
+                password: password
+            }
+            User.create(newUser, err => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                console.log("postRegister: Successfully added to DB");
+            })
+            //res.redirect('/login');
+        }
+        catch {
+            //res.redirect('/register');
+            console.log("postRegister: Unsuccessful");  
+        }
+    }
+
+}; 
+
+export default userController;
+
