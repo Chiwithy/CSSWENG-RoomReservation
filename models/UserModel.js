@@ -11,6 +11,10 @@ var UserSchema = new mongoose.Schema({
     password: {
         type: String,
         required: true
+    },
+    employeeType: {
+        type: String,
+        required: true
     }
 });
 
