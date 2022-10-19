@@ -1,10 +1,8 @@
-const express = require (`express`);
-const passport = require ('passport');
+import {Router} from "router";
+import userController from "../controllers/userController.js";
 
-const userController = require (`../controllers/userController.js`);
+const router = Router ();
 
-const app = express ();
+router.post ('/login', userController.postLogin);
 
-app.post ('/login', passport.authenticate('local', { failureRedirect: '/login', failureMessage: true}), userController.postLogin)
-
-module.exports = app;
+export default router;

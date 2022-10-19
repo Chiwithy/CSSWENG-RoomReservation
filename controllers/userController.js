@@ -1,7 +1,7 @@
-const User = require ('../models/UserModel.js');
-const bcrypt = require ('bcrypt');
-const passport = require ('passport');
-let LocalStrategy = require ('passport-local').Strategy;
+import bcrypt from "bcrypt";
+import User from "../models/UserModel.js";
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
 
 
 passport.use (new LocalStrategy (function (username, password, done) {
@@ -19,9 +19,10 @@ passport.use (new LocalStrategy (function (username, password, done) {
 }));
 
 const userController = {
-    login: (req, res) => {
-        res.redirect ('/calendar');
-    },
+    postLogin: passport.authenticate('local', {
+        successRedirect: '/calendar',
+        failureRedirect: '/login?err=true',
+    }),
 };
 
-module.exports = userController;
+export default userController
