@@ -28,6 +28,15 @@ passport.use (new LocalStrategy (function (username, password, done) {
 }));
 
 const userController = {
+    isLoggedIn (req, res, next) {
+        if (req.isAuthenticated ()) return next ();
+        res.redirect ('/login');
+    },
+
+    isLoggedOut (req, res, next) {
+        if (!req.isAuthenticated ()) return next ();
+        res.redirect ('/calendar');
+    },
 
     postLogin: passport.authenticate ('local', {
         successRedirect: '/',
