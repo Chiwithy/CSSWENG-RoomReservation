@@ -9,6 +9,9 @@
 		<!-- CSS links -->
 		<link rel="stylesheet" href="/css/fonts.css" />
 		<link rel="stylesheet" href="/css/styles.css" />
+
+		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+		<script src="/js/register.js"></script>
 	</head>
 	
 	<body>
@@ -23,12 +26,14 @@
 		<div class="box">
 			<h2>REGISTRATION</h2>
 			<form action="/register" method="post" enctype="multipart/form-data">
-				<input name="username" type="text" placeholder="Username"/>
-				<input name="password" type="password" placeholder="Password"/>
-				<input type="password" placeholder="Confirm Password"/>
-				<p font-family="Nunito" font-size="16px"></p>
+				<input name="username" id="username" type="text" placeholder="Username"/>
+				<input name="password" id="password1" type="password" placeholder="Password"/>
+				<input type="password" id="password2" placeholder="Confirm Password"/>
+				
+				<p font-family="Nunito" font-size="16px" id="errorMessage"></p>
 				<input type="submit" class="submitButton" value="REGISTER">
 			</form>
 		</div>
 	</body>
 </html>
+
