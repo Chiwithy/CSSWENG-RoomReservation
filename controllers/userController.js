@@ -1,5 +1,3 @@
-const User = require ('../models/UserModel.js');
-module.exports = userController;
 import bcrypt from "bcrypt";
 import User from "../models/UserModel.js";
 
@@ -37,6 +35,14 @@ const userController = {
 
         res.send (values);
     },
+    getSuccess: (req, res) => {
+        res.render ("tempLand");
+    },
+
+    getRegister: (req, res) => {
+        res.render ("register");
+    },
+
 
     // getRegister: function (req, res) { //test of database 
        
@@ -81,10 +87,11 @@ const userController = {
                 }
                 console.log("postRegister: Successfully added to DB");
             })
-            //res.redirect('/login');
+            res.redirect('/successReg');
         }
         catch {
-            //res.redirect('/register');
+            console.log (req.body);
+            res.redirect('/register?err=fail');
             console.log("postRegister: Unsuccessful");  
         }
     }
