@@ -46,30 +46,6 @@ const userController = {
         res.render ("register");
     },
 
-
-    // getRegister: function (req, res) { //test of database 
-       
-    //     {var username = "Me";
-    //         var password = "Moi";
-    //         var newUser = {
-    //             username: username,
-    //             password: password
-    //         }
-    //         User.create(newUser, err => {
-    //             if (err) {
-    //                 console.log(err);
-    //                 return;
-    //             }
-    //         console.log("postRegister: Successfully added to DB");
-    //         })
-    //         //res.redirect('/login');}
-                
-    //     res.render("register");
-    //     }
-
-    //     //real code: res.render("register"); 
-    // }
-
     //------------------------KYLA CODE---------------------------
     // Adds a username to the datbase given a username and password
     //  - does not implememt passowrd confirmation 
@@ -81,7 +57,8 @@ const userController = {
             var password = hashedPassword;
             var newUser = {
                 username: username,
-                password: password
+                password: password,
+                employeeType: 'R'
             }
             User.create(newUser, err => {
                 if (err) {
@@ -90,10 +67,9 @@ const userController = {
                 }
                 console.log("postRegister: Successfully added to DB");
             })
-            res.redirect('/successReg');
+            res.redirect('/successfulReg');
         }
         catch {
-            console.log (req.body);
             res.redirect('/register?err=fail');
             console.log("postRegister: Unsuccessful");  
         }
@@ -102,4 +78,3 @@ const userController = {
 }; 
 
 export default userController;
-
