@@ -38,12 +38,17 @@ const userController = {
             res.send (values);
         }
     },
+
     getSuccess: (req, res) => {
         res.render ("tempLand");
     },
 
     getRegister: (req, res) => {
         res.render ("register");
+    },
+
+    getLogin: (req, res) => {
+        res.render ("login");
     },
 
     //------------------------KYLA CODE---------------------------
