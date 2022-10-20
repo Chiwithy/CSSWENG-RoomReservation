@@ -11,4 +11,6 @@ router.get('/register', controller.getRegister);
 router.post('/register', controller.postRegister); 
 //router.get ('/successfulReg', controller.getSuccess);
 
+router.get('/logout', controller.isLoggedIn, controller.getLogout); 
+
 export default router;

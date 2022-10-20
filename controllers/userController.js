@@ -51,6 +51,20 @@ const userController = {
         res.render ("login");
     },
 
+    //for logout -- checks if user is logged in first 
+    isLoggedIn(req, res, next) {
+        if (req.isAuthenticated()) return next();
+        res.redirect('/login');
+    },
+
+    //for logout -- logs out user 
+    getLogout: function (req, res) {
+        req.logout(function (err) {
+            if (err) return next(err);
+            res.redirect('/');
+        });
+    },
+
     //------------------------KYLA CODE---------------------------
     // Adds a username to the datbase given a username and password
     //  - does not implememt passowrd confirmation 
