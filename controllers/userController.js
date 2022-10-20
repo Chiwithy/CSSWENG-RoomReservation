@@ -39,9 +39,9 @@ const userController = {
         }
     },
 
-    getSuccess: (req, res) => {
-        res.render ("tempLand");
-    },
+    // getSuccess: (req, res) => {
+    //     res.render ("tempLand");
+    // },
 
     getRegister: (req, res) => {
         res.render ("register");
@@ -72,7 +72,7 @@ const userController = {
                 }
                 console.log("postRegister: Successfully added to DB");
             })
-            res.redirect('/successfulReg');
+            res.redirect('/login');
         }
         catch {
             res.redirect('/register?err=fail');
