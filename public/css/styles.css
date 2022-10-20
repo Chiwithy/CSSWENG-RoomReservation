@@ -12,7 +12,7 @@ input {
 	border: 4px solid black;
 }
 
-button, .submitButton {
+button {
 	width: 100%;
 	color: #efefef;
 	font-size: 24px;
@@ -21,11 +21,19 @@ button, .submitButton {
 	background-color: #242424;
 }
 
-button:hover, .submitButton:hover {
+button:hover {
 	background-color: white;
 	color: black;
 	outline-style: solid;
 	cursor: pointer;
+}
+
+button:disabled {
+	
+}
+
+button:disabled:hover {
+	cursor: default;
 }
 
 h1 {
