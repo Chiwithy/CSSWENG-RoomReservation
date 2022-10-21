@@ -33,7 +33,6 @@ $(document).ready (() => {
     }
 
     function checkUsername () {
-        console.log ("here first" + invalidUsername);
         if (usernameField.value != "") {
             $.get ('/checkUsername', {username: usernameField.value}, (invalid) => {
                 if (invalid.symbol) {
@@ -88,7 +87,9 @@ $(document).ready (() => {
     }
 
     function registerUser () {
-        if (errorMessage.value == "")
+        console.log ("reached here");
+        console.log (errorMessage.innerHTML);
+        if (errorMessage.innerHTML == "")
             $('#registerForm')[0].submit ();
         else
             registerButton.disabled = true;

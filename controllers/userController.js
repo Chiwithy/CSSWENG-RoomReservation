@@ -11,8 +11,7 @@ const userController = {
                 taken: false    //true if username is taken
             };
             let i;
-
-            console.log (username);
+            
             //Checks if username is already taken
             if (foundUser != null) {
                 values.taken = true;
@@ -56,7 +55,7 @@ const userController = {
             var username = req.body.username;
             var password = hashedPassword;
             var newUser = {
-                username: username,
+                username: username.toUpperCase (),
                 password: password,
                 employeeType: 'R'
             }
