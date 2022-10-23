@@ -1,5 +1,3 @@
-
-// from s1-us1-vincent
 import mongoose from "mongoose";
 
 var UserSchema = new mongoose.Schema({
@@ -17,4 +15,5 @@ var UserSchema = new mongoose.Schema({
     }
 });
 
-export default mongoose.model ('User', UserSchema);
+const User =  mongoose.model ('User', UserSchema);
+export default User;

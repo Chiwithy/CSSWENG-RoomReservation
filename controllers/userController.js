@@ -1,5 +1,32 @@
 import bcrypt from "bcrypt";
 import User from "../models/UserModel.js";
+import passport from "passport";
+import { Strategy as LocalStrategy } from "passport-local";
+
+passport.serializeUser (function (user, done) {
+    done(null, user.id);
+});
+
+passport.deserializeUser (function (id, done) {
+    User.findById(id, function (err, user) {
+        done(err, user);
+    });
+});
+
+passport.use (new LocalStrategy (function (username, password, done) {
+    User.findOne ({username: username}, (err, user) => {
+        if (err) return done (err);
+        if (!user) return done (null, false, {message: 'We did not find an account that matches those credentials.'});
+
+        bcrypt.compare (password, user.password, (err, res) => {
+            if (err) return done (err);
+            if (res == false) return done (null, false, {message: 'We did not find an account that matches those credentials.'});
+
+            return done (null, user);
+        });
+    });
+}));
+
 
 const userController = {
     checkUsername: async (req, res) => {
@@ -33,30 +60,18 @@ const userController = {
                         return;
                     }
             }
-
             res.send (values);
         }
     },
-
-    // getSuccess: (req, res) => {
-    //     res.render ("tempLand");
-    // },
 
     getRegister: (req, res) => {
         res.render ("register");
     },
 
-    getLogin: (req, res) => {
+    getLogin: (req, res) => { //make into getLogin for consistency?? also change all my functions to =>
         res.render ("login");
     },
 
-    //for logout -- checks if user is logged in first 
-    isLoggedIn(req, res, next) {
-        if (req.isAuthenticated()) return next();
-        res.redirect('/login');
-    },
-
-    //for logout -- logs out user 
     getLogout: function (req, res) {
         req.logout(function (err) {
             if (err) return next(err);
@@ -64,10 +79,21 @@ const userController = {
         });
     },
 
-    //------------------------KYLA CODE---------------------------
-    // Adds a username to the datbase given a username and password
-    //  - does not implememt passowrd confirmation 
-    //  - does not check if username already exists
+    isLoggedIn (req, res, next) {
+        if (req.isAuthenticated ()) return next ();
+        res.redirect ('/login');
+    },
+
+    isLoggedOut (req, res, next) {
+        if (!req.isAuthenticated ()) return next ();
+        res.redirect ('/calendar');
+    },
+
+    postLogin: passport.authenticate ('local', {
+        successRedirect: '/',
+        failureRedirect: '/login?err=true',
+    }),
+
     postRegister: async function (req, res) {
         try {
             const hashedPassword = await bcrypt.hash(req.body.password, 10);
@@ -94,5 +120,6 @@ const userController = {
     }
 
 }; 
+
 
 export default userController;

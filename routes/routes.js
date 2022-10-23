@@ -1,16 +1,19 @@
 import { Router } from "express";
-import controller from '../controllers/userController.js'
+import userController from "../controllers/userController.js";
+import calendarController from "../controllers/calendarController.js";
 
 const router = Router();
 
-router.get('/', controller.getLogin);
+router.get ('/', userController.isLoggedIn, calendarController.getCalendarPage);
 
-router.get('/login', controller.getLogin); 
-router.get ('/checkUsername', controller.checkUsername);
-router.get('/register', controller.getRegister);
-router.post('/register', controller.postRegister); 
-//router.get ('/successfulReg', controller.getSuccess);
+router.get ('/checkUsername', userController.checkUsername);
 
-router.get('/logout', controller.isLoggedIn, controller.getLogout); 
+router.get ('/calendar', userController.isLoggedIn, calendarController.getCalendarPage);
+
+router.get ('/login', userController.isLoggedOut, userController.getLogin);
+router.post ('/login', userController.postLogin);
+
+router.get('/register', userController.getRegister);
+router.post('/register', userController.postRegister); 
 
 export default router;
