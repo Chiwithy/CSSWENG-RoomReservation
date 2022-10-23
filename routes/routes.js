@@ -4,7 +4,8 @@ import calendarController from "../controllers/calendarController.js";
 
 const router = Router();
 
-router.get ('/', userController.isLoggedIn, calendarController.getCalendarPage);
+//gets calender if logged in, otherwise goes to /login
+router.get ('/', userController.isLoggedIn, calendarController.getCalendarPage); 
 
 router.get ('/checkUsername', userController.checkUsername);
 

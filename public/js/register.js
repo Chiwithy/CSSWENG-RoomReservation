@@ -7,16 +7,13 @@ $(document).ready (() => {
     let invalidUsername = false;
     let invalidPassword = false;
 
-    passwordTextField1.onkeyup = checkCredentials;          //from comparePassword to checkCredentials
-    passwordTextField1.onkeydown = checkCredentials;        //from comparePassword to checkCredentials
-
-    passwordTextField2.onkeyup = checkCredentials;          //from comparePassword to checkCredentials
-    passwordTextField2.onkeydown = checkCredentials;        //from comparePassword to checkCredentials
-
     $('#username').keyup (delay (checkCredentials, 150));
 
-    // passwordField1.onkeyup = checkCredentials;
-    // passwordField2.onkeyup = checkCredentials;
+    //orginally only onkeyup fpr passwordFields 1 and 2 
+    passwordField1.onkeyup = checkCredentials;          
+    passwordField1.onkeydown = checkCredentials;        
+    passwordField2.onkeyup = checkCredentials;          
+    passwordField2.onkeydown = checkCredentials;        
 
     registerButton.onclick = registerUser;
 
