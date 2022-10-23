@@ -3,10 +3,11 @@ $(document).ready (() => {
     let passwordField1 = $('#password1')[0];
     let passwordField2 = $('#password2')[0];
     let registerButton = $('#registerBtn')[0];
+    let errorMessage = $('#errorMessage')[0];
     let invalidUsername = false;
     let invalidPassword = false;
 
-    usernameField.onkeyup = checkCredentials;
+    $('#username').keyup (delay (checkCredentials, 150));
 
     passwordField1.onkeyup = checkCredentials;
     passwordField2.onkeyup = checkCredentials;
@@ -20,59 +21,77 @@ $(document).ready (() => {
         confirmPassword ();
     }
 
+    function delay (callback, ms) {
+        var timer = 0;
+        return function() {
+            var context = this, args = arguments;
+            clearTimeout (timer);
+            timer = setTimeout (function () {
+            callback.apply (context, args);
+            }, ms || 0);
+        };
+    }
+
     function checkUsername () {
         if (usernameField.value != "") {
             $.get ('/checkUsername', {username: usernameField.value}, (invalid) => {
                 if (invalid.symbol) {
-                    $('#errorMessage')[0].innerHTML = "Username contains invalid symbols.";
-                    $('#errorMessage')[0].style.visibility = "visible";
+                    errorMessage.innerHTML = "Username contains invalid symbols.";
+                    errorMessage.style.visibility = "visible";
                     invalidUsername = true;
                     registerButton.disabled = true;
                 }
                 else if (invalid.taken) {
-                    $('#errorMessage')[0].innerHTML = "User already exists with that username.";
-                    $('#errorMessage')[0].style.visibility = "visible";
+                    errorMessage.innerHTML = "User already exists with that username.";
+                    errorMessage.style.visibility = "visible";
                     invalidUsername = true;
                     registerButton.disabled = true;
                 }
                 else {
-                    if (!invalidPassword) {
-                        $('#errorMessage')[0].innerHTML = "";
-                        $('#errorMessage')[0].style.visibility = "hidden";
-
-                        if (passwordField1.value != "" && passwordField2.value != "")
-                            registerButton.disabled = false;
+                    if (!invalidPassword && passwordField1.value != "" && passwordField2.value != "") {
+                        errorMessage.innerHTML = "";
+                        errorMessage.style.visibility = "hidden";
+                        registerButton.disabled = false;
+                    }
+                    else if (passwordField1.value == "" && passwordField2.value == "") {
+                        errorMessage.innerHTML = "";
+                        errorMessage.style.visibility = "hidden";
                     }
                     invalidUsername = false;
                 }
             });
         }
-        else registerButton.disabled = false
+        else
+            registerButton.disabled = true;
     };
 
     function confirmPassword () {
-        if (passwordField1.value == passwordField2.value) {
-            if (!invalidUsername) {
-                $('#errorMessage')[0].innerHTML = "";
-                $('#errorMessage')[0].style.visibility = "hidden";
-
-                if (usernameField.value != "")
+        if (passwordField1.value != "" && passwordField2.value != "") {
+            if (passwordField1.value == passwordField2.value) {
+                if (!invalidUsername && usernameField.value != "") {
+                    errorMessage.innerHTML = "";
+                    errorMessage.style.visibility = "hidden";
                     registerButton.disabled = false;
+                }
+                invalidPassword = false;
             }
-            invalidPassword = false;
+            else {
+                errorMessage.innerHTML = "Passwords do not match";
+                errorMessage.style.visibility = "visible";
+                invalidPassword = true;
+                registerButton.disabled = true;
+            }
         }
-        else {
-            $('#errorMessage')[0].innerHTML = "Passwords do not match";
-            $('#errorMessage')[0].style.visibility = "visible";
-            invalidPassword = true;
+        else 
             registerButton.disabled = true;
-        }
-
-        return;
     }
 
     function registerUser () {
-        if (!invalidUsername && !invalidPassword && usernameField.value != "" && passwordField1.value != "" && passwordField2.value != "")
+        console.log ("reached here");
+        console.log (errorMessage.innerHTML);
+        if (errorMessage.innerHTML == "")
             $('#registerForm')[0].submit ();
+        else
+            registerButton.disabled = true;
     }
 });

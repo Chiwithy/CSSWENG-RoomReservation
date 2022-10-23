@@ -21,7 +21,7 @@ button {
 	background-color: #242424;
 }
 
-button:hover {
+button:hover:enabled {
 	background-color: white;
 	color: black;
 	outline-style: solid;
@@ -29,7 +29,8 @@ button:hover {
 }
 
 button:disabled {
-	
+	background-color: Silver;
+	color: Gray;
 }
 
 button:disabled:hover {
