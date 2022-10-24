@@ -1,5 +1,5 @@
 $(document).ready (() => {
-    let usernameField = $('#username')[0]; //Assign the value of the text fields
+    let usernameField = $('#username')[0];
     let passwordField1 = $('#password1')[0];
     let passwordField2 = $('#password2')[0];
     let registerButton = $('#registerBtn')[0];
@@ -9,15 +9,12 @@ $(document).ready (() => {
 
     $('#username').keyup (delay (checkCredentials, 150));
 
-    //orginally only onkeyup fpr passwordFields 1 and 2 
-    passwordField1.onkeyup = checkCredentials;          
-    passwordField1.onkeydown = checkCredentials;        
-    passwordField2.onkeyup = checkCredentials;          
+    passwordField1.onkeydown = checkCredentials;
     passwordField2.onkeydown = checkCredentials;        
 
     registerButton.onclick = registerUser;
 
-    console.log ("register js load successful");
+    console.log ("register.js load successful");
 
     function checkCredentials () {
         checkUsername ();

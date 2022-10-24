@@ -49,7 +49,7 @@ const userController = {
             //Checks if the username contains invalid symbols
             for (i = 0; i < username.length; i++) {
                 let curAscii = username.charCodeAt (i);
-                //If statement checks if the current character is an invalid symbol (listed below)
+                //If statement checks if the current character is a valid symbol (listed below)
                 if (!(  (curAscii >= 48 && curAscii <= 57) ||   //Digits
                         (curAscii >= 65 && curAscii <= 90) ||   //Uppercase
                         (curAscii >= 97 && curAscii <= 122) ||  //Lowercase
@@ -125,8 +125,6 @@ const userController = {
             console.log("postRegister: Unsuccessful");  
         }
     }
-
 }; 
-
 
 export default userController;
