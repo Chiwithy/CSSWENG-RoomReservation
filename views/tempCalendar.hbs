@@ -1,7 +1,17 @@
+<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
+<script>
+    function logOut () {
+        $.post ('/logout', () => {
+            location.href = '/';
+        });
+    }
+</script>
 <div style="font-family: arial">
     <h1 style="font-style:italic; font-weight:bold">placeholder calendar page</h1>
 
     CALENDAR PAGE
 
     CAN ONLY BE ACCESSED BY LOGGED IN USERS
+
+    <span id="logOut" onclick="logOut ()" style="cursor: pointer">Logout</span>
 </div>

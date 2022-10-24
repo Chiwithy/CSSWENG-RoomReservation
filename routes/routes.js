@@ -12,6 +12,7 @@ router.get ('/calendar', userController.isLoggedIn, calendarController.getCalend
 
 router.get ('/login', userController.isLoggedOut, userController.getLogin);
 router.post ('/login', userController.postLogin);
+router.post ('/logout', userController.postLogout);
 router.get('/register', userController.getRegister);
 router.post('/register', userController.postRegister); 
 

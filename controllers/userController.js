@@ -94,9 +94,16 @@ const userController = {
         failureRedirect: '/login?err=true',
     }),
 
-    postRegister: async function (req, res) {
+    postLogout: (req, res) => {
+        req.logout ((err) => {
+            if (err) return next (err);
+            res.redirect ('/login');
+        });
+    },
+
+    postRegister: async (req, res) => {
         try {
-            const hashedPassword = await bcrypt.hash(req.body.password, 10);
+            const hashedPassword = await bcrypt.hash (req.body.password, 10);
             var username = req.body.username;
             var password = hashedPassword;
             var newUser = {
