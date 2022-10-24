@@ -9,8 +9,8 @@ $(document).ready (() => {
 
     $('#username').keyup (delay (checkCredentials, 150));
 
-    passwordField1.onkeydown = checkCredentials;
-    passwordField2.onkeydown = checkCredentials;        
+    passwordField1.onkeyup = checkCredentials;
+    passwordField2.onkeyup = checkCredentials;        
 
     registerButton.onclick = registerUser;
 

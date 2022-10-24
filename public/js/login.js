@@ -3,6 +3,6 @@ $(document).ready (() => {
     
     if (window.location.search != "") {
         if (window.location.search.split ('?')[1] == "invalid")
-            errorMessage.innerHTML = "Username or password is incorrect.";
+            errorMessage.innerHTML = "Incorrect username or password.";
     };
 });
