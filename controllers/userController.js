@@ -91,7 +91,7 @@ const userController = {
 
     postLogin: passport.authenticate ('local', {
         successRedirect: '/',
-        failureRedirect: '/login?err=true',
+        failureRedirect: '/login?invalid',
     }),
 
     postLogout: (req, res) => {
