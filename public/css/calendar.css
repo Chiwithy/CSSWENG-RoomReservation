@@ -1,0 +1,97 @@
+/*****
+*	The code below is based on the following source:
+*	Title:	JavaScript Calendar
+*	Author:	Walter Guevara
+*	Date:	October 25 2021
+*	Source: https://www.thatsoftwaredude.com/pages/9209/full-source-for-javascript-calendar
+*****/
+
+.clear {
+	clear: both;
+}
+
+/* Calendar*/
+.calendar {
+	background-color: white;
+	width: 40%;
+	margin: auto;
+	padding: 20px;
+	display: block;
+	overflow: hidden;
+}
+
+/* Calendar Buttons*/
+.calendar-btn {
+	float: left;
+	background-color: #3159BC;
+	color: white;
+	text-align: center;
+	font-size: 14pt;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	position: relative;
+	width: 20%;
+	cursor: pointer;
+	transition: .5s background-color;
+}
+
+.year-btn {
+	float: right;
+}
+
+.dropdown {
+	display: none;
+	background-color: white;
+	position: absolute;
+	color: black;
+	text-align: center;
+	font-size: 14pt;
+	width: 100%;
+	border-style: solid;
+	border-width: 1px;
+}
+
+.dropdown-item {
+	font-size: 12pt;
+	cursor: pointer;
+	opacity: .7;
+}
+
+.dropdown-item:hover {
+	opacity: 1;
+	border-style: solid;
+	border-width: 1px;
+	border-color: black;
+	background-color: #d3d3d3;
+}
+
+/* Day */
+.days {
+	padding-top: 1%;
+	padding-bottom: 1%;
+}
+
+.day {
+	font-family: 'Nunito';
+	float: left;
+	width: 14%;
+	padding: 1%;
+	font-size: 24px;
+	text-align: center;
+	border: solid 1px #ddd;
+	box-sizing: border-box;	
+}
+
+.label {
+	font-size: 20px;
+	height: 40px;
+	background-color: white;
+	color: black;
+	border: none;
+	font-weight: bold;	
+}
+
+.blank {
+	background-color: white;
+	border: none;
+}
