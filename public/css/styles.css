@@ -73,7 +73,7 @@ i:hover {
 
 /* Classes */
 .logo {
-	height: 72px;
+	max-height: 72px;
 }
 
 .navigation {
@@ -86,6 +86,7 @@ i:hover {
   background-color: white;
   border-bottom-left-radius: 5px;
   border-bottom-right-radius: 5px;
+  overflow: hidden;
 }
 
 .logo-div {
@@ -97,8 +98,27 @@ i:hover {
 .icons-div {
   margin: 12px;
   padding: 7.5px;
-  float:right;
+  float: right;
   display: inline-block;  
+}
+
+.icons-desc {
+	font-family: 'Nunito';
+	font-size: 36px;
+	position: relative;
+	transform: translateY(35%);
+	margin: auto;
+	float: right;
+	display: inline-block;  
+}
+.site-title {
+	font-family: 'Nunito';
+	font-size: 36px;
+	font-weight: bold;
+	display: inline-block;
+	position: relative;
+	margin-left: 10px;
+	transform: translateY(-50%);
 }
 
 .box {
