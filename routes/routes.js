@@ -17,4 +17,6 @@ router.get ('/login', userController.isLoggedOut, userController.getLogin);
 router.post ('/login', userController.postLogin);
 router.post ('/logout', userController.postLogout);
 
+router.get ('/getAccountType', userController.getAccountType);
+
 export default router;
