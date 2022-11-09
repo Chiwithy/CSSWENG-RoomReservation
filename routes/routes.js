@@ -1,6 +1,7 @@
 import { Router } from "express";
 import userController from "../controllers/userController.js";
 import calendarController from "../controllers/calendarController.js";
+import bookviewController from "../controllers/bookviewController.js";
 
 const router = Router();
 
@@ -19,4 +20,5 @@ router.post ('/logout', userController.postLogout);
 
 router.get ('/getAccountType', userController.getAccountType);
 
+router.get('/bookandview', bookviewController.getBookview); 
 export default router;
