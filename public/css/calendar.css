@@ -95,3 +95,25 @@
 	background-color: white;
 	border: none;
 }
+
+.availableDate {
+	background-color: #c7c7c7;
+}
+
+.notAvailableDate:hover {
+	cursor: pointer;
+	background-color: #aec5ff;
+}
+
+/* Year */
+#curYear {
+	float: right;
+	color: #3159BC;
+	font-weight: bold;
+	text-align: center;
+	font-size: 18pt;
+	padding-top: 5px;
+	padding-bottom: 5px;
+	position: relative;
+	width: 20%;
+}
