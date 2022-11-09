@@ -1,6 +1,6 @@
 const calendarController = {
     getCalendarPage: (req, res) => {
-        res.render ("tempCalendar");
+        res.render ("calendar");
     }
 };
 

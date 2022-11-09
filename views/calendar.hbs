@@ -1,0 +1,71 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>Calendar</title>
+		<!-- tailwind link -->
+		<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"/>
+		<!-- Google fonts link -->
+		<link href='https://fonts.googleapis.com/css?family=Nunito' rel='stylesheet'>
+		<!-- CSS links -->
+		<link rel="stylesheet" href="/css/styles.css"/>
+		<link rel="stylesheet" href="/css/calendar.css"/>
+		<!-- FontAwesome link-->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+		<!-- Javascript links-->
+		<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script language="JavaScript" type="text/javascript" src="./js/calendar.js"></script>
+	</head>
+	
+	<body>
+		<!--
+		-	The code below is based on the following source:
+		-	Title:	JavaScript Calendar
+		-	Author:	Walter Guevara
+		-	Date:	October 25 2021
+		-	Source: https://www.thatsoftwaredude.com/pages/9209/full-source-for-javascript-calendar
+		-->
+		<div class="navigation">
+			<div class="logo-div flex">
+				<img src="/images/logo.png" class="logo">
+			</div>
+			
+			<p class="site-title">Conference Room Booking</p>
+			
+			<div class="icons-div flex">
+				<i class="fa-solid fa-right-from-bracket"></i>
+			</div>
+			
+			<p class="icons-desc">Logout</p>
+		</div>
+		
+		<div class="calendar" id="calendar">
+			<div class="calendar-btn" onclick="$('#months').toggle('fast')">
+				<span id="curMonth"></span>
+				<div id="months" class="months dropdown"></div>
+			</div>
+
+			<div class="calendar-btn year-btn" onclick="$('#years').toggle('fast')">
+				<span id="curYear"></span>
+				<div id="years" class="years dropdown"></div>
+			</div>
+
+			<div class="clear"></div>
+
+			<div class="calendar-dates">
+				<div class="days">
+					<div class="day label">SUN</div>
+					<div class="day label">MON</div>
+					<div class="day label">TUE</div>
+					<div class="day label">WED</div>
+					<div class="day label">THUR</div>
+					<div class="day label">FRI</div>
+					<div class="day label">SAT</div>
+
+					<div class="clear"></div>
+				</div>
+
+				<div id="calendarDays" class="days"></div>
+			</div>
+		</div>
+	</body>
+</html>
