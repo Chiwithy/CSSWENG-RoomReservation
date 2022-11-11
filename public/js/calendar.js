@@ -21,7 +21,7 @@ function loadCalendarMonths() {
 	
 			doc.onclick = (function () {
 				var selectedMonth = (month + i);
-				var year = (selectedMonth + i) > 11 ? curYear + 1 : curYear;
+				var year = (selectedMonth) > 11 ? curYear + 1 : curYear;
 				return function () {
 					month = selectedMonth % 12;
 					document.getElementById("curMonth").innerHTML = months[month];
