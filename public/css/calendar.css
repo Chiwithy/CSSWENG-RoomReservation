@@ -96,11 +96,11 @@
 	border: none;
 }
 
-.availableDate {
+.notAvailableDate {
 	background-color: #c7c7c7;
 }
 
-.notAvailableDate:hover {
+.availableDate:hover {
 	cursor: pointer;
 	background-color: #aec5ff;
 }
