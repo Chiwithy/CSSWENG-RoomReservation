@@ -38,7 +38,6 @@ function loadCalendarMonths() {
 }
 
 function loadCalendarDays(year) {
-    console.log (month);
     document.getElementById("calendarDays").innerHTML = "";
 
     var tmpDate = new Date(year, month, 0);
@@ -55,10 +54,13 @@ function loadCalendarDays(year) {
     for (var i = 0; i < num; i++) {
         var tmp = i + 1;
         var d = document.createElement("div");
-        d.id = "calendarday_" + i;
+        d.id = "calendarday_" + tmp + "_" + month + "_" + year;
         d.className = "day";
         d.innerHTML = tmp;
-        d.classList.add (new Date (year, month, tmp) < new Date ().setHours (0, 0, 0, 0) ? "availableDate" : "notAvailableDate");
+        d.classList.add (new Date (year, month, tmp) < new Date ().setHours (0, 0, 0, 0) ? "notAvailableDate" : "availableDate");
+
+        if (d.classList.contains ('availableDate'))
+            d.onclick = bookDate;
 
         document.getElementById("calendarDays").appendChild(d);
     }
@@ -66,6 +68,20 @@ function loadCalendarDays(year) {
     var clear = document.createElement("div");
     clear.className = "clear";
     document.getElementById("calendarDays").appendChild(clear);
+}
+
+function bookDate () {
+    let date = this.id.split ('_')[1];
+    let month = this.id.split ('_')[2];
+    let year = this.id.split ('_')[3];
+    fetch("/bookandview?" + new URLSearchParams({
+        date: date,
+        month : month,
+        year : year,
+    }), {method: 'GET',}
+    ).then(res => {
+        window.location.href=res.url;
+    });
 }
 
 function daysInMonth(month, year)
