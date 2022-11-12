@@ -9,7 +9,7 @@ var UserSchema = new mongoose.Schema({
         type: String,
         required: true
     },
-    employeeType: {
+    accountType: {
         type: String,
         required: true
     }

@@ -73,7 +73,7 @@ const userController = {
     },
 
     getAccountType: (req, res) => {
-        res.send (req.user.employeeType);
+        res.send (req.user.accountType);
     },
 
     isLoggedIn (req, res, next) {
