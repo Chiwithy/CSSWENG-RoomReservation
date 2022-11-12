@@ -1,18 +1,36 @@
-// TODO add Meeting DB schema (Francis)
-const mongoose = require('mongoose');
+import mongoose from "mongoose";
 
-const MeetingSchema = new mongoose.Schema({
-    meetingID: Number,
-    userID: Number,
-    name: String,
-    dateTime: Date,
-    meetingRoom: String,
-    marketingRequest: String,
-    reqAccomplished: Boolean,
-    status: String,
-    attendeeList: String
+const MeetingSchema = new mongoose.Schema ({
+    meetingID: {
+        type: Number,
+        required: true
+    },
+    username: {
+        type: String,
+        required: true
+    },
+    dateTime: {
+        type: Date,
+        required: true
+    },
+    meetingRoom: {
+        type: String,
+        required: true
+    },
+    marketingRequest: {
+        type: String
+    },
+    marketingStatus: {
+        type: Boolean
+    },
+    meetingStatus: {
+        type: String,
+        required: true
+    },
+    attendeeList: {
+        type: String
+    }
 });
 
 const Meeting = mongoose.model('Meeting', MeetingSchema);
-
-module.exports = Meeting;
+export default Meeting;
