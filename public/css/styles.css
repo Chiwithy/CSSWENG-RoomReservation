@@ -133,3 +133,8 @@ i:hover {
   right: 0;
   bottom: 0;
 }
+
+/* Ids */
+#logout:hover {
+	cursor: pointer;
+}

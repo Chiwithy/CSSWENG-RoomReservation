@@ -11,12 +11,14 @@ var month = (new Date).getMonth ();
 var curYear = (new Date).getFullYear ();
 var accountType;
 
-
-function logOut(){
-    $.post ('/logout', () => {
-        location.href = '/';
+$(document).ready (() => {
+    $('#logout').click (() => {
+        $.post ('/logout', () => {
+            location.href = '/';
+        })
     });
-}
+});
+
 function loadCalendarMonths() {
     let i = accountType == 'R' ? 0 : -1;
     for (; i < 4; i++) {
