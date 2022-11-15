@@ -9,32 +9,32 @@
 var months = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
 var month = (new Date).getMonth ();
 var curYear = (new Date).getFullYear ();
+var accountType;
+
 
 function loadCalendarMonths() {
-	$.get ('/getAccountType', (accountType) => {
-		let i = accountType == 'R' ? 0 : -1;
-		for (; i < 4; i++) {
-			var doc = document.createElement("div");
-			var year = (month + i) > 11 ? curYear + 1 : curYear;
-			doc.innerHTML = months[(month + i) % 12] + " " + year;
-			doc.classList.add("dropdown-item");
-	
-			doc.onclick = (function () {
-				var selectedMonth = (month + i);
-				var year = (selectedMonth) > 11 ? curYear + 1 : curYear;
-				return function () {
-					month = selectedMonth % 12;
-					document.getElementById("curMonth").innerHTML = months[month];
-					document.getElementById("curYear").innerHTML = year;
-					loadCalendarDays(year);
-					return month;
-				}
-			})();
-	
-			document.getElementById("months").appendChild(doc);
-	
-		}
-	});
+    let i = accountType == 'R' ? 0 : -1;
+    for (; i < 4; i++) {
+        var doc = document.createElement("div");
+        var year = (month + i) > 11 ? curYear + 1 : curYear;
+        doc.innerHTML = months[(month + i) % 12] + " " + year;
+        doc.classList.add("dropdown-item");
+
+        doc.onclick = (function () {
+            var selectedMonth = (month + i);
+            var year = (selectedMonth) > 11 ? curYear + 1 : curYear;
+            return function () {
+                month = selectedMonth % 12;
+                document.getElementById("curMonth").innerHTML = months[month];
+                document.getElementById("curYear").innerHTML = year;
+                loadCalendarDays(year);
+                return month;
+            }
+        })();
+
+        document.getElementById("months").appendChild(doc);
+
+    }
 }
 
 function loadCalendarDays(year) {
@@ -57,7 +57,7 @@ function loadCalendarDays(year) {
         d.id = "calendarday_" + tmp + "_" + month + "_" + year;
         d.className = "day";
         d.innerHTML = tmp;
-        d.classList.add (new Date (year, month, tmp) < new Date ().setHours (0, 0, 0, 0) ? "notAvailableDate" : "availableDate");
+        d.classList.add (((accountType == 'R') && (new Date (year, month, tmp) < new Date ().setHours (0, 0, 0, 0))) ? "notAvailableDate" : "availableDate");
 
         if (d.classList.contains ('availableDate'))
             d.onclick = bookDate;
@@ -96,6 +96,9 @@ window.addEventListener('load', function () {
     month = date.getMonth();
     document.getElementById("curMonth").innerHTML = months[month];
 	document.getElementById("curYear").innerHTML = year;
-    loadCalendarMonths();
-    loadCalendarDays(year);
+    $.get ('/getAccountType', (accType) => {
+        accountType = accType;
+        loadCalendarMonths();
+        loadCalendarDays(year);
+    });
 });
