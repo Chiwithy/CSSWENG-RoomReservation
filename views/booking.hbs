@@ -1,0 +1,218 @@
+<!DOCTYPE html>
+<html>
+	<head>
+	    <title>Booking</title>
+		<!-- tailwind link -->
+		<link href="https://unpkg.com/tailwindcss@^2/dist/tailwind.min.css" rel="stylesheet"/>
+		<!-- Google fonts link -->
+		<link href='https://fonts.googleapis.com/css?family=Nunito' rel='stylesheet'>
+		<!-- CSS links -->
+		<link rel="stylesheet" href="css/styles.css"/>
+		<link rel="stylesheet" href="css/booking.css"/>
+		<!-- FontAwesome link-->
+		<link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.0.0/css/all.min.css">
+		<!-- Javascript links-->
+		<script src="http://code.jquery.com/jquery-1.11.0.min.js"></script>
+		<script language="JavaScript" type="text/javascript" src="js/booking.js"></script>
+	</head>
+	
+	<body>
+		<div class="navigation">
+			<div class="logo-div flex">
+				<img src="images/logo.png" class="logo">
+			</div>
+			
+			<p class="site-title">Conference Room Booking</p>
+			
+			<div class="icons-div flex"> <!-- Logout Icon -->
+				<i class="fa-solid fa-right-from-bracket"></i>
+			</div>
+			
+			<p class="icons-desc">Logout</p>
+			
+			<div class="icons-div flex"> <!-- Calendar Icon -->
+				<i class="fa-regular fa-calendar-days"></i>
+			</div>
+			
+			<p class="icons-desc">Back to Calendar</p>
+		</div>	
+		
+		<div class="container">
+			<!-- Booking Details -->
+			<div class="square">
+				<h2>Booking Details</h2>
+				<div class="line-break"></div><!-- Line Break -->
+				<table class="booking">
+					<tr>
+						<td>Date: </td>
+						<td>Placeholder </td>
+					</tr>
+					<tr>
+						<td>Booked by: </td>
+						<td>Placeholder </td>
+					</tr>
+					<tr>
+						<td>Start Time: </td>
+						<td>  
+							<select>
+								<option value="" disabled selected>Select</option>
+								<option value="integrity">Integrity</option>
+								<option value="innovation">Innovation</option>
+								<option value="teamwork">Teamwork</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>End Time: </td>
+						<td>  
+							<select>
+								<option value="" disabled selected>Select</option>
+								<option value="integrity">Integrity</option>
+								<option value="innovation">Innovation</option>
+								<option value="teamwork">Teamwork</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Room: </td>
+						<td>  
+							<select>
+								<option value="" disabled selected>Select</option>
+								<option value="integrity">Integrity</option>
+								<option value="innovation">Innovation</option>
+								<option value="teamwork">Teamwork</option>
+							</select>
+						</td>
+					</tr>
+					<tr>
+						<td>Attendees: </td>
+						<td><textarea></textarea></td>
+					</tr>
+					<tr>
+						<td>Requests: </td>
+						<td><textarea></textarea></td>
+					</tr>					
+				</table>
+				<div class="line-break"></div><!-- Line Break -->
+				<button id="book" class="book">BOOK</button>
+			</div>
+			
+			<div class="px-1 inline"></div><!-- Division between Squares-->
+			
+			<!-- Schedule Details -->
+			<div class="square">
+				<table class="view-table">
+					<tr class="view-headers"> <!-- Headers -->
+						<td class="whitespace-nowrap">Time Slot</td>
+						<td>Integrity <br>(10 Pax)</td>
+						<td>Innovation (12 Pax)</td>
+						<td>Teamwork (16 Pax)</td>			
+					</tr>					
+				
+					<tbody class="view-body"><!-- Time Table -->
+						<tr><td>08:00 AM - 08:30 AM</td>
+							<td id="integrity0800"></td>
+							<td id="innovation0800"></td>
+							<td id="teamwork0800"></td>
+						</tr>
+						<tr><td>08:30 AM - 09:00 AM</td>
+							<td id="integrity0830"></td>
+							<td id="innovation0830"></td>
+							<td id="teamwork0830"></td>
+						</tr>
+						<tr><td>09:00 AM - 09:30 AM</td>
+							<td id="integrity0900"></td>
+							<td id="innovation0900"></td>
+							<td id="teamwork0900"></td>
+						</tr>
+						<tr><td>09:30 AM - 10:00 AM</td>
+							<td id="integrity0930"></td>
+							<td id="innovation0930"></td>
+							<td id="teamwork0930"></td>
+						</tr>
+						<tr><td>10:00 AM - 10:30 AM</td>
+							<td id="integrity1000"></td>
+							<td id="innovation1000"></td>
+							<td id="teamwork1000"></td>
+						</tr>
+						<tr><td>10:30 AM - 11:00 AM</td>
+							<td id="integrity1030"></td>
+							<td id="innovation1030"></td>
+							<td id="teamwork1030"></td>
+						</tr>
+						<tr><td>11:00 AM - 11:30 AM</td>
+							<td id="integrity1100"></td>
+							<td id="innovation1100"></td>
+							<td id="teamwork1100"></td>
+						</tr>
+						<tr><td>11:30 AM - 12:00 NN</td>
+							<td id="integrity1130"></td>
+							<td id="innovation1130"></td>
+							<td id="teamwork1130"></td>
+						</tr>
+						<tr><td>12:00 NN - 12:30 PM</td>
+							<td id="integrity1200"></td>
+							<td id="innovation1200"></td>
+							<td id="teamwork1200"></td>
+						</tr>
+						<tr><td>12:30 PM - 01:00 PM</td>
+							<td id="integrity1230"></td>
+							<td id="innovation1230"></td>
+							<td id="teamwork1230"></td>
+						</tr>
+						<tr><td>01:00 PM - 01:30 PM</td>
+							<td id="integrity1300"></td>
+							<td id="innovation1300"></td>
+							<td id="teamwork1300"></td>
+						</tr>
+						<tr><td>01:30 PM - 02:00 PM</td>
+							<td id="integrity1330"></td>
+							<td id="innovation1330"></td>
+							<td id="teamwork1330"></td>
+						</tr>
+						<tr><td>02:00 PM - 02:30 PM</td>
+							<td id="integrity1400"></td>
+							<td id="innovation1400"></td>
+							<td id="teamwork1400"></td>
+						</tr>
+						<tr><td>02:30 PM - 03:00 PM</td>
+							<td id="integrity1430"></td>
+							<td id="innovation1430"></td>
+							<td id="teamwork1430"></td>
+						</tr>
+						<tr><td>03:00 PM - 03:30 PM</td>
+							<td id="integrity1500"></td>
+							<td id="innovation1500"></td>
+							<td id="teamwork1500"></td>
+						</tr>
+						<tr><td>03:30 PM - 04:00 PM</td>
+							<td id="integrity1530"></td>
+							<td id="innovation1530"></td>
+							<td id="teamwork1530"></td>
+						</tr>
+						<tr><td>04:00 PM - 04:30 PM</td>
+							<td id="integrity1600"></td>
+							<td id="innovation1600"></td>
+							<td id="teamwork1600"></td>
+						</tr>
+						<tr><td>04:30 PM - 05:00 PM</td>
+							<td id="integrity1630"></td>
+							<td id="innovation1630"></td>
+							<td id="teamwork1630"></td>
+						</tr>
+						<tr><td>05:00 PM - 05:30 PM</td>
+							<td id="integrity1700"></td>
+							<td id="innovation1700"></td>
+							<td id="teamwork1700"></td>
+						</tr>
+						<tr><td>05:30 PM - 06:00 PM</td>
+							<td id="integrity1730"></td>
+							<td id="innovation1730"></td>
+							<td id="teamwork1730"></td>
+						</tr>
+					</tbody>
+				</table>
+			</div>
+		</div>
+	</body>
+</html>

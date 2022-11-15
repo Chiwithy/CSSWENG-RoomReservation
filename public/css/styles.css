@@ -1,5 +1,6 @@
 /* HTML Elements */
 body {
+	min-width: 1080px;
 	background-color: #3159BC;
 }
 
@@ -12,7 +13,7 @@ input {
 	border: 4px solid black;
 }
 
-button, .submit {
+button {
 	width: 100%;
 	color: #efefef;
 	font-size: 24px;
@@ -21,20 +22,15 @@ button, .submit {
 	background-color: #242424;
 }
 
-button:hover, .submit:hover {
+button:hover:enabled {
 	background-color: white;
 	color: black;
 	outline-style: solid;
-	cursor: pointer;
 }
 
-button:disabled {
-	background-color: Silver;
-	color: Gray;
-}
-
-button:disabled:hover {
-	cursor: default;
+button:disabled{
+  background-color: Silver;
+  color: Gray;
 }
 
 h1 {
@@ -42,18 +38,16 @@ h1 {
 	font-weight: bold;
 	font-size: 4vw;
 	background-color: white;
-
 	margin: auto;
 	margin-bottom: 2%;
 	padding: 10px 25px;
 	border-radius: 15px;
-
 	display: table;
 }
 
 h2 {
 	font-family: 'Nunito';
-	font-size: 2vw;
+	font-size: 32px;
 	font-weight: bold;
 	margin: auto;
 	text-align: center;
@@ -62,13 +56,13 @@ h2 {
 
 /* for Font Awesome icons */
 i {
-  color: black;
-  margin: auto;
-  font-size: 54px;
+	color: black;
+	margin: auto;
+	font-size: 54px;
 }
 
 i:hover {
-  color: grey;
+	color: grey;
 }
 
 /* Classes */
@@ -90,9 +84,9 @@ i:hover {
 }
 
 .logo-div {
-  color: white;
-  padding: 7.5px;
-  display: inline-block;
+	color: white;
+	padding: 7.5px;
+	display: inline-block;
 }
 
 .icons-div {
