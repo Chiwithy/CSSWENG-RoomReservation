@@ -94,7 +94,7 @@ const userController = {
     postLogout: (req, res) => {
         req.logout ((err) => {
             if (err) return next (err);
-            res.redirect ('/login');
+            res.redirect ('/');
         });
     },
 
@@ -106,7 +106,7 @@ const userController = {
             var newUser = {
                 username: username.toUpperCase (),
                 password: password,
-                employeeType: 'R'
+                accountType: 'R'
             }
             User.create(newUser, err => {
                 if (err) {
