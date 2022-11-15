@@ -1,0 +1,110 @@
+/* HTML Elements*/
+body {
+	min-width: 1560px;
+}
+
+b {
+	color: white;
+}
+
+table {
+	margin: 0 auto;
+	border-collapse:separate; 
+	border-spacing: 0 6px;
+	font-family: 'Nunito';
+}
+
+textarea, select {
+	line-height: 1.25;
+	font-family: Arial;
+	width: 90%;
+	font-size: 20px;
+	outline: 2px solid black;
+}
+
+/* Classes */
+.booking {
+	width: 480px;
+	font-size: 30px;
+}
+
+.booking td {
+	padding-right: 20px
+}
+
+.container {
+	display: flex;
+	width: 65%;
+	margin: auto;
+	flex-wrap: nowrap;
+}
+
+.square {
+	width: 720px;
+	background-color: white;
+	margin: 5px;
+	padding: 20px 20px;
+}
+
+.book {
+	font-family: 'Nunito';
+	display:block;
+	width: 20%;
+	text-align: center;
+	margin: 0 auto;
+	background-color: #3159BC;
+}
+
+.line-break {
+	display: block;
+	height: 15px;
+}
+
+.view-table {
+	font-family: 'Nunito';
+    font-size: 18px;
+	border-collapse: collapse;
+	table-layout: fixed;
+	text-align: center;
+	width: 480px;
+	max-height: 50%;
+}
+
+.view-body {
+	max-height: 560px;
+	overflow: scroll;
+	overflow-x: hidden;
+	font-size: 18px;
+}
+
+.view-headers {
+	font-weight: bold;
+	display: block;
+	width: calc(100% - 17px);
+}
+
+.view-headers tr{
+	display: block;
+}
+
+.view-headers tbody{
+	display: block;
+}
+
+.view-headers td {
+	text-align: center;
+	width: 25%
+}
+
+.view-table tbody {
+	display: block;
+}
+
+.view-table tr {
+	display: block;
+}
+
+.view-table td {
+	border: 1px solid black;
+	width: 25%
+}
