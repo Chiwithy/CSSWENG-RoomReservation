@@ -100,10 +100,6 @@ textarea, select {
 	display: block;
 }
 
-.view-table tr {
-	display: block;
-}
-
 .view-table td {
 	border: 1px solid black;
 	width: 25%
