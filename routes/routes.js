@@ -1,6 +1,7 @@
 import { Router } from "express";
 import userController from "../controllers/userController.js";
 import calendarController from "../controllers/calendarController.js";
+import bookviewController from "../controllers/bookviewController.js";
 
 const router = Router();
 
@@ -17,4 +18,8 @@ router.get ('/login', userController.isLoggedOut, userController.getLogin);
 router.post ('/login', userController.postLogin);
 router.post ('/logout', userController.postLogout);
 
+router.get ('/getAccountType', userController.getAccountType);
+
+router.get ('/bookandview', userController.isLoggedIn, bookviewController.getBookview);
+router.get ('/getMeetings', userController.isLoggedIn, bookviewController.getMeetings);
 export default router;

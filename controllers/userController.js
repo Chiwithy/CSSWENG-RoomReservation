@@ -72,11 +72,8 @@ const userController = {
         res.render ("login");
     },
 
-    getLogout: function (req, res) {
-        req.logout(function (err) {
-            if (err) return next(err);
-            res.redirect('/');
-        });
+    getAccountType: (req, res) => {
+        res.send (req.user.accountType);
     },
 
     isLoggedIn (req, res, next) {

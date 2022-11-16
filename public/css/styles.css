@@ -116,6 +116,25 @@ i:hover {
 	transform: translateY(-50%);
 }
 
+.icons-desc {
+	font-family: 'Nunito';
+	font-size: 36px;
+	position: relative;
+	transform: translateY(35%);
+	margin: auto;
+	float: right;
+	display: inline-block;  
+}
+.site-title {
+	font-family: 'Nunito';
+	font-size: 36px;
+	font-weight: bold;
+	display: inline-block;
+	position: relative;
+	margin-left: 10px;
+	transform: translateY(-50%);
+}
+
 .box {
 	width: 40%;
 	height: 90%;
