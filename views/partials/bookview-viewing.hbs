@@ -1,0 +1,23 @@
+<table class="view-table">
+	<tr class="view-headers"> <!-- Headers -->
+		<td class="whitespace-nowrap">Time Slot</td>
+		<td>Integrity <br>(10 Pax)</td>
+		<td>Innovation (12 Pax)</td>
+		<td>Teamwork (16 Pax)</td>			
+	</tr>					
+
+	<tbody id="schedRows" class="view-body"><!-- Time Table -->
+		{{#each meetingRows}} <tr>
+			<td>{{time}}</td>
+			{{#unless integTaken}}
+				<td rowspan={{integSlots}} id="Integrity_{{integID}}" {{#if integSlotTaken}} class="takenSlot" {{/if}}></td>
+			{{/unless}}
+			{{#unless innovTaken}}
+				<td rowspan={{innovSlots}} id="Innovation_{{innovID}}" {{#if innovSlotTaken}} class="takenSlot" {{/if}}></td>
+			{{/unless}}
+			{{#unless teamTaken}}
+				<td rowspan={{teamSlots}} id="Teamwork_{{teamID}}" {{#if teamSlotTaken}} class="takenSlot" {{/if}}></td>
+			{{/unless}}
+		</tr> {{/each}}
+	</tbody>
+</table>
