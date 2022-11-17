@@ -54,7 +54,6 @@ const bookviewController = {
         for (i = 0; i < rooms.length; i++)
             roomCurrentSlots.push (0);
 
-
         for (i = 0; i < times.length - 1; i++) {
             let meeting = {
                 time: times[i] + " - " + times[i + 1]
@@ -63,30 +62,33 @@ const bookviewController = {
             if (meetings != undefined) {
                 for (let j = 0; j < rooms.length; j++) {
                     if (roomCurrentSlots[j] == 0) {
-                        if (meetings[j] != undefined) {
-                            for (let k = 0; k < meetings[j].length; k++) {
-                                if (meetings[j][k].startTime == curTime) {
-                                    let timeDiffInMinutes = Math.abs (new Date (meetings[j][k].endTime) - new Date (meetings[j][k].startTime)) / 60000;
-                                    roomCurrentSlots[j] = timeDiffInMinutes / interval;
+                        for (let k = 0; k < meetings.length; k++) {
+                            for (let m = 0; m < meetings[k].length; m++) {
+                                if (meetings[k][m].meetingRoom == rooms[j]) {
+                                    if (meetings[k][m].startTime == curTime) {
+                                        let timeDiffInMinutes = Math.abs (new Date (meetings[k][m].endTime) - new Date (meetings[k][m].startTime)) / 60000;
+                                        roomCurrentSlots[j] = timeDiffInMinutes / interval;
 
-                                    if (j == 0) {
-                                        meeting.integSlots = roomCurrentSlots[j];
-                                        meeting.integID = k;
-                                        meeting.integSlotTaken = true;
-                                    }
-                                    else if (j == 1) {
-                                        meeting.innovSlots = roomCurrentSlots[j];
-                                        meeting.innovID = k;
-                                        meeting.innovSlotTaken = true;
-                                    }
-                                    else if (j == 2) {
-                                        meeting.teamSlots = roomCurrentSlots[j];
-                                        meeting.teamID = k;
-                                        meeting.teamSlotTaken = true;
-                                    }
+                                        if (j == 0) {
+                                            meeting.integSlots = roomCurrentSlots[j];
+                                            meeting.integID = m;
+                                            meeting.integSlotTaken = true;
+                                        }
+                                        else if (j == 1) {
+                                            meeting.innovSlots = roomCurrentSlots[j];
+                                            meeting.innovID = m;
+                                            meeting.innovSlotTaken = true;
+                                        }
+                                        else if (j == 2) {
+                                            meeting.teamSlots = roomCurrentSlots[j];
+                                            meeting.teamID = m;
+                                            meeting.teamSlotTaken = true;
+                                        }
 
-                                    roomCurrentSlots[j] -= 1;
+                                        roomCurrentSlots[j] -= 1;
+                                    }
                                 }
+                                else m = meetings[k].length;
                             }
                         }
                     }
