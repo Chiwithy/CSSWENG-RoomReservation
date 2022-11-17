@@ -1,0 +1,56 @@
+/* Background */
+.modal {
+	display: none;
+	position: fixed;
+	left: 0;
+	top: 0;
+	width: 100%;
+	height: 100%;
+	overflow: auto;
+	background-color: rgba(0,0,0,0.6);
+}
+
+.close {
+	position: absolute;
+	font-size: 32px;
+	color: black;
+	right: 2%;
+}
+
+.close:hover {
+	color: gray;
+	cursor: pointer;
+	background-color: white;
+	border-radius: 8em;
+}
+
+/* Modal Header */
+.modal-header {
+	padding: 12px 24px;
+	background-color: #8a8a8a;
+	color: white;
+}
+
+/* Box */
+.modal-box {
+	position: relative;
+	background-color: #eeeeee;
+	margin: 2.5% auto;
+	padding: 0px;
+	width: 60%;
+
+	animation-name: animatetop;
+	animation-duration: 0.4s
+}
+
+/* Modal Body */
+.modal-body {
+	padding: 20px 20px;
+}
+
+.details td {
+	padding-left: 8px;
+	border-width: 2px;
+	border-color: black;
+	border-collapse: collapse;
+}
