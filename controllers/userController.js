@@ -106,7 +106,7 @@ const userController = {
             var newUser = {
                 username: username.toUpperCase (),
                 password: password,
-                employeeType: 'R'
+                accountType: 'R'
             }
             User.create(newUser, err => {
                 if (err) {

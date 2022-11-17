@@ -1,9 +1,8 @@
 import Meeting from "../models/Meeting.js";
 
-
 const bookviewController = {
     getBookview: (req, res) => {
-        res.render ("tempBookingAndViewing", {date: req.query.date, month: req.query.month, year: req.query.year});
+        res.render("booking", {date: req.query.date, month: req.query.month, year: req.query.year, username: req.user.username});
     },
 
     getMeetings: async (req, res) => {
