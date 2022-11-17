@@ -11,6 +11,12 @@ $(document).ready (() => {
         accountType = accType;
     });
 
+    $('#logout').click (() => {
+        $.post ('/logout', () => {
+            location.href = '/';
+        })
+    });
+    
 	getMeetings ();
 
 
