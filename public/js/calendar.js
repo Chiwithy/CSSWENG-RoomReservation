@@ -76,12 +76,19 @@ function bookDate () {
     let year = this.id.split ('_')[3];
     fetch("/bookandview?" + new URLSearchParams({
         date: date,
-        month : month,
-        year : year,
+        month: month,
+        year: year,
     }), {method: 'GET',}
     ).then(res => {
         window.location.href=res.url;
     });
+
+    ///////////////////////////////////////////////////////
+    fetch("/seeBooked?" + new URLSearchParams({
+        date: date,
+        month: month,
+        year: year,
+    }), {method: 'GET',})
 }
 
 function daysInMonth(month, year)

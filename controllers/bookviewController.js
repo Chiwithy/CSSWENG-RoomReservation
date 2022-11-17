@@ -29,6 +29,13 @@ const bookviewController = {
             meetings = await Meeting.find ({startTime: {$gte: start, $lt: end}}, {_id: 0, username: 0, attendeeList: 0});
 
         res.send (meetings);
+    },
+
+    /////////////////////////////////////////////////
+    getSeeBookedMeetings: (req, res) =>{
+        //using req.query date month and year, make a new date 
+        //use these days to make an array of start and end times all under the same date 
+        console.log("HERE"); 
     }
 
 
