@@ -32,10 +32,11 @@ const bookviewController = {
     },
 
     /////////////////////////////////////////////////
-    getSeeBookedMeetings: (req, res) =>{
+    getBookedMeetings: (req, res) =>{
         //using req.query date month and year, make a new date 
         //use these days to make an array of start and end times all under the same date 
-        console.log("HERE"); 
+        const d = new Date(req.query.year, req.query.month, req.query.date); 
+        console.log(d); 
     }
 
 
