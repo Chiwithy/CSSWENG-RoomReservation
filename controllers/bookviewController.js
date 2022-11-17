@@ -60,38 +60,42 @@ const bookviewController = {
                 time: times[i] + " - " + times[i + 1]
             };
 
-            for (let j = 0; j < rooms.length; j++) {
-                if (roomCurrentSlots[j] == 0) {
-                    for (let k = 0; k < meetings[j].length; k++) {
-                        if (meetings[j][k].startTime == curTime) {
-                            let timeDiffInMinutes = Math.abs (new Date (meetings[j][k].endTime) - new Date (meetings[j][k].startTime)) / 60000;
-                            roomCurrentSlots[j] = timeDiffInMinutes / interval;
+            if (meetings != undefined) {
+                for (let j = 0; j < rooms.length; j++) {
+                    if (roomCurrentSlots[j] == 0) {
+                        if (meetings[j] != undefined) {
+                            for (let k = 0; k < meetings[j].length; k++) {
+                                if (meetings[j][k].startTime == curTime) {
+                                    let timeDiffInMinutes = Math.abs (new Date (meetings[j][k].endTime) - new Date (meetings[j][k].startTime)) / 60000;
+                                    roomCurrentSlots[j] = timeDiffInMinutes / interval;
 
-                            if (j == 0) {
-                                meeting.integSlots = roomCurrentSlots[j];
-                                meeting.integID = k;
-                                meeting.integSlotTaken = true;
-                            }
-                            else if (j == 1) {
-                                meeting.innovSlots = roomCurrentSlots[j];
-                                meeting.innovID = k;
-                                meeting.innovSlotTaken = true;
-                            }
-                            else if (j == 2) {
-                                meeting.teamSlots = roomCurrentSlots[j];
-                                meeting.teamID = k;
-                                meeting.teamSlotTaken = true;
-                            }
+                                    if (j == 0) {
+                                        meeting.integSlots = roomCurrentSlots[j];
+                                        meeting.integID = k;
+                                        meeting.integSlotTaken = true;
+                                    }
+                                    else if (j == 1) {
+                                        meeting.innovSlots = roomCurrentSlots[j];
+                                        meeting.innovID = k;
+                                        meeting.innovSlotTaken = true;
+                                    }
+                                    else if (j == 2) {
+                                        meeting.teamSlots = roomCurrentSlots[j];
+                                        meeting.teamID = k;
+                                        meeting.teamSlotTaken = true;
+                                    }
 
-                            roomCurrentSlots[j] -= 1;
+                                    roomCurrentSlots[j] -= 1;
+                                }
+                            }
                         }
                     }
-                }
-                else {
-                    if (j == 0) meeting.integTaken = true;
-                    else if (j == 1) meeting.innovTaken = true;
-                    else if (j == 2) meeting.teamTaken = true;
-                    roomCurrentSlots[j] -= 1;
+                    else {
+                        if (j == 0) meeting.integTaken = true;
+                        else if (j == 1) meeting.innovTaken = true;
+                        else if (j == 2) meeting.teamTaken = true;
+                        roomCurrentSlots[j] -= 1;
+                    }
                 }
             }
             curTime.setMinutes (curTime.getMinutes () + interval);
