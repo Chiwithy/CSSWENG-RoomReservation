@@ -35,7 +35,8 @@ const bookviewController = {
     getBookedMeetings: (req, res) =>{
         //using req.query date month and year, make a new date 
         //use these days to make an array of start and end times all under the same date 
-        const d = new Date(req.query.year, req.query.month, req.query.date); 
+        const d = new Date(req.query.year, req.query.month, req.query.date, 9, 30);
+        d.setTime(d.getTime() - new Date().getTimezoneOffset()*60*1000); //offsets time 
         console.log(d); 
     }
 
