@@ -2,7 +2,71 @@ import Meeting from "../models/Meeting.js";
 
 const bookviewController = {
     getBookview: (req, res) => {
-        res.render("booking", {date: req.query.date, month: req.query.month, year: req.query.year, username: req.user.username});
+        const month = ["Jan", "Feb", "Mar", "Apr", "May", "Jun", "Jul", "Aug", "Sep", "Oct", "Nov", "Dec"];
+        const currDate = new Date(req.query.year, req.query.month, req.query.date); 
+        let currMonth = month[currDate.getMonth()]; 
+
+
+        //////////////////////////////////////////////////////////////////////
+        //using req.query date month and year, make a new date 
+        //use these days to make an array of start and end times all under the same date 
+
+        var i;  
+        var startHour, startMinute; 
+        var endHour, endMinute; 
+        const startTimes = new Array(); 
+        const startView = new Array(); 
+        const endTimes = new Array();
+        
+        startHour = 7; 
+        endHour = 7; 
+
+        //creates an arry of all possible start times 
+        for(i=0; i<20; i++){
+            startMinute = 0; 
+            if(i%2 == 0){
+                startHour++; 
+            }
+            else{
+                startMinute = 30;
+            }
+            var startTime = new Date(req.query.year, req.query.month, req.query.date, startHour, startMinute); 
+            //startTime.setTime(startTime.getTime() - new Date().getTimezoneOffset()*60*1000); //offsets time
+            startTimes.push(startTime); 
+        }
+
+        for(i=0; i<startTimes.length; i++){
+            // endMinute = 30; 
+            // if (startTimes[i].getMinutes() == 0){
+            //     endTimes.push(new Date(req.query.year, req.query.month, req.query.date, endHour, endMinute));
+            // }
+            // else{
+            //     endMinute = 30; 
+            //     endHour++; 
+            //     endTimes.push(new Date(req.query.year, req.query.month, req.query.date, endHour, endMinute));
+            // }
+
+            endMinute = 0; 
+            var endTime = new Date(req.query.year, req.query.month, req.query.date, endHour, endMinute); 
+            endTime.setTime(endTime.getTime() - new Date().getTimezoneOffset()*60*1000); //offsets time
+            endTimes.push(endTime);
+            endHour++; 
+            
+        }
+
+        //creates an array based on startTimes array (only times -- no dates)
+        for(i=0; i<startTimes.length; i++){
+            startView.push(startTimes[i].toLocaleTimeString()); 
+        }
+
+        for(i=0; i<startTimes.length; i++){
+            console.log(startTimes[i]); 
+        }
+
+        ///////////////////////////////////////////////////////////////////////////////
+
+
+        res.render("booking", {month: currMonth, date: req.query.date, year: req.query.year, username: req.user.username, startView:startView});
     },
 
     getMeetings: async (req, res) => {
@@ -29,16 +93,40 @@ const bookviewController = {
             meetings = await Meeting.find ({startTime: {$gte: start, $lt: end}}, {_id: 0, username: 0, attendeeList: 0});
 
         res.send (meetings);
-    },
-
-    /////////////////////////////////////////////////
-    getBookedMeetings: (req, res) =>{
-        //using req.query date month and year, make a new date 
-        //use these days to make an array of start and end times all under the same date 
-        const d = new Date(req.query.year, req.query.month, req.query.date, 9, 30);
-        d.setTime(d.getTime() - new Date().getTimezoneOffset()*60*1000); //offsets time 
-        console.log(d); 
     }
+
+    // /////////////////////////////////////////////////
+    // getBookedMeetings: (req, res) =>{
+    //     //using req.query date month and year, make a new date 
+    //     //use these days to make an array of start and end times all under the same date 
+
+    //     var i;  
+    //     var startHour, startMinute; 
+    //     const startTimes = new Array(); 
+    //     // const endTimes = new Array();
+        
+    //     startHour = 7; 
+
+    //     //creates an arry of all possible start times 
+    //     for(i=0; i<20; i++){
+    //         startMinute = 0; 
+    //         if(i%2 == 0){
+    //             startHour++; 
+    //         }
+    //         else{
+    //             startMinute = 30;
+    //         }
+    //         startTimes.push(new Date(req.query.year, req.query.month, req.query.date, startHour, startMinute));
+    //         let startTime = startTimes[startTimes.length - 1];
+    //         startTime.setTime(startTime.getTime() - new Date().getTimezoneOffset()*60*1000); //offsets time  
+    //     }
+
+    //     res.render("booking", {startTimes: startTimes}); 
+    //     // for(i=0; i<startTimes.length; i++){
+    //     //     console.log(startTimes[i]); 
+    //     // }
+    //
+    // }
 
 
 };

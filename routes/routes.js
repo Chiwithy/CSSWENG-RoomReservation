@@ -22,6 +22,7 @@ router.get ('/getAccountType', userController.getAccountType);
 
 router.get ('/bookandview', userController.isLoggedIn, bookviewController.getBookview);
 router.get ('/getMeetings', userController.isLoggedIn, bookviewController.getMeetings);
-///////////////////////////////////////////////////
-router.get('/seeBooked', bookviewController.getBookedMeetings); 
+
+// ///////////////////////////////////////////////////
+// router.get('/seeBooked', bookviewController.getBookedMeetings); 
 export default router;

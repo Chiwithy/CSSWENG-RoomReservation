@@ -84,11 +84,11 @@ function bookDate () {
     });
 
     ///////////////////////////////////////////////////////
-    fetch("/seeBooked?" + new URLSearchParams({
-        date: date,
-        month: month,
-        year: year,
-    }), {method: 'GET',})
+    // fetch("/seeBooked?" + new URLSearchParams({
+    //     date: date,
+    //     month: month,
+    //     year: year,
+    // }), {method: 'GET',})
 }
 
 function daysInMonth(month, year)
