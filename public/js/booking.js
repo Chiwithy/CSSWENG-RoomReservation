@@ -37,20 +37,21 @@ $(document).ready (() => {
     var date = splitDate[0]; 
 
     ///////////
-    const startArr = [];
-    const endArr = [];  
-
+    // const startArr = [];
+    // const endArr = [];  
     //STEP 4: get start and end time from the form 
-    $("#startTime").on('change', function(){ //start time selected 
-        var start = $("#startTime option:selected").text(); 
-        startArr.push(start); 
-    }); 
-    $("#endTime").on('change', function(){ //end time selected 
-        var end = $("#endTime option:selected").text(); 
-        endArr.push(end); 
-    }); 
+    // $("#startTime").on('change', function(){ //start time selected 
+    //     var start = $("#startTime option:selected").text(); 
+    //     startArr.push(start); 
+    // }); 
+    // $("#endTime").on('change', function(){ //end time selected 
+    //     var end = $("#endTime option:selected").text(); 
+    //     endArr.push(end); 
+    // }); 
 
-    console.log(startArr); 
+    var sel1 = document.getElementById("startTime");
+	var text1 = sel1.options[sel1.selectedIndex].text; 
+    console.log(text1); 
     
     //STEP 3: have everything react beginning from onclick of the room dropdown  
     $("#room").on('change', function(){
@@ -114,7 +115,8 @@ $(document).ready (() => {
         // }
         // else{
         //     var selected = document.getElementById("startTime"); 
-        //     selected.innerHTML = "<option value='' disabled selected>Select</option>" 
+        //     //selected.innerHTML = "<option value='' disabled selected>Select</option>" 
+        //     selected.innerHTML = ""; 
         // }
 
 
