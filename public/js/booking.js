@@ -122,6 +122,8 @@ $(document).ready (() => {
         
         //STEP 11: get the meetings array array that corresponds to the room currently selected 
         //         iterate through all existing meetings and compare what slots are already taken 
+		//		   take into account any meetings booked that go over 30 mins -- multiple start times/end times inside 
+		// basically: GET A LIST OF ALL START/ENDTIMES IN DB (including the ones that hide under big meetings)
         var currRoomArray = meetings[indexOfRoom]; 
         var i,x;
 
@@ -131,6 +133,12 @@ $(document).ready (() => {
         var endInDBArr = currRoomArray.map(a => a.endTime);
         var arrLength = startInDBArr.length; 
 
+		//(1) in the DB find the meetings that span more than 30 mins 
+		//(2) trun them into hour:minute format and check the array for them (.contains) and return the index -- this will be our basis for value
+
+		 
+		//NOTE: you can use index somehow to get value -- index of startAllTimes, endAllTimes 
+		///////////////////////////////////////////////////////////////////////////////////////////////
         // for(i=0; i<arrLength; i++){ //for start hours 
         //     var startInDBHour = startInDBArr[i].getHours(); 
         //     var startInDBMin = startInDBArr[i].getMinutes(); 
@@ -155,20 +163,23 @@ $(document).ready (() => {
         //         var tempHour2 = endInDBHour; 
         //         var tempMin2 = endInDBMin; 
 
-        //         while(tempHour < endInDBHour){ //THIS IS NOT CORRECT --does not account for 1pm etc 
-        //             if(tempMin == 0){ 
-        //                 tempMin = tempMin + 30; 
-        //                 startInDBArr.push(new Date(year,month,date,tempHour,tempMin)); 
-        //             }
-        //             else if(tempMin == 30){
-        //                 tempMin = 0; 
-        //                 tempHour = tempHour + 1; 
-        //                 startInDBArr.push(new Date(year,month,date,tempHour,tempMin)); 
-        //             }
-        //         }
+
+		// 		if(tempHour < 10)
+		// 		var check = "0" + tempHour + ":" +  
+                // while(tempHour < endInDBHour){ //THIS IS NOT CORRECT --does not account for 1pm etc 
+                //     if(tempMin == 0){ 
+                //         tempMin = tempMin + 30; 
+                //         startInDBArr.push(new Date(year,month,date,tempHour,tempMin)); 
+                //     }
+                //     else if(tempMin == 30){
+                //         tempMin = 0; 
+                //         tempHour = tempHour + 1; 
+                //         startInDBArr.push(new Date(year,month,date,tempHour,tempMin)); 
+                //     }
+                // }
 
 
-                //this one just doesnt work 
+                // this one just doesnt work 
                 // while(tempHour2 > startInDBArr){ 
                 //     console.log("___",tempHour2); 
                 //     if(tempMin2 == 0){
@@ -183,12 +194,13 @@ $(document).ready (() => {
                 // }
 
 
-            // }
+        //     }
         // }
         // startInDBArr.pop(); 
-        // //endInDBArr.pop(); 
+        //endInDBArr.pop(); 
+		/////////////////////////////////////////////////////////////////////////////////////////
        
-        //this works 
+        //STEP 12: compare start/endTimes that already exist in DB and all start/endTimes possible 
         for(i=0; i<startInDBArr.length; i++){   //compares start times in DB vs all start times (and makes array with indexes to remove ie. taken up classes)
             for(x=0; x<allStartTimes.length; x++){
                 var inDBHour = startInDBArr[i].getHours(); 
@@ -218,7 +230,7 @@ $(document).ready (() => {
         //             toRemoveEnd.push(x); 
         //         }
         //     }
-        // }
+        // } //to double check 
 
 
         //STEP 12: makes new options based on meetings that already exist -- dynamic time 
