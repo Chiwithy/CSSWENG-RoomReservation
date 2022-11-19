@@ -24,7 +24,7 @@ $(document).ready (() => {
 
     /////////////////////////////////////////KYLA SPACE 
 
-    //[] ADD TO DATABASE (based on book buttons)
+    //[X] ADD TO DATABASE (based on book buttons)
     //[] DYNAMIC START AND END TIMES (based on room selection)
     //      [] MAKE SURE THAT start < end and end > start ALWAYS (when showing clickable options)
     //      [] only show the times that are NOT booked 
@@ -68,7 +68,7 @@ $(document).ready (() => {
         var numOfMeetingsInDB = meetings[indexOfRoom].length;
 
         //STEP 7: get all the values from the form 
-        var meetingID = currRoomText + "_" + numOfMeetingsInDB; 
+        var meetingID = numOfMeetingsInDB; 
         var username = $("#username").text();
         var startTime = startTimeDate; 
         var endTime = endTimedate 
@@ -91,29 +91,71 @@ $(document).ready (() => {
             attendeeList: attendeeList,
         }), {method: 'POST',})
 
+        window.location.reload(); 
+
     }); 
 
 
     
-    //STEP 3: have everything react beginning from onclick of the room dropdown  
+    //STEP 9: have start and end change depending on click of 
     $("#room").on('change', function(){
         document.querySelector('#book').disabled = false;
         var currRoom = $("#room").val(); //value of room
-        // var currRoomCap = currRoom.toUpperCase().charAt(0) + currRoom.slice(1);  
-        // var indexOfRoom = rooms.indexOf(currRoomCap);    // THIS CHUNK POSSIBLY NO LONGER NEEDED
-        // var numOfMeetingsInDB = meetings[indexOfRoom].length; //meeting ID depends on how many meetings are in the array per room
-    
+        var currRoomCap = currRoom.charAt(0).toUpperCase() + currRoom.slice(1); 
+        var indexOfRoom = rooms.indexOf(currRoomCap); 
        
-        //2: lists all times that arent taken -- makes sure that only available meeting times is open 
-        // let times = [ "08:00 AM", "08:30 AM", "09:00 AM",
-        //               "09:30 AM", "10:00 AM", "10:30 AM",
-        //               "11:00 AM", "11:30 AM", "12:00 NN",
-        //               "12:30 PM", "01:00 PM", "01:30 PM",
-        //               "02:00 PM", "02:30 PM", "03:00 PM",
-        //               "03:30 PM", "04:00 PM", "04:30 PM",
-        //               "05:00 PM", "05:30 PM", "06:00 PM" ];
-        // get room, iterate through meetinsg using room, get startTime and cross out anything that 
-        // exists in meetings (getMeetings) array  
+        //STEP 10: get a list of all possible start and times 
+        let allStartTimes = [ "08:00 AM", "08:30 AM", "09:00 AM",
+                              "09:30 AM", "10:00 AM", "10:30 AM",
+                              "11:00 AM", "11:30 AM", "12:00 NN",
+                              "12:30 PM", "01:00 PM", "01:30 PM",
+                              "02:00 PM", "02:30 PM", "03:00 PM",
+                              "03:30 PM", "04:00 PM", "04:30 PM",
+                              "05:00 PM", "05:30 PM" ];
+        let allEndTimes =   [ "08:30 AM", "09:00 AM",
+                              "09:30 AM", "10:00 AM", "10:30 AM",
+                              "11:00 AM", "11:30 AM", "12:00 NN",
+                              "12:30 PM", "01:00 PM", "01:30 PM",
+                              "02:00 PM", "02:30 PM", "03:00 PM",
+                              "03:30 PM", "04:00 PM", "04:30 PM",
+                              "05:00 PM", "05:30 PM", "06:00 PM" ];
+        
+        //STEP 11: get the meetings array array that corresponds to the room currently selected 
+        //         iterate through all existing meetings and compare what slots are already taken 
+        var currRoomArray = meetings[indexOfRoom]; 
+        var i,x;
+
+        var startInDBArr = currRoomArray.map(a => a.startTime); //gets an arrya of startTimes (for this room) from DB
+        var endInDBArr = currRoomArray.map(a => a.endTime);
+
+        // console.log(startInDBArr[0].getHours()); 
+
+        for(i=0; i<startInDBArr.length; i++){
+            for(x=0; x<allStartTimes.length; x++){
+                var inDBHour = startInDBArr[i].getHours(); 
+                var inDBMin = startInDBArr[i].getMinutes(); 
+
+                var split1 = allStartTimes[x].split(":"); 
+                var allStartHour = parseInt(split1[0]); 
+                var split2 = split1[1].split(" "); 
+                var allStartMin = parseInt(split2[0]);
+                
+                if(inDBHour == allStartHour && inDBMin == allStartMin){
+                    console.log(startInDBArr[i], " ", allStartTimes[x]); 
+                }
+                //////////////////////////////////
+            }
+        }
+
+        // for(i=0; i<currRoomArray.length; i++){
+        //     for(x=0; x<allStartTimes.length; x++){
+        //         var inDBstart = currRoomArray.map(a => a.startTime); //gets attribute from a  
+        //         console.log(inDBstart)
+        //     }
+        // }
+
+
+
 
 
         //1: makes a new option -- dynamic time 

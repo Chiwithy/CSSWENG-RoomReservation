@@ -123,7 +123,6 @@ const bookviewController = {
 
             var newBookedMeeting = {
                 meetingID: meetingID, 
-                meetingDate: meetingDate,
                 username: username,
 				startTime: startTime,
 				endTime: endTime,
