@@ -37,7 +37,7 @@
 	background-color: #eeeeee;
 	margin: 2.5% auto;
 	padding: 0px;
-	width: 60%;
+	width: 45%;
 
 	animation-name: animatetop;
 	animation-duration: 0.4s
@@ -48,9 +48,20 @@
 	padding: 20px 20px;
 }
 
+.details {
+	font-size: 30px;
+}
+
+#dateModal {
+	min-width: 450px;
+	max-width: 550px;
+}
+
 .details td {
 	padding-left: 8px;
+	padding-right: 8px;
 	border-width: 2px;
+	min-width: 170px;
 	border-color: black;
 	border-collapse: collapse;
 }
