@@ -107,6 +107,10 @@ const bookviewController = {
         res.render ('partials/bookview-viewing', {meetingRows: meetingRows}, (err, html) => {
             res.send (html);
         })
+    },
+
+    postMeeting (req,res) =>{
+
     }
 
 };

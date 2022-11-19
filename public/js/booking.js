@@ -37,6 +37,18 @@ $(document).ready (() => {
         // var marketingStatus = false; 
         // var meetingStatus = "S"; 
         // var attendeeList = $('#attendees').val(); 
+        // fetch("/addBookedMeeting?" + new URLSearchParams({
+        //     meetingID: meetingID,
+        //     meetingDate: meetingDate, 
+        //     username: username,
+        //     startTime: startTime,
+        //     endTime: endTime,
+        //     meetingRoom: meetingRoom, 
+        //     marketingRequest: marketingReqs, 
+        //     marketingStatus: marketingStatus, 
+        //     meetingStatus: meetingStatus, 
+        //     attendeeList: attendeeList,
+        // }), {method: 'POST',})
 
         
 
