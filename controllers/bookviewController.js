@@ -1,5 +1,5 @@
 import Meeting from "../models/Meeting.js";
-var months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const times = [ "08:00 AM", "08:30 AM", "09:00 AM",
                 "09:30 AM", "10:00 AM", "10:30 AM",
                 "11:00 AM", "11:30 AM", "12:00 NN",
@@ -32,10 +32,8 @@ const bookviewController = {
                     meetings[i].username = "";
         }
             
-        else if (accountType == "H")
+        else 
             meetings = await Meeting.find ({startTime: {$gte: start, $lt: end}}, {_id: 0})
-        else if (accountType == "M")
-            meetings = await Meeting.find ({startTime: {$gte: start, $lt: end}}, {_id: 0, username: 0, attendeeList: 0});
 
         res.send (meetings);
     },
@@ -104,7 +102,7 @@ const bookviewController = {
             meetingRows.push (meeting);
         }
 
-        res.render ('partials/bookview-viewing', {meetingRows: meetingRows}, (err, html) => {
+        res.render ('partials/bookview_viewing', {meetingRows: meetingRows}, (err, html) => {
             res.send (html);
         })
     },
