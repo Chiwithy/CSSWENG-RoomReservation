@@ -1,4 +1,5 @@
 //Parallel arrays || {rooms} array is parallel to {meetings} array || rooms[0] = "Integrity" => meetings[0][n] = meetings in Integrity
+const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const rooms = ["Integrity", "Innovation", "Teamwork"];
 let meetings = [];  //YAY <-- meeting array that conatins all filled meetings 
 let accountType;
@@ -19,16 +20,33 @@ $(document).ready (() => {
     
 	getMeetings ();
 
-    //4: on click of room 
+
+
+    /////////////////////////////////////////KYLA SPACE 
+
+    //STEP 1: DISABLE BOOK BUTTON UNTIL ALL REQUIRED FIELDS ARE FILLED 
+    //document.querySelector('#book').disabled = true; //disable book button until all fields (sans last 2) are filled
+    //the enable will be inside the --ON CLICK OF ROOM--
+    //UNFINISHED  
+
+    //STEP 2: get year,month,day, start and end times and turn them into DATE objects 
+    var currDate = $("#date").text();
+    var splitDate = currDate.split(" "); 
+    var year = splitDate[2]; 
+    var month = months.indexOf(splitDate[1]); 
+    var date = splitDate[0]; 
+    
+    //STEP 3: have everything react beginning from onclick of the room dropdown  
     $("#room").on('change', function(){
-        var currRoom = $("#room").val(); //value of room 
-        var numOfMeetingsInDB = meetings.length; 
+        var currRoom = $("#room").val(); //value of room
+        var currRoomCap = currRoom.toUpperCase().charAt(0) + currRoom.slice(1);  
+        var indexOfRoom = rooms.indexOf(currRoomCap); 
+        var numOfMeetingsInDB = meetings[indexOfRoom].length; //meeting ID depends on how many meetings are in the array per room
+ 
 
-        //STEP 1: DISABLE BOOK BUTTON UNTIL ALL REQUIRED FIELDS ARE FILLED 
-        //document.querySelector('#book').disabled = true; //disable book button until all fields (sans last 2) are filled
-
-        //STEP 2: ADD MEETINGS TO DB 
-        // var meetingID = currRoom + "_" + numOfMeetingsInDB; 
+        //STEP 4: get all the values from the form 
+        var meetingID = currRoomCap + "_" + numOfMeetingsInDB; 
+        console.log(meetingID); 
         // var username = $("#username").innerText; 
         // var startTime <-- basta this is a date 
         // var endTime <-- basta this is a date 
@@ -37,6 +55,9 @@ $(document).ready (() => {
         // var marketingStatus = false; 
         // var meetingStatus = "S"; 
         // var attendeeList = $('#attendees').val(); 
+
+
+        //STEP 5: ADD MEETINGS TO DB 
         // fetch("/addBookedMeeting?" + new URLSearchParams({
         //     meetingID: meetingID,
         //     meetingDate: meetingDate, 
