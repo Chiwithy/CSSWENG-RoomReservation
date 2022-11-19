@@ -109,40 +109,39 @@ const bookviewController = {
         })
     },
 
-    // postMeeting: (req,res) => {
-    //     try {
-    //         var meetingID = req.query.meetingID; 
-    //         var meetingDate = req.query.meetingDate;
-    //         var username = req.query.username;
-	// 		var startTime = req.query.startTime;
-	// 		var endTime = req.query.endTime;
-	// 		var meetingRoom = req.query.meetingRoom; 
-	// 		var	marketingRequest = req.query.marketingRequest; 
-	// 		var marketingStatus = req.query.marketingStatus; 
-	// 		var meetingStatus = req.query.meetingStatus; 
-	// 		var	attendeeList = req.query.attendeeList; 
+    postMeeting: (req,res) => {
+        try {
+            var meetingID = req.query.meetingID; 
+            var username = req.query.username;
+			var startTime = req.query.startTime;
+			var endTime = req.query.endTime;
+			var meetingRoom = req.query.meetingRoom; 
+			var	marketingRequest = req.query.marketingRequest; 
+			var marketingStatus = req.query.marketingStatus; 
+			var meetingStatus = req.query.meetingStatus; 
+			var	attendeeList = req.query.attendeeList; 
 
-    //         var newBookedMeeting = {
-    //             meetingID: meetingID, 
-    //             meetingDate: meetingDate,
-    //             username: username,
-	// 			startTime: startTime,
-	// 			endTime: endTime,
-	// 			meetingRoom: meetingRoom, 
-	// 			marketingRequest: marketingRequest, 
-	// 			marketingStatus: marketingStatus, 
-	// 			meetingStatus: meetingStatus, 
-	// 			attendeeList: attendeeList
-    //         }
-    //         Meeting.create(newBookedMeeting, err => {
-    //             if (err) {
-    //                 console.log(err);
-    //                 return;
-    //             }
-    //             console.log(">>>   postBookedMeetings: Successfully added to DB");
-    //         })
-    //     } catch {}
-    // }
+            var newBookedMeeting = {
+                meetingID: meetingID, 
+                meetingDate: meetingDate,
+                username: username,
+				startTime: startTime,
+				endTime: endTime,
+				meetingRoom: meetingRoom, 
+				marketingRequest: marketingRequest, 
+				marketingStatus: marketingStatus, 
+				meetingStatus: meetingStatus, 
+				attendeeList: attendeeList
+            }
+            Meeting.create(newBookedMeeting, err => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                console.log(">>>   postBookedMeetings: Successfully added to DB");
+            })
+        } catch {}
+    }
 
 };
 

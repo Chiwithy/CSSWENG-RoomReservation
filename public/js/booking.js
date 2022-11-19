@@ -24,10 +24,15 @@ $(document).ready (() => {
 
     /////////////////////////////////////////KYLA SPACE 
 
-    //STEP 1: DISABLE BOOK BUTTON UNTIL ALL REQUIRED FIELDS ARE FILLED 
-    //document.querySelector('#book').disabled = true; //disable book button until all fields (sans last 2) are filled
-    //the enable will be inside the --ON CLICK OF ROOM--
-    //UNFINISHED  
+    //[] ADD TO DATABASE (based on book buttons)
+    //[] DYNAMIC START AND END TIMES (based on room selection)
+    //      [] MAKE SURE THAT start < end and end > start ALWAYS (when showing clickable options)
+    //      [] only show the times that are NOT booked 
+    //[] add a check to confirm that the booking has been added to the database 
+    //[X] disable book button if room is not yet selected 
+
+    //STEP 1: DISABLE BOOK BUTTON UNTIL ALL REQUIRED FIELDS ARE FILLED (specifically room)
+    document.querySelector('#book').disabled = true; 
 
     //STEP 2: get year,month,day, start and end times and turn them into DATE objects 
     var currDate = $("#date").text();
@@ -36,64 +41,69 @@ $(document).ready (() => {
     var month = months.indexOf(splitDate[1]); 
     var date = splitDate[0]; 
 
-    ///////////
-    // const startArr = [];
-    // const endArr = [];  
-    //STEP 4: get start and end time from the form 
-    // $("#startTime").on('change', function(){ //start time selected 
-    //     var start = $("#startTime option:selected").text(); 
-    //     startArr.push(start); 
-    // }); 
-    // $("#endTime").on('change', function(){ //end time selected 
-    //     var end = $("#endTime option:selected").text(); 
-    //     endArr.push(end); 
-    // }); 
+    //STEP 3: when book is clicked, get info 
+    $("#book").on('click', function(){
+        //STEP 4: get start and end time from the form 
+        var startSelect = document.getElementById("startTime"); //startTime
+        var start = startSelect.options[startSelect.selectedIndex].text; 
+        var endSelect = document.getElementById("endTime"); //endTime 
+        var end = endSelect.options[endSelect.selectedIndex].text; 
 
-    var sel1 = document.getElementById("startTime");
-	var text1 = sel1.options[sel1.selectedIndex].text; 
-    console.log(text1); 
+        //STEP 5: turn start and end time into dates 
+        var startSplit = start.split(":"); 
+        var startHour = parseInt(startSplit[0]); 
+        var reSplit = startSplit[1].split(" "); 
+        var startMin = parseInt(reSplit[0]); 
+        var endSplit = end.split(":"); 
+        var endHour = parseInt(endSplit[0]); 
+        var reSplit1 = endSplit[1].split(" "); 
+        var endMin = parseInt(reSplit1[0]); 
+        var startTimeDate = new Date(year, month, date, startHour, startMin); 
+        var endTimedate = new Date(year, month, date, endHour, endMin); 
+
+        //STEP 6: set up to get all the values from the form 
+        var currRoom = document.getElementById("room"); 
+        var currRoomText = currRoom.options[currRoom.selectedIndex].text;   
+        var indexOfRoom = rooms.indexOf(currRoomText); 
+        var numOfMeetingsInDB = meetings[indexOfRoom].length;
+
+        //STEP 7: get all the values from the form 
+        var meetingID = currRoomText + "_" + numOfMeetingsInDB; 
+        var username = $("#username").text();
+        var startTime = startTimeDate; 
+        var endTime = endTimedate 
+        var meetingRoom = currRoomText; //meeting room is capitalized 
+        var marketingRequest = $("#marketingReqs").val(); 
+        var marketingStatus = false; 
+        var meetingStatus = "S"; 
+        var attendeeList = $('#attendees').val(); 
+ 
+        //STEP 8: ADD MEETINGS TO DB 
+        fetch("/addBookedMeeting?" + new URLSearchParams({
+            meetingID: meetingID,
+            username: username,
+            startTime: startTime,
+            endTime: endTime,
+            meetingRoom: meetingRoom, 
+            marketingRequest: marketingRequest, 
+            marketingStatus: marketingStatus, 
+            meetingStatus: meetingStatus, 
+            attendeeList: attendeeList,
+        }), {method: 'POST',})
+
+    }); 
+
+
     
     //STEP 3: have everything react beginning from onclick of the room dropdown  
     $("#room").on('change', function(){
+        document.querySelector('#book').disabled = false;
         var currRoom = $("#room").val(); //value of room
-        var currRoomCap = currRoom.toUpperCase().charAt(0) + currRoom.slice(1);  
-        var indexOfRoom = rooms.indexOf(currRoomCap); 
-        var numOfMeetingsInDB = meetings[indexOfRoom].length; //meeting ID depends on how many meetings are in the array per room
+        // var currRoomCap = currRoom.toUpperCase().charAt(0) + currRoom.slice(1);  
+        // var indexOfRoom = rooms.indexOf(currRoomCap);    // THIS CHUNK POSSIBLY NO LONGER NEEDED
+        // var numOfMeetingsInDB = meetings[indexOfRoom].length; //meeting ID depends on how many meetings are in the array per room
     
-        //STEP 4: get all the values from the form 
-        var meetingID = currRoomCap + "_" + numOfMeetingsInDB; 
-        var username = $("#username").text();
-        // var startTime <-- basta this is a date 
-        // var endTime <-- basta this is a date 
-        // var meetingRoom = currRoom; 
-        // var marketingRequest = $('#marketingReqs').val(); 
-        // var marketingStatus = false; 
-        // var meetingStatus = "S"; 
-        // var attendeeList = $('#attendees').val(); 
-
-
-        //STEP 5: ADD MEETINGS TO DB 
-        // fetch("/addBookedMeeting?" + new URLSearchParams({
-        //     meetingID: meetingID,
-        //     meetingDate: meetingDate, 
-        //     username: username,
-        //     startTime: startTime,
-        //     endTime: endTime,
-        //     meetingRoom: meetingRoom, 
-        //     marketingRequest: marketingReqs, 
-        //     marketingStatus: marketingStatus, 
-        //     meetingStatus: meetingStatus, 
-        //     attendeeList: attendeeList,
-        // }), {method: 'POST',})
-
-        
-
-
-
-        
-        
-        
-
+       
         //2: lists all times that arent taken -- makes sure that only available meeting times is open 
         // let times = [ "08:00 AM", "08:30 AM", "09:00 AM",
         //               "09:30 AM", "10:00 AM", "10:30 AM",
