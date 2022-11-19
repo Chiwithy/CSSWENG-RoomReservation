@@ -1,6 +1,6 @@
 //Parallel arrays || {rooms} array is parallel to {meetings} array || rooms[0] = "Integrity" => meetings[0][n] = meetings in Integrity
 const rooms = ["Integrity", "Innovation", "Teamwork"];
-let meetings = [];
+let meetings = [];  //YAY <-- meeting array that conatins all filled meetings 
 let accountType;
 
 $(document).ready (() => {
@@ -19,25 +19,46 @@ $(document).ready (() => {
     
 	getMeetings ();
 
-
-    //on click of room 
+    //4: on click of room 
     $("#room").on('change', function(){
-        alert($("#room").val()); 
+        var currRoom = $("#room").val(); //value of room 
 
-        ///create --> var d = document.createElement("div"); new option
+        
+        
+        
 
-        //1: makes a new option 
+        //2: lists all times that arent taken -- makes sure that only available meeting times is open 
+        // let times = [ "08:00 AM", "08:30 AM", "09:00 AM",
+        //               "09:30 AM", "10:00 AM", "10:30 AM",
+        //               "11:00 AM", "11:30 AM", "12:00 NN",
+        //               "12:30 PM", "01:00 PM", "01:30 PM",
+        //               "02:00 PM", "02:30 PM", "03:00 PM",
+        //               "03:30 PM", "04:00 PM", "04:30 PM",
+        //               "05:00 PM", "05:30 PM", "06:00 PM" ];
+        // get room, iterate through meetinsg using room, get startTime and cross out anything that 
+        // exists in meetings (getMeetings) array  
+
+
+        //1: makes a new option -- dynamic time 
         // if($("#room").val() == "integrity"){
         //     var test = document.createElement("option"); 
-        //     test.innerHTML = "this"; 
+        //     test.innerHTML = "1"; 
+        //     test.value = "1"; 
         //     document.getElementById("startTime").appendChild(test);  
         // }
         // else{
         //     var selected = document.getElementById("startTime"); 
         //     selected.innerHTML = "<option value='' disabled selected>Select</option>" 
         // }
+
          
-    }); 
+    });
+    
+    //3: make sure that end tims are always after start time
+    //   and that start times are always before end time 
+    // $("#startTime").on('change', function(){
+    //     console.log($("#startTime").val()); 
+    // }) 
 
 
     //gets all possible meetings for that day -- the ones booked already 
