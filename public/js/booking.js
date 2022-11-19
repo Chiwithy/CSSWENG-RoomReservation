@@ -25,7 +25,7 @@ $(document).ready (() => {
     /////////////////////////////////////////KYLA SPACE 
 
     //[X] ADD TO DATABASE (based on book buttons)
-    //[] DYNAMIC START AND END TIMES (based on room selection)
+    //[X] DYNAMIC START AND END TIMES (based on room selection)
     //      [] MAKE SURE THAT start < end and end > start ALWAYS (when showing clickable options)
     //      [] only show the times that are NOT booked 
     //[] add a check to confirm that the booking has been added to the database 
@@ -129,7 +129,66 @@ $(document).ready (() => {
         var toRemoveEnd = []; 
         var startInDBArr = currRoomArray.map(a => a.startTime); //gets an arrya of startTimes (for this room) from DB
         var endInDBArr = currRoomArray.map(a => a.endTime);
+        var arrLength = startInDBArr.length; 
 
+        // for(i=0; i<arrLength; i++){ //for start hours 
+        //     var startInDBHour = startInDBArr[i].getHours(); 
+        //     var startInDBMin = startInDBArr[i].getMinutes(); 
+
+        //     var endInDBHour = endInDBArr[i].getHours(); 
+        //     var endInDBMin = endInDBArr[i].getMinutes(); 
+        //     var check; 
+
+        //     if((startInDBHour == endInDBHour) && (startInDBMin + 30 == endInDBMin)){
+        //         check = true; 
+        //     }
+        //     else if((startInDBHour + 1 == endInDBHour) && (startInDBMin == endInDBMin + 30)){
+        //         check = true; 
+        //     }
+        //     else{
+        //         check = false;
+        //     }
+            
+        //     if(!check){
+        //         var tempHour = startInDBHour; 
+        //         var tempMin = startInDBMin; 
+        //         var tempHour2 = endInDBHour; 
+        //         var tempMin2 = endInDBMin; 
+
+        //         while(tempHour < endInDBHour){ //THIS IS NOT CORRECT --does not account for 1pm etc 
+        //             if(tempMin == 0){ 
+        //                 tempMin = tempMin + 30; 
+        //                 startInDBArr.push(new Date(year,month,date,tempHour,tempMin)); 
+        //             }
+        //             else if(tempMin == 30){
+        //                 tempMin = 0; 
+        //                 tempHour = tempHour + 1; 
+        //                 startInDBArr.push(new Date(year,month,date,tempHour,tempMin)); 
+        //             }
+        //         }
+
+
+                //this one just doesnt work 
+                // while(tempHour2 > startInDBArr){ 
+                //     console.log("___",tempHour2); 
+                //     if(tempMin2 == 0){
+                //         tempMin2 = tempMin2 + 30; 
+                //         tempHour2 = tempHour2 - 1; 
+                //         endInDBArr.push(new Date(year,month,date,tempHour2,tempMin2));
+                //     }
+                //     else if(tempMin == 30){
+                //         tempMin2 = 0; 
+                //         endInDBArr.push(new Date(year,month,date,tempHour2,tempMin2));
+                //     }
+                // }
+
+
+            // }
+        // }
+        // startInDBArr.pop(); 
+        // //endInDBArr.pop(); 
+       
+        //this works 
         for(i=0; i<startInDBArr.length; i++){   //compares start times in DB vs all start times 
             for(x=0; x<allStartTimes.length; x++){
                 var inDBHour = startInDBArr[i].getHours(); 
@@ -145,24 +204,24 @@ $(document).ready (() => {
                 }
             }
         }
-        for(i=0; i<endInDBArr.length; i++){   //compares end times in DB vs all end times 
-            for(x=0; x<allEndTimes.length; x++){
-                var inDBHour = endInDBArr[i].getHours(); 
-                var inDBMin = endInDBArr[i].getMinutes(); 
+        // for(i=0; i<endInDBArr.length; i++){   //compares end times in DB vs all end times 
+        //     for(x=0; x<allEndTimes.length; x++){
+        //         var inDBHour = endInDBArr[i].getHours(); 
+        //         var inDBMin = endInDBArr[i].getMinutes(); 
 
-                var split1 = allEndTimes[x].split(":"); 
-                var allEndHour = parseInt(split1[0]); 
-                var split2 = split1[1].split(" "); 
-                var allEndMin = parseInt(split2[0]);
+        //         var split1 = allEndTimes[x].split(":"); 
+        //         var allEndHour = parseInt(split1[0]); 
+        //         var split2 = split1[1].split(" "); 
+        //         var allEndMin = parseInt(split2[0]);
                 
-                if(inDBHour == allEndHour && inDBMin == allEndMin){
-                    toRemoveEnd.push(x); 
-                }
-            }
-        }
+        //         if(inDBHour == allEndHour && inDBMin == allEndMin){
+        //             toRemoveEnd.push(x); 
+        //         }
+        //     }
+        // }
 
 
-        //STEP 12: makes a new option -- dynamic time 
+        //STEP 12: makes new options based on meetings that already exist -- dynamic time 
         for(i=0; i<allStartTimes.length; i++){  //all startTimes minus the ones found in meetings array 
             if(!(toRemoveStart.includes(i))){
                 var test = document.createElement("option"); 
