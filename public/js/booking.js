@@ -125,12 +125,12 @@ $(document).ready (() => {
         var currRoomArray = meetings[indexOfRoom]; 
         var i,x;
 
+        var toRemoveStart = [];
+        var toRemoveEnd = []; 
         var startInDBArr = currRoomArray.map(a => a.startTime); //gets an arrya of startTimes (for this room) from DB
         var endInDBArr = currRoomArray.map(a => a.endTime);
 
-        // console.log(startInDBArr[0].getHours()); 
-
-        for(i=0; i<startInDBArr.length; i++){
+        for(i=0; i<startInDBArr.length; i++){   //compares start times in DB vs all start times 
             for(x=0; x<allStartTimes.length; x++){
                 var inDBHour = startInDBArr[i].getHours(); 
                 var inDBMin = startInDBArr[i].getMinutes(); 
@@ -141,36 +141,66 @@ $(document).ready (() => {
                 var allStartMin = parseInt(split2[0]);
                 
                 if(inDBHour == allStartHour && inDBMin == allStartMin){
-                    console.log(startInDBArr[i], " ", allStartTimes[x]); 
+                    toRemoveStart.push(x); 
                 }
-                //////////////////////////////////
+            }
+        }
+        for(i=0; i<endInDBArr.length; i++){   //compares end times in DB vs all end times 
+            for(x=0; x<allEndTimes.length; x++){
+                var inDBHour = endInDBArr[i].getHours(); 
+                var inDBMin = endInDBArr[i].getMinutes(); 
+
+                var split1 = allEndTimes[x].split(":"); 
+                var allEndHour = parseInt(split1[0]); 
+                var split2 = split1[1].split(" "); 
+                var allEndMin = parseInt(split2[0]);
+                
+                if(inDBHour == allEndHour && inDBMin == allEndMin){
+                    toRemoveEnd.push(x); 
+                }
             }
         }
 
-        // for(i=0; i<currRoomArray.length; i++){
-        //     for(x=0; x<allStartTimes.length; x++){
-        //         var inDBstart = currRoomArray.map(a => a.startTime); //gets attribute from a  
-        //         console.log(inDBstart)
-        //     }
-        // }
 
-
-
-
-
-        //1: makes a new option -- dynamic time 
-        // if($("#room").val() == "integrity"){
-        //     var test = document.createElement("option"); 
-        //     test.innerHTML = "1"; 
-        //     test.value = "1"; 
-        //     document.getElementById("startTime").appendChild(test);  
-        // }
-        // else{
-        //     var selected = document.getElementById("startTime"); 
-        //     //selected.innerHTML = "<option value='' disabled selected>Select</option>" 
-        //     selected.innerHTML = ""; 
-        // }
-
+        //STEP 12: makes a new option -- dynamic time 
+        for(i=0; i<allStartTimes.length; i++){  //all startTimes minus the ones found in meetings array 
+            if(!(toRemoveStart.includes(i))){
+                var test = document.createElement("option"); 
+                test.innerHTML = allStartTimes[i]; 
+                var split = allStartTimes[i].split(":"); 
+                var allStartHour = parseInt(split[0]);
+                var split1 = split[1].split(" ");  
+                var allStartMin = parseInt(split1[0]);
+                var allStartVal; 
+                if(allStartMin == 30){
+                    allStartVal = allStartHour + 0.5; 
+                }
+                else{ 
+                    allStartVal = allStartHour; 
+                }
+                test.value = allStartVal; 
+                document.getElementById("startTime").appendChild(test);
+            }
+        }
+        for(i=0; i<allEndTimes.length; i++){  //all endTimes minus the ones found in meetings array 
+            if(!(toRemoveEnd.includes(i))){
+                var test = document.createElement("option"); 
+                test.innerHTML = allEndTimes[i]; 
+                var split = allEndTimes[i].split(":"); 
+                var allEndHour = parseInt(split[0]);
+                var split1 = split[1].split(" ");  
+                var allEndMin = parseInt(split1[0]);
+                var allEndVal; 
+                if(allEndMin == 30){
+                    allEndVal = allEndHour + 0.5; 
+                }
+                else{ 
+                    allEndVal = allEndHour; 
+                }
+                test.value = allEndVal; 
+                document.getElementById("endTime").appendChild(test);
+            }
+        }
 
         
 
