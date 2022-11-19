@@ -3,7 +3,6 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 const rooms = ["Integrity", "Innovation", "Teamwork"];
 let meetings = [];  //YAY <-- meeting array that conatins all filled meetings 
 let accountType;
-let start, end; 
 
 $(document).ready (() => {
     for (let i = 0; i < rooms.length; i++)
@@ -44,17 +43,21 @@ $(document).ready (() => {
         var indexOfRoom = rooms.indexOf(currRoomCap); 
         var numOfMeetingsInDB = meetings[indexOfRoom].length; //meeting ID depends on how many meetings are in the array per room
 
+        let startArr = [];
+        let endArr = [];  
 
         //STEP 4: get start and end time from the form 
         $("#startTime").on('change', function(){ //start time selected 
-            start = $("#startTime option:selected").text(); 
+            var start = $("#startTime option:selected").text(); 
+            startArr.push(start); 
         }); 
         $("#endTime").on('change', function(){ //end time selected 
-            end = $("#endTime option:selected").text(); 
+            var end = $("#endTime option:selected").text(); 
+            endArr.push(end); 
         }); 
-        console.log(end); 
 
-        
+        console.log(startArr); 
+    
         //STEP 4: get all the values from the form 
         var meetingID = currRoomCap + "_" + numOfMeetingsInDB; 
         var username = $("#username").text();
@@ -125,6 +128,7 @@ $(document).ready (() => {
     // $("#startTime").on('change', function(){
     //     console.log($("#startTime").val()); 
     // }) 
+    
 
     ///////////////////////////////////////////////////////////////STOP 
 
