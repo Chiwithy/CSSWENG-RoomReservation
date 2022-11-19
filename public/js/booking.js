@@ -3,6 +3,7 @@ const months = ["January", "February", "March", "April", "May", "June", "July", 
 const rooms = ["Integrity", "Innovation", "Teamwork"];
 let meetings = [];  //YAY <-- meeting array that conatins all filled meetings 
 let accountType;
+let start, end; 
 
 $(document).ready (() => {
     for (let i = 0; i < rooms.length; i++)
@@ -42,12 +43,21 @@ $(document).ready (() => {
         var currRoomCap = currRoom.toUpperCase().charAt(0) + currRoom.slice(1);  
         var indexOfRoom = rooms.indexOf(currRoomCap); 
         var numOfMeetingsInDB = meetings[indexOfRoom].length; //meeting ID depends on how many meetings are in the array per room
- 
 
+
+        //STEP 4: get start and end time from the form 
+        $("#startTime").on('change', function(){ //start time selected 
+            start = $("#startTime option:selected").text(); 
+        }); 
+        $("#endTime").on('change', function(){ //end time selected 
+            end = $("#endTime option:selected").text(); 
+        }); 
+        console.log(end); 
+
+        
         //STEP 4: get all the values from the form 
         var meetingID = currRoomCap + "_" + numOfMeetingsInDB; 
-        console.log(meetingID); 
-        // var username = $("#username").innerText; 
+        var username = $("#username").text();
         // var startTime <-- basta this is a date 
         // var endTime <-- basta this is a date 
         // var meetingRoom = currRoom; 
@@ -109,11 +119,14 @@ $(document).ready (() => {
          
     });
     
+
     //3: make sure that end tims are always after start time
     //   and that start times are always before end time 
     // $("#startTime").on('change', function(){
     //     console.log($("#startTime").val()); 
     // }) 
+
+    ///////////////////////////////////////////////////////////////STOP 
 
 
     //gets all possible meetings for that day -- the ones booked already 
