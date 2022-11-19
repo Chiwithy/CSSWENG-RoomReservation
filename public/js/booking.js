@@ -10,6 +10,10 @@ $(document).ready (() => {
     
     $.get('/getAccountType', (accType) => {
         accountType = accType;
+        if (accType == "R") {
+            $("#attendeesModalRow").remove ();
+            $("#requestsModalRow").remove ();
+        }
     });
 
     $('#logout').click (() => {
@@ -345,10 +349,54 @@ $(document).ready (() => {
     }
 
     function clickRoom () {
+        const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
+        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
         const bookingID = $(this).attr ("id");
         const roomInd = rooms.indexOf (bookingID.split ("_")[0]);
         const ind = parseInt (bookingID.split ("_")[1]);
+        const meeting = meetings[roomInd][ind];
+        let fullDate = meeting.startTime.getDate () + " " + months[meeting.startTime.getMonth ()] + " " + meeting.startTime.getFullYear () + ", " + days[meeting.startTime.getDay ()];
+
+        $("#dateModal")[0].innerHTML = fullDate;
+        $("#usernameModal")[0].innerHTML = meeting.username;
+        $("#startTimeModal")[0].innerHTML = formatTime (meeting.startTime);
+        $("#endTimeModal")[0].innerHTML = formatTime (meeting.endTime);
+        $("#roomModal")[0].innerHTML = meeting.meetingRoom;
         
-        console.log (meetings[roomInd][ind]);
+        if (accountType != "R") {
+            if (meeting.attendeeList) {
+                let attendeeList = meeting.attendeeList.split ("|");
+                for (let i = 0; i < attendeeList.length; i++) {
+                    if (i) $("#attendeesModal")[0].innerHTML += "<br>" + attendeeList[i];
+                    else $("#attendeesModal")[0].innerHTML = attendeeList[i];
+                }
+            }
+            else $("#attendeesModal")[0].innerHTML = "";
+
+            if (meeting.marketingRequest) $("#requestsModal")[0].innerHTML = meeting.marketingRequest;
+            else $("#requestsModal")[0].innerHTML = "";
+        }
+
+
+        $("#modal").css ('display', 'block');
     }
 });
+
+function formatTime (date) {
+    let hours = date.getHours ();
+    let minutes = date.getMinutes ();
+    let ampm = hours >= 12 ? "PM" : "AM";
+    let timeString;
+
+    hours = hours % 12;
+    hours = hours ? hours : 12;
+    minutes = minutes == 0 ? "00" : minutes;
+
+    if (hours == 12)
+        ampm = "NN";
+
+    hours = hours < 10 ? "0" + hours : hours;
+    timeString = hours + ":" + minutes + " " + ampm;
+
+    return timeString;
+}
