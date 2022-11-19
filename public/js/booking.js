@@ -189,7 +189,7 @@ $(document).ready (() => {
         // //endInDBArr.pop(); 
        
         //this works 
-        for(i=0; i<startInDBArr.length; i++){   //compares start times in DB vs all start times 
+        for(i=0; i<startInDBArr.length; i++){   //compares start times in DB vs all start times (and makes array with indexes to remove ie. taken up classes)
             for(x=0; x<allStartTimes.length; x++){
                 var inDBHour = startInDBArr[i].getHours(); 
                 var inDBMin = startInDBArr[i].getMinutes(); 
@@ -260,8 +260,6 @@ $(document).ready (() => {
                 document.getElementById("endTime").appendChild(test);
             }
         }
-
-        
 
          
     });
