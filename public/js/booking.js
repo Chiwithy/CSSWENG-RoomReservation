@@ -20,7 +20,27 @@ $(document).ready (() => {
 	getMeetings ();
 
 
+    //on click of room 
+    $("#room").on('change', function(){
+        alert($("#room").val()); 
 
+        ///create --> var d = document.createElement("div"); new option
+
+        //1: makes a new option 
+        // if($("#room").val() == "integrity"){
+        //     var test = document.createElement("option"); 
+        //     test.innerHTML = "this"; 
+        //     document.getElementById("startTime").appendChild(test);  
+        // }
+        // else{
+        //     var selected = document.getElementById("startTime"); 
+        //     selected.innerHTML = "<option value='' disabled selected>Select</option>" 
+        // }
+         
+    }); 
+
+
+    //gets all possible meetings for that day -- the ones booked already 
     function getMeetings () {
         const params = new URLSearchParams (window.location.search);
         let year = parseInt (params.get ("year"));
@@ -39,6 +59,7 @@ $(document).ready (() => {
         });
     }
 
+    //renders the meetings that are already taken 
     function renderMeetings () {
         const params = new URLSearchParams (window.location.search);
         let year = parseInt (params.get ("year"));
