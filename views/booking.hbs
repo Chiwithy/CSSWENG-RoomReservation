@@ -53,7 +53,7 @@
 					</tr>
 					<tr>
 						<td>Booked by: </td>
-						<td>{{username}} </td>
+						<td id="username">{{username}} </td>
 					</tr>
 					<tr>
 						<td>Room: </td>
@@ -71,6 +71,7 @@
 						<td>  
 							<select id="startTime">
 								<option value="" disabled selected>Select</option>
+								<option value="1" disabled selected>1</option>  {{!-------}}
 							</select>
 						</td>
 					</tr>
@@ -79,16 +80,17 @@
 						<td>  
 							<select id="endTime">
 								<option value="" disabled selected>Select</option>
+								<option value="2" disabled selected>2</option>  {{!-------}}
 							</select>
 						</td>
 					</tr>
 					<tr>
 						<td>Attendees: </td>
-						<td><textarea></textarea></td>
+						<td id="attendees"><textarea></textarea></td>
 					</tr>
 					<tr>
 						<td>Requests: </td>
-						<td><textarea></textarea></td>
+						<td id="marketingReqs"><textarea></textarea></td>
 					</tr>					
 				</table>
 				<div class="line-break"></div><!-- Line Break -->

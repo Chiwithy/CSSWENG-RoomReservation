@@ -22,6 +22,25 @@ $(document).ready (() => {
     //4: on click of room 
     $("#room").on('change', function(){
         var currRoom = $("#room").val(); //value of room 
+        var numOfMeetingsInDB = meetings.length; 
+
+        //STEP 1: DISABLE BOOK BUTTON UNTIL ALL REQUIRED FIELDS ARE FILLED 
+        //document.querySelector('#book').disabled = true; //disable book button until all fields (sans last 2) are filled
+
+        //STEP 2: ADD MEETINGS TO DB 
+        // var meetingID = currRoom + "_" + numOfMeetingsInDB; 
+        // var username = $("#username").innerText; 
+        // var startTime <-- basta this is a date 
+        // var endTime <-- basta this is a date 
+        // var meetingRoom = currRoom; 
+        // var marketingRequest = $('#marketingReqs').val(); 
+        // var marketingStatus = false; 
+        // var meetingStatus = "S"; 
+        // var attendeeList = $('#attendees').val(); 
+
+        
+
+
 
         
         
@@ -50,6 +69,9 @@ $(document).ready (() => {
         //     var selected = document.getElementById("startTime"); 
         //     selected.innerHTML = "<option value='' disabled selected>Select</option>" 
         // }
+
+
+        
 
          
     });
