@@ -2,9 +2,9 @@
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const rooms =  ["Integrity", "Innovation", "Teamwork"];
 let meetings = [];  
-let accountType;
 let openEndTimes = []; 
 let openStartTimes = []; 
+let accountType;
 let allStartTimes = [ "08:00 AM", "08:30 AM", "09:00 AM",
                       "09:30 AM", "10:00 AM", "10:30 AM",
                       "11:00 AM", "11:30 AM", "12:00 NN",
@@ -109,7 +109,9 @@ $(document).ready (() => {
             attendeeList: attendeeList,
         }), {method: 'POST',})
 
-        window.location.reload(); 
+        checkIfSuccessful(startTime, endTime, meetingRoom);
+
+        //window.location.reload(); 
 
     }); 
 
@@ -189,7 +191,6 @@ $(document).ready (() => {
                     }
                 }
 
-
                 //offsets time for 1pm - 6pm 
                 if(endTempHour >= 1 && endTempHour <= 6){ 
                     endTempHourVal = endTempHour + 12; 
@@ -217,47 +218,48 @@ $(document).ready (() => {
                 }
             }
         }
-
+        endInDBArr.shift(); ////////////
        
         //PART 12: compare start/endTimes that already exist in DB and all start/endTimes possible and makes array the conatins what exists (based on index)
-        for(i=0; i<startInDBArr.length; i++){   //compares start times in DB vs all start times (and makes array with indexes to remove ie. taken up classes)
-            for(x=0; x<allStartTimes.length; x++){
-                var inDBHour = startInDBArr[i].getHours(); 
-                var inDBMin = startInDBArr[i].getMinutes(); 
+        //         makes sure that times that are booked arent shown 
+        // for(i=0; i<startInDBArr.length; i++){   //compares start times in DB vs all start times (and makes array with indexes to remove ie. taken up classes)
+        //     for(x=0; x<allStartTimes.length; x++){
+        //         var inDBHour = startInDBArr[i].getHours(); 
+        //         var inDBMin = startInDBArr[i].getMinutes(); 
 
-                if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm 
-                    inDBHour = inDBHour - 12; 
-                }
+        //         if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm 
+        //             inDBHour = inDBHour - 12; 
+        //         }
 
-                var split1 = allStartTimes[x].split(":"); 
-                var allStartHour = parseInt(split1[0]); 
-                var split2 = split1[1].split(" "); 
-                var allStartMin = parseInt(split2[0]);
+        //         var split1 = allStartTimes[x].split(":"); 
+        //         var allStartHour = parseInt(split1[0]); 
+        //         var split2 = split1[1].split(" "); 
+        //         var allStartMin = parseInt(split2[0]);
                 
-                if(inDBHour == allStartHour && inDBMin == allStartMin){
-                    toRemoveStart.push(x); 
-                }
-            }
-        }
-        for(i=0; i<endInDBArr.length; i++){   //compares end times in DB vs all end times 
-            for(x=0; x<allEndTimes.length; x++){
-                var inDBHour = endInDBArr[i].getHours(); 
-                var inDBMin = endInDBArr[i].getMinutes(); 
+        //         if(inDBHour == allStartHour && inDBMin == allStartMin){
+        //             toRemoveStart.push(x); 
+        //         }
+        //     }
+        // }
+        // for(i=0; i<endInDBArr.length; i++){   //compares end times in DB vs all end times 
+        //     for(x=0; x<allEndTimes.length; x++){
+        //         var inDBHour = endInDBArr[i].getHours(); 
+        //         var inDBMin = endInDBArr[i].getMinutes(); 
 
-                if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm
-                    inDBHour = inDBHour - 12; 
-                }
+        //         if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm
+        //             inDBHour = inDBHour - 12; 
+        //         }
 
-                var split1 = allEndTimes[x].split(":"); 
-                var allEndHour = parseInt(split1[0]); 
-                var split2 = split1[1].split(" "); 
-                var allEndMin = parseInt(split2[0]);
+        //         var split1 = allEndTimes[x].split(":"); 
+        //         var allEndHour = parseInt(split1[0]); 
+        //         var split2 = split1[1].split(" "); 
+        //         var allEndMin = parseInt(split2[0]);
                 
-                if(inDBHour == allEndHour && inDBMin == allEndMin){
-                    toRemoveEnd.push(x); 
-                }
-            }
-        } 
+        //         if(inDBHour == allEndHour && inDBMin == allEndMin){
+        //             toRemoveEnd.push(x); 
+        //         }
+        //     }
+        // } 
 
         //PART  12: makes new options based on meetings that already exist -- dynamic time (based on allStartTimes array and toRemoveStart)
         for(i=0; i<allStartTimes.length; i++){  //all startTimes minus the ones found in meetings array 
@@ -283,6 +285,7 @@ $(document).ready (() => {
                 openStartTimes.push(allStartTimes[i]); 
             }
         }
+
         for(i=0; i<allEndTimes.length; i++){  //all endTimes minus the ones found in meetings array 
             if(!(toRemoveEnd.includes(i))){
                 var test = document.createElement("option"); 
@@ -311,6 +314,7 @@ $(document).ready (() => {
 
     //PART  12: onclick of start time -- allow only end times after it that are consecutive (no gaps) in dropdown options for endtime 
     $("#startTime").on('change', function(){
+        //console.log(openEndTimes); 
         finalChangeTimeOptions("endTime", $("#startTime"), openEndTimes); 
     })
 
@@ -319,13 +323,33 @@ $(document).ready (() => {
         finalChangeTimeOptions("startTime", $("#endTime"), openStartTimes); 
     })
 
-    //3: make sure that end tims are always after start time
-    //   and that start times are always before end time 
-    // $("#startTime").on('change', function(){
-    //     console.log($("#startTime").val()); 
-    // }) 
     
     //-----------
+
+    function checkIfSuccessful(startTime, endTime, meetingRoom){
+        var i; 
+        var roomIndex = rooms.indexOf(meetingRoom); 
+        var roomMeetings = meetings[roomIndex]; 
+        
+        for(i=0; i<roomMeetings.length;i++){
+            console.log("--------");
+            console.log("start: ", roomMeetings[i].startTime, "---", startTime); 
+            console.log("end: ", roomMeetings[i].endTime, "---", endTime); 
+
+            
+            if(Number(roomMeetings[i].startTime) == Number(startTime) && Number(roomMeetings[i].endTime) == Number(endTime)){
+                console.log("[1] exactly the same");  
+            }
+            if(Number(roomMeetings[i].startTime) == Number(startTime) && Number(roomMeetings[i].endTime) >= Number(endTime)){
+                console.log("[2] inside and up");  
+            }
+            if(Number(roomMeetings[i].startTime) <= Number(startTime) && Number(roomMeetings[i].endTime) == Number(endTime)){
+                console.log("[3] inside and below");  
+            }
+            
+            
+        }
+    }
 
     function finalChangeTimeOptions(id, origin, openSlots){
         var i,x;
@@ -349,8 +373,15 @@ $(document).ready (() => {
             else
                 currVal = hour; 
 
-            if(currVal > previous){ 
+            if(currVal > previous && id.localeCompare("endTime") == 0){ 
                 if(currVal - previous == 0.5){
+                    toKeep.push(currVal); 
+                    previous = parseFloat(previous) + 0.5; 
+                }
+            }
+            
+            if(currVal < previous && id.localeCompare("startTime") == 0){ 
+                if(previous - currVal == 0.5){
                     toKeep.push(currVal); 
                     previous = parseFloat(previous) + 0.5; 
                 }
