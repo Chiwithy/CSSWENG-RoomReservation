@@ -95,24 +95,28 @@ $(document).ready (() => {
         var marketingStatus = false; 
         var meetingStatus = "S"; 
         var attendeeList = $('#attendees').val(); 
+
+        var success = checkIfSuccessful(startTime, endTime, meetingRoom);
  
-        //PART  8: ADD MEETINGS TO DB 
-        fetch("/addBookedMeeting?" + new URLSearchParams({
-            meetingID: meetingID,
-            username: username,
-            startTime: startTime,
-            endTime: endTime,
-            meetingRoom: meetingRoom, 
-            marketingRequest: marketingRequest, 
-            marketingStatus: marketingStatus, 
-            meetingStatus: meetingStatus, 
-            attendeeList: attendeeList,
-        }), {method: 'POST',})
-
-        checkIfSuccessful(startTime, endTime, meetingRoom);
-
-        //window.location.reload(); 
-
+        if(success){
+             //PART  8: ADD MEETINGS TO DB 
+            fetch("/addBookedMeeting?" + new URLSearchParams({
+                meetingID: meetingID,
+                username: username,
+                startTime: startTime,
+                endTime: endTime,
+                meetingRoom: meetingRoom, 
+                marketingRequest: marketingRequest, 
+                marketingStatus: marketingStatus, 
+                meetingStatus: meetingStatus, 
+                attendeeList: attendeeList,
+            }), {method: 'POST',})
+            window.location.reload(); 
+        }
+        else{
+            getMeetings(); 
+            renderMeetings();
+        }
     }); 
 
     //PART  9: have start and end change depending on click of 
@@ -129,7 +133,7 @@ $(document).ready (() => {
         //PART  10: get a list of all possible start and times (global variables -- allStartTimes, allEndTimes)
         //PART  11: GET A LIST OF ALL START/ENDTIMES IN DB (including the ones that hide under big meetings)
         var currRoomArray = meetings[indexOfRoom]; 
-        var i,x;
+        var i;
 
         var toRemoveStart = [];
         var toRemoveEnd = []; 
@@ -222,44 +226,44 @@ $(document).ready (() => {
        
         //PART 12: compare start/endTimes that already exist in DB and all start/endTimes possible and makes array the conatins what exists (based on index)
         //         makes sure that times that are booked arent shown 
-        // for(i=0; i<startInDBArr.length; i++){   //compares start times in DB vs all start times (and makes array with indexes to remove ie. taken up classes)
-        //     for(x=0; x<allStartTimes.length; x++){
-        //         var inDBHour = startInDBArr[i].getHours(); 
-        //         var inDBMin = startInDBArr[i].getMinutes(); 
+        for(i=0; i<startInDBArr.length; i++){   //compares start times in DB vs all start times (and makes array with indexes to remove ie. taken up classes)
+            for(x=0; x<allStartTimes.length; x++){
+                var inDBHour = startInDBArr[i].getHours(); 
+                var inDBMin = startInDBArr[i].getMinutes(); 
 
-        //         if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm 
-        //             inDBHour = inDBHour - 12; 
-        //         }
+                if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm 
+                    inDBHour = inDBHour - 12; 
+                }
 
-        //         var split1 = allStartTimes[x].split(":"); 
-        //         var allStartHour = parseInt(split1[0]); 
-        //         var split2 = split1[1].split(" "); 
-        //         var allStartMin = parseInt(split2[0]);
+                var split1 = allStartTimes[x].split(":"); 
+                var allStartHour = parseInt(split1[0]); 
+                var split2 = split1[1].split(" "); 
+                var allStartMin = parseInt(split2[0]);
                 
-        //         if(inDBHour == allStartHour && inDBMin == allStartMin){
-        //             toRemoveStart.push(x); 
-        //         }
-        //     }
-        // }
-        // for(i=0; i<endInDBArr.length; i++){   //compares end times in DB vs all end times 
-        //     for(x=0; x<allEndTimes.length; x++){
-        //         var inDBHour = endInDBArr[i].getHours(); 
-        //         var inDBMin = endInDBArr[i].getMinutes(); 
+                if(inDBHour == allStartHour && inDBMin == allStartMin){
+                    toRemoveStart.push(x); 
+                }
+            }
+        }
+        for(i=0; i<endInDBArr.length; i++){   //compares end times in DB vs all end times 
+            for(x=0; x<allEndTimes.length; x++){
+                var inDBHour = endInDBArr[i].getHours(); 
+                var inDBMin = endInDBArr[i].getMinutes(); 
 
-        //         if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm
-        //             inDBHour = inDBHour - 12; 
-        //         }
+                if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm
+                    inDBHour = inDBHour - 12; 
+                }
 
-        //         var split1 = allEndTimes[x].split(":"); 
-        //         var allEndHour = parseInt(split1[0]); 
-        //         var split2 = split1[1].split(" "); 
-        //         var allEndMin = parseInt(split2[0]);
+                var split1 = allEndTimes[x].split(":"); 
+                var allEndHour = parseInt(split1[0]); 
+                var split2 = split1[1].split(" "); 
+                var allEndMin = parseInt(split2[0]);
                 
-        //         if(inDBHour == allEndHour && inDBMin == allEndMin){
-        //             toRemoveEnd.push(x); 
-        //         }
-        //     }
-        // } 
+                if(inDBHour == allEndHour && inDBMin == allEndMin){
+                    toRemoveEnd.push(x); 
+                }
+            }
+        } 
 
         //PART  12: makes new options based on meetings that already exist -- dynamic time (based on allStartTimes array and toRemoveStart)
         for(i=0; i<allStartTimes.length; i++){  //all startTimes minus the ones found in meetings array 
@@ -324,30 +328,29 @@ $(document).ready (() => {
     })
 
     
-    //-----------
-
+    //before the current form info can be added to the database, it checks if an existing meeting overlaps with it
     function checkIfSuccessful(startTime, endTime, meetingRoom){
-        var i; 
+        var i;
+        var flag = 0; 
         var roomIndex = rooms.indexOf(meetingRoom); 
         var roomMeetings = meetings[roomIndex]; 
         
         for(i=0; i<roomMeetings.length;i++){
-            console.log("--------");
-            console.log("start: ", roomMeetings[i].startTime, "---", startTime); 
-            console.log("end: ", roomMeetings[i].endTime, "---", endTime); 
-
-            
-            if(Number(roomMeetings[i].startTime) == Number(startTime) && Number(roomMeetings[i].endTime) == Number(endTime)){
-                console.log("[1] exactly the same");  
+            if(Number(roomMeetings[i].startTime) <= Number(startTime) && Number(roomMeetings[i].endTime) > Number(startTime)){
+                console.log("Error: start is inside an existing meeting");  
+                flag = 1; 
             }
-            if(Number(roomMeetings[i].startTime) == Number(startTime) && Number(roomMeetings[i].endTime) >= Number(endTime)){
-                console.log("[2] inside and up");  
+            if(Number(roomMeetings[i].startTime) < Number(endTime) && Number(roomMeetings[i].endTime) >= Number(endTime)){
+                console.log("Error: end is inside an existing meeting"); 
+                flag = 1;  
             }
-            if(Number(roomMeetings[i].startTime) <= Number(startTime) && Number(roomMeetings[i].endTime) == Number(endTime)){
-                console.log("[3] inside and below");  
-            }
-            
-            
+        }
+        if(flag){
+            alert("That meeting time is already booked. Please choose another one."); 
+            return 0; 
+        }
+        else{
+            return 1; 
         }
     }
 
