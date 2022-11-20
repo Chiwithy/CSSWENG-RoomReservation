@@ -20,7 +20,7 @@ router.post ('/logout', userController.postLogout);
 
 router.get ('/getAccountType', userController.getAccountType);
 
-router.get ('/bookandview', userController.isLoggedIn, bookviewController.getBookview);
+router.get ('/bookandview', userController.isLoggedIn, calendarController.isValidCalendarDate, bookviewController.getBookview);
 router.get ('/getMeetings', userController.isLoggedIn, bookviewController.getMeetings);
 router.get ('/renderMeetingRows', userController.isLoggedIn, bookviewController.renderMeetingRows);
 
