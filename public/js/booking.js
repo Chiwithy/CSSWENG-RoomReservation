@@ -1,24 +1,24 @@
 //Parallel arrays || {rooms} array is parallel to {meetings} array || rooms[0] = "Integrity" => meetings[0][n] = meetings in Integrity
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const rooms = ["Integrity", "Innovation", "Teamwork"];
+const rooms =  ["Integrity", "Innovation", "Teamwork"];
 let meetings = [];  
 let accountType;
 let openEndTimes = []; 
 let openStartTimes = []; 
 let allStartTimes = [ "08:00 AM", "08:30 AM", "09:00 AM",
-                        "09:30 AM", "10:00 AM", "10:30 AM",
-                        "11:00 AM", "11:30 AM", "12:00 NN",
-                        "12:30 PM", "01:00 PM", "01:30 PM",
-                        "02:00 PM", "02:30 PM", "03:00 PM",
-                        "03:30 PM", "04:00 PM", "04:30 PM",
-                        "05:00 PM", "05:30 PM" ];
+                      "09:30 AM", "10:00 AM", "10:30 AM",
+                      "11:00 AM", "11:30 AM", "12:00 NN",
+                      "12:30 PM", "01:00 PM", "01:30 PM",
+                      "02:00 PM", "02:30 PM", "03:00 PM",
+                      "03:30 PM", "04:00 PM", "04:30 PM",
+                      "05:00 PM", "05:30 PM" ];
 let allEndTimes =   [ "08:30 AM", "09:00 AM",
-                        "09:30 AM", "10:00 AM", "10:30 AM",
-                        "11:00 AM", "11:30 AM", "12:00 NN",
-                        "12:30 PM", "01:00 PM", "01:30 PM",
-                        "02:00 PM", "02:30 PM", "03:00 PM",
-                        "03:30 PM", "04:00 PM", "04:30 PM",
-                        "05:00 PM", "05:30 PM", "06:00 PM" ];
+                      "09:30 AM", "10:00 AM", "10:30 AM",
+                      "11:00 AM", "11:30 AM", "12:00 NN",
+                      "12:30 PM", "01:00 PM", "01:30 PM",
+                      "02:00 PM", "02:30 PM", "03:00 PM",
+                      "03:30 PM", "04:00 PM", "04:30 PM",
+                      "05:00 PM", "05:30 PM", "06:00 PM" ];
 
 $(document).ready (() => {
     for (let i = 0; i < rooms.length; i++)
@@ -39,7 +39,6 @@ $(document).ready (() => {
     });
     
 	getMeetings ();
-
 
     //PART  1: DISABLE BOOK BUTTON UNTIL ALL REQUIRED FIELDS ARE FILLED (specifically room)
     document.querySelector('#book').disabled = true; 
@@ -164,7 +163,7 @@ $(document).ready (() => {
                 var startTempHourVal, endInDBHourVal; 
                 var endTempHourVal, startInDBHourVal; 
 
-                //offsets time for 1pm - 5pm 
+                //offsets time for 1pm - 6pm 
                 if(startTempHour >= 1 && startTempHour <= 6){ 
                     startTempHourVal = startTempHour + 12; 
                 }
@@ -191,7 +190,7 @@ $(document).ready (() => {
                 }
 
 
-                //offsets time for 1pm - 5pm 
+                //offsets time for 1pm - 6pm 
                 if(endTempHour >= 1 && endTempHour <= 6){ 
                     endTempHourVal = endTempHour + 12; 
                 }
@@ -226,7 +225,7 @@ $(document).ready (() => {
                 var inDBHour = startInDBArr[i].getHours(); 
                 var inDBMin = startInDBArr[i].getMinutes(); 
 
-                if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-5pm 
+                if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm 
                     inDBHour = inDBHour - 12; 
                 }
 
@@ -245,7 +244,7 @@ $(document).ready (() => {
                 var inDBHour = endInDBArr[i].getHours(); 
                 var inDBMin = endInDBArr[i].getMinutes(); 
 
-                if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-5pm
+                if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm
                     inDBHour = inDBHour - 12; 
                 }
 
