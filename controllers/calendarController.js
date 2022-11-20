@@ -16,9 +16,6 @@ const calendarController = {
             validDate.setDate (1);
         }
 
-        console.log ("Valid Date/s: " + validDate);
-        console.log ("checkDate: " + checkDate);
-
         if (checkDate >= validDate) return next ();
         else res.redirect ('/calendar');
     }
