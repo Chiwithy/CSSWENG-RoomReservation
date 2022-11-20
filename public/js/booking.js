@@ -31,7 +31,7 @@ $(document).ready (() => {
     //[X] ADD TO DATABASE (based on book buttons)
     //[X] DYNAMIC START AND END TIMES (based on room selection)
     //      [] MAKE SURE THAT start < end and end > start ALWAYS (when showing clickable options)
-    //      [] only show the times that are NOT booked 
+    //      [X] only show the times that are NOT booked 
     //[] add a check to confirm that the booking has been added to the database 
     //[X] disable book button if room is not yet selected 
 
@@ -62,6 +62,15 @@ $(document).ready (() => {
         var endHour = parseInt(endSplit[0]); 
         var reSplit1 = endSplit[1].split(" "); 
         var endMin = parseInt(reSplit1[0]); 
+
+        //STEP 5.1: offset the times for PM  
+        if(startHour >= 1 && startHour <= 5){
+            startHour = startHour + 12; 
+        }
+        if(endHour >= 1 && endHour <= 5){
+            endHour = endHour + 12; 
+        }
+        
         var startTimeDate = new Date(year, month, date, startHour, startMin); 
         var endTimedate = new Date(year, month, date, endHour, endMin); 
 
@@ -100,10 +109,10 @@ $(document).ready (() => {
     }); 
 
 
-    
     //STEP 9: have start and end change depending on click of 
     $("#room").on('change', function(){
         document.querySelector('#book').disabled = false;
+        $(".select").remove(); 
         var currRoom = $("#room").val(); //value of room
         var currRoomCap = currRoom.charAt(0).toUpperCase() + currRoom.slice(1); 
         var indexOfRoom = rooms.indexOf(currRoomCap); 
@@ -124,10 +133,8 @@ $(document).ready (() => {
                               "03:30 PM", "04:00 PM", "04:30 PM",
                               "05:00 PM", "05:30 PM", "06:00 PM" ];
         
-        //STEP 11: get the meetings array array that corresponds to the room currently selected 
-        //         iterate through all existing meetings and compare what slots are already taken 
-		//		   take into account any meetings booked that go over 30 mins -- multiple start times/end times inside 
-		// basically: GET A LIST OF ALL START/ENDTIMES IN DB (including the ones that hide under big meetings)
+
+        //STEP 11: GET A LIST OF ALL START/ENDTIMES IN DB (including the ones that hide under big meetings)
         var currRoomArray = meetings[indexOfRoom]; 
         var i,x;
 
@@ -137,12 +144,7 @@ $(document).ready (() => {
         var endInDBArr = currRoomArray.map(a => a.endTime);
         var arrLength = startInDBArr.length; 
 
-		//(1) in the DB find the meetings that span more than 30 mins 
-		//(2) trun them into hour:minute format and check the array for them (.contains) and return the index -- this will be our basis for value
-
-		 
-		//NOTE: you can use index somehow to get value -- index of startAllTimes, endAllTimes 
-		///////////////////////////////////////////////////////////////////////////////////////////////
+		//deals with meetings that last more than 30 mins 
         for(i=0; i<arrLength; i++){ //for start hours 
             var startInDBHour = startInDBArr[i].getHours(); 
             var startInDBMin = startInDBArr[i].getMinutes(); 
@@ -162,68 +164,78 @@ $(document).ready (() => {
             }
             
             if(!check){
-                var tempHour = startInDBHour; 
-                var tempMin = startInDBMin; 
-                var tempHour2 = endInDBHour; 
-                var tempMin2 = endInDBMin; 
+                var startTempHour = startInDBHour; 
+                var startTempMin = startInDBMin; 
+                var endTempHour = endInDBHour; 
+                var endTempMin = endInDBMin; 
+
+                var startTempHourVal, endInDBHourVal; 
+                var endTempHourVal, startInDBHourVal; 
+
+                //offsets time for 1pm - 5pm 
+                if(startTempHour >= 1 && startTempHour <= 5){ 
+                    startTempHourVal = startTempHour + 12; 
+                }
+                if(endInDBHour >= 1 && endInDBHour <= 5){ 
+                    endInDBHourVal = endInDBHour + 12; 
+                }
+                else{
+                    startTempHourVal = startTempHour; 
+                    endInDBHourVal = endInDBHour; 
+                }
+
+                //gets all start times in between and pushes it to startInDBArr
+                while(startTempHourVal < endInDBHourVal){  
+                    if(startTempMin == 0){ 
+                        startTempMin = startTempMin + 30; 
+                        startInDBArr.push(new Date(year,month,date,startTempHour,startTempMin)); 
+                    }
+                    else if(startTempMin == 30){
+                        startTempMin = 0; 
+                        startTempHour = startTempHour + 1; 
+                        startInDBArr.push(new Date(year,month,date,startTempHour,startTempMin)); 
+                        startTempHourVal = startTempHourVal + 1; 
+                    }
+                }
 
 
-                var tempHourVal, endInDBHourVal; 
+                //offsets time for 1pm - 5pm 
+                if(endTempHour >= 1 && endTempHour <= 5){ 
+                    endTempHourVal = endTempHour + 12; 
+                }
+                if(startInDBHour >= 1 && startInDBHour <= 5){ 
+                    startInDBHourVal = startInDBHour + 12; 
+                }
+                else{
+                    endTempHourVal = endTempHour; 
+                    startInDBHourVal = startInDBHour; 
+                }
 
-                // if(tempHour == 1){ 
-                //     console.log("---", tempHour);
-                // }
-
-                // if(parseInt(tempHour) == 1){ 
-                //     tempHourVal = parseInt(tempHour) + 12; 
-                // }
-                // if(endInDBHour >= 1 && endInDBHour <= 5){ 
-                //     endInDBHourVal = endInDBHour + 12; 
-                // }
-
-                console.log("+++++"); 
-                
-                
-                // while(tempHourVal < endInDBHourVal){ //THIS IS NOT CORRECT --does not account for 1pm etc 
-                //     if(tempMin == 0){ 
-                //         tempMin = tempMin + 30; 
-                //         startInDBArr.push(new Date(year,month,date,tempHour,tempMin)); 
-                //     }
-                //     else if(tempMin == 30){
-                //         tempMin = 0; 
-                //         tempHour = tempHour + 1; 
-                //         startInDBArr.push(new Date(year,month,date,tempHour,tempMin)); 
-                //         tempHourVal = tempHourVal + 1; 
-                //     }
-                // }
-
-
-                //this one just doesnt work 
-                // while(tempHour2 > startInDBArr){ 
-                //     console.log("___",tempHour2); 
-                //     if(tempMin2 == 0){
-                //         tempMin2 = tempMin2 + 30; 
-                //         tempHour2 = tempHour2 - 1; 
-                //         endInDBArr.push(new Date(year,month,date,tempHour2,tempMin2));
-                //     }
-                //     else if(tempMin == 30){
-                //         tempMin2 = 0; 
-                //         endInDBArr.push(new Date(year,month,date,tempHour2,tempMin2));
-                //     }
-                // }
-
-
+                //gets all start times in between and pushes it to startInDBArr
+                while(endTempHourVal > startInDBHourVal){  
+                    if(endTempMin == 0){ 
+                        endTempMin = endTempMin + 30; 
+                        endTempHour = endTempHour - 1; 
+                        endTempHourVal = endTempHourVal - 1; 
+                        endInDBArr.push(new Date(year,month,date,endTempHour,endTempMin)); 
+                    }
+                    else if(endTempMin == 30){
+                        endTempMin = 0; 
+                        endInDBArr.push(new Date(year,month,date,endTempHour,endTempMin)); 
+                    }
+                }
             }
         }
-        startInDBArr.pop(); 
-        //endInDBArr.pop(); 
-		/////////////////////////////////////////////////////////////////////////////////////////
        
-        //STEP 12: compare start/endTimes that already exist in DB and all start/endTimes possible 
+        //STEP 12: compare start/endTimes that already exist in DB and all start/endTimes possible and makes array the conatins what exists (based on index)
         for(i=0; i<startInDBArr.length; i++){   //compares start times in DB vs all start times (and makes array with indexes to remove ie. taken up classes)
             for(x=0; x<allStartTimes.length; x++){
                 var inDBHour = startInDBArr[i].getHours(); 
                 var inDBMin = startInDBArr[i].getMinutes(); 
+
+                if(inDBHour > 12 && inDBHour <= 17){ //offsets for 1pm-5pm 
+                    inDBHour = inDBHour - 12; 
+                }
 
                 var split1 = allStartTimes[x].split(":"); 
                 var allStartHour = parseInt(split1[0]); 
@@ -235,24 +247,27 @@ $(document).ready (() => {
                 }
             }
         }
-        // for(i=0; i<endInDBArr.length; i++){   //compares end times in DB vs all end times 
-        //     for(x=0; x<allEndTimes.length; x++){
-        //         var inDBHour = endInDBArr[i].getHours(); 
-        //         var inDBMin = endInDBArr[i].getMinutes(); 
+        for(i=0; i<endInDBArr.length; i++){   //compares end times in DB vs all end times 
+            for(x=0; x<allEndTimes.length; x++){
+                var inDBHour = endInDBArr[i].getHours(); 
+                var inDBMin = endInDBArr[i].getMinutes(); 
 
-        //         var split1 = allEndTimes[x].split(":"); 
-        //         var allEndHour = parseInt(split1[0]); 
-        //         var split2 = split1[1].split(" "); 
-        //         var allEndMin = parseInt(split2[0]);
+                if(inDBHour > 12 && inDBHour <= 17){ //offsets for 1pm-5pm
+                    inDBHour = inDBHour - 12; 
+                }
+
+                var split1 = allEndTimes[x].split(":"); 
+                var allEndHour = parseInt(split1[0]); 
+                var split2 = split1[1].split(" "); 
+                var allEndMin = parseInt(split2[0]);
                 
-        //         if(inDBHour == allEndHour && inDBMin == allEndMin){
-        //             toRemoveEnd.push(x); 
-        //         }
-        //     }
-        // } //to double check 
+                if(inDBHour == allEndHour && inDBMin == allEndMin){
+                    toRemoveEnd.push(x); 
+                }
+            }
+        } 
 
-
-        //STEP 12: makes new options based on meetings that already exist -- dynamic time 
+        //STEP 12: makes new options based on meetings that already exist -- dynamic time (based on allStartTimes array and toRemoveStart)
         for(i=0; i<allStartTimes.length; i++){  //all startTimes minus the ones found in meetings array 
             if(!(toRemoveStart.includes(i))){
                 var test = document.createElement("option"); 
@@ -294,6 +309,13 @@ $(document).ready (() => {
 
          
     });
+
+    //STEP 12: onclick of start time -- allow only end times after it that are consecutive (no gaps) in dropdown options for endtime 
+    $("#startTime").on('change', function(){
+        $("#startTime").val(); 
+    })
+
+    //STEP 13: onclick of end time -- allow only start times after it that are consecutive (no gaps) in dropdown options for startTime 
     
 
     //3: make sure that end tims are always after start time
@@ -303,7 +325,7 @@ $(document).ready (() => {
     // }) 
     
 
-    ///////////////////////////////////////////////////////////////STOP 
+    ////////////////////////////////////////////////////////////////////////////////////////////////////////////////////STOP 
 
 
     //gets all possible meetings for that day -- the ones booked already 
