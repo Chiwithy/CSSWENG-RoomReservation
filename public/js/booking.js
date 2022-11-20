@@ -143,34 +143,48 @@ $(document).ready (() => {
 		 
 		//NOTE: you can use index somehow to get value -- index of startAllTimes, endAllTimes 
 		///////////////////////////////////////////////////////////////////////////////////////////////
-        // for(i=0; i<arrLength; i++){ //for start hours 
-        //     var startInDBHour = startInDBArr[i].getHours(); 
-        //     var startInDBMin = startInDBArr[i].getMinutes(); 
+        for(i=0; i<arrLength; i++){ //for start hours 
+            var startInDBHour = startInDBArr[i].getHours(); 
+            var startInDBMin = startInDBArr[i].getMinutes(); 
 
-        //     var endInDBHour = endInDBArr[i].getHours(); 
-        //     var endInDBMin = endInDBArr[i].getMinutes(); 
-        //     var check; 
+            var endInDBHour = endInDBArr[i].getHours(); 
+            var endInDBMin = endInDBArr[i].getMinutes(); 
+            var check; 
 
-        //     if((startInDBHour == endInDBHour) && (startInDBMin + 30 == endInDBMin)){
-        //         check = true; 
-        //     }
-        //     else if((startInDBHour + 1 == endInDBHour) && (startInDBMin == endInDBMin + 30)){
-        //         check = true; 
-        //     }
-        //     else{
-        //         check = false;
-        //     }
+            if((startInDBHour == endInDBHour) && (startInDBMin + 30 == endInDBMin)){
+                check = true; 
+            }
+            else if((startInDBHour + 1 == endInDBHour) && (startInDBMin == endInDBMin + 30)){
+                check = true; 
+            }
+            else{
+                check = false;
+            }
             
-        //     if(!check){
-        //         var tempHour = startInDBHour; 
-        //         var tempMin = startInDBMin; 
-        //         var tempHour2 = endInDBHour; 
-        //         var tempMin2 = endInDBMin; 
+            if(!check){
+                var tempHour = startInDBHour; 
+                var tempMin = startInDBMin; 
+                var tempHour2 = endInDBHour; 
+                var tempMin2 = endInDBMin; 
 
 
-		// 		if(tempHour < 10)
-		// 		var check = "0" + tempHour + ":" +  
-                // while(tempHour < endInDBHour){ //THIS IS NOT CORRECT --does not account for 1pm etc 
+                var tempHourVal, endInDBHourVal; 
+
+                // if(tempHour == 1){ 
+                //     console.log("---", tempHour);
+                // }
+
+                // if(parseInt(tempHour) == 1){ 
+                //     tempHourVal = parseInt(tempHour) + 12; 
+                // }
+                // if(endInDBHour >= 1 && endInDBHour <= 5){ 
+                //     endInDBHourVal = endInDBHour + 12; 
+                // }
+
+                console.log("+++++"); 
+                
+                
+                // while(tempHourVal < endInDBHourVal){ //THIS IS NOT CORRECT --does not account for 1pm etc 
                 //     if(tempMin == 0){ 
                 //         tempMin = tempMin + 30; 
                 //         startInDBArr.push(new Date(year,month,date,tempHour,tempMin)); 
@@ -179,11 +193,12 @@ $(document).ready (() => {
                 //         tempMin = 0; 
                 //         tempHour = tempHour + 1; 
                 //         startInDBArr.push(new Date(year,month,date,tempHour,tempMin)); 
+                //         tempHourVal = tempHourVal + 1; 
                 //     }
                 // }
 
 
-                // this one just doesnt work 
+                //this one just doesnt work 
                 // while(tempHour2 > startInDBArr){ 
                 //     console.log("___",tempHour2); 
                 //     if(tempMin2 == 0){
@@ -198,9 +213,9 @@ $(document).ready (() => {
                 // }
 
 
-        //     }
-        // }
-        // startInDBArr.pop(); 
+            }
+        }
+        startInDBArr.pop(); 
         //endInDBArr.pop(); 
 		/////////////////////////////////////////////////////////////////////////////////////////
        
