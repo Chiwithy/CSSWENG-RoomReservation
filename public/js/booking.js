@@ -364,19 +364,12 @@ $(document).ready (() => {
         $("#roomModal")[0].innerHTML = meeting.meetingRoom;
         
         if (accountType != "R") {
-            if (meeting.attendeeList) {
-                let attendeeList = meeting.attendeeList.split ("|");
-                for (let i = 0; i < attendeeList.length; i++) {
-                    if (i) $("#attendeesModal")[0].innerHTML += "<br>" + attendeeList[i];
-                    else $("#attendeesModal")[0].innerHTML = attendeeList[i];
-                }
-            }
+            if (meeting.attendeeList) $("#attendeesModal")[0].innerHTML= meeting.attendeeList;
             else $("#attendeesModal")[0].innerHTML = "";
 
             if (meeting.marketingRequest) $("#requestsModal")[0].innerHTML = meeting.marketingRequest;
             else $("#requestsModal")[0].innerHTML = "";
         }
-
 
         $("#modal").css ('display', 'block');
     }
