@@ -110,7 +110,7 @@ const bookviewController = {
     postMeeting: async (req,res) => {
         try {
             var meetingID = (await Meeting.find ({})).length;
-            var username = req.query.username;
+            var username = req.user.username;
 			var startTime = req.query.startTime;
 			var endTime = req.query.endTime;
 			var meetingRoom = req.query.meetingRoom; 
