@@ -2,17 +2,17 @@
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const rooms =  ["Integrity", "Innovation", "Teamwork"];
 let meetings = [];  
-let openEndTimes = []; 
-let openStartTimes = []; 
+let openEndTimes = [];
+let openStartTimes = [];
 let accountType;
-let allStartTimes = [ "08:00 AM", "08:30 AM", "09:00 AM",
+const allStartTimes = [ "08:00 AM", "08:30 AM", "09:00 AM",
                       "09:30 AM", "10:00 AM", "10:30 AM",
                       "11:00 AM", "11:30 AM", "12:00 NN",
                       "12:30 PM", "01:00 PM", "01:30 PM",
                       "02:00 PM", "02:30 PM", "03:00 PM",
                       "03:30 PM", "04:00 PM", "04:30 PM",
                       "05:00 PM", "05:30 PM" ];
-let allEndTimes =   [ "08:30 AM", "09:00 AM",
+const allEndTimes =   [ "08:30 AM", "09:00 AM",
                       "09:30 AM", "10:00 AM", "10:30 AM",
                       "11:00 AM", "11:30 AM", "12:00 NN",
                       "12:30 PM", "01:00 PM", "01:30 PM",
@@ -121,6 +121,8 @@ $(document).ready (() => {
 
     //PART  9: have start and end change depending on click of 
     $("#room").on('change', function(){
+        openEndTimes = [];
+        openStartTimes = [];
         document.querySelector('#book').disabled = false;
         $("#startTime").empty(); 
         $("#endTime").empty(); 
@@ -214,12 +216,20 @@ $(document).ready (() => {
             }
         }
        
+        
+        const params = new URLSearchParams (window.location.search);
+        let curYear = parseInt (params.get ("year"));
+        let curMonth = parseInt (params.get ("month"));
+        let curDate = parseInt (params.get ("date"));
+        let bookDate = new Date (curYear, curMonth, curDate);
         //PART 12: compare start/endTimes that already exist in DB and all start/endTimes possible and makes array the conatins what exists (based on index)
         //         makes sure that times that are booked arent shown 
         for(i=0; i<startInDBArr.length; i++){   //compares start times in DB vs all start times (and makes array with indexes to remove ie. taken up classes)
             for(x=0; x<allStartTimes.length; x++){
                 var inDBHour = startInDBArr[i].getHours(); 
-                var inDBMin = startInDBArr[i].getMinutes(); 
+                var inDBMin = startInDBArr[i].getMinutes();
+                bookDate.setHours (inDBHour);
+                bookDate.setMinutes (inDBMin);
 
                 if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm 
                     inDBHour = inDBHour - 12; 
@@ -230,7 +240,7 @@ $(document).ready (() => {
                 var split2 = split1[1].split(" "); 
                 var allStartMin = parseInt(split2[0]);
                 
-                if(inDBHour == allStartHour && inDBMin == allStartMin){
+                if(bookDate < new Date () || (inDBHour == allStartHour && inDBMin == allStartMin)){
                     toRemoveStart.push(x); 
                 }
             }
@@ -239,6 +249,8 @@ $(document).ready (() => {
             for(x=0; x<allEndTimes.length; x++){
                 var inDBHour = endInDBArr[i].getHours(); 
                 var inDBMin = endInDBArr[i].getMinutes(); 
+                bookDate.setHours (inDBHour);
+                bookDate.setMinutes (inDBMin);
 
                 if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm
                     inDBHour = inDBHour - 12; 
@@ -249,7 +261,7 @@ $(document).ready (() => {
                 var split2 = split1[1].split(" "); 
                 var allEndMin = parseInt(split2[0]);
                 
-                if(inDBHour == allEndHour && inDBMin == allEndMin){
+                if(bookDate < new Date () || (inDBHour == allEndHour && inDBMin == allEndMin)){
                     toRemoveEnd.push(x); 
                 }
             }
@@ -282,6 +294,7 @@ $(document).ready (() => {
 
         for(i=0; i<allEndTimes.length; i++){  //all endTimes minus the ones found in meetings array 
             if(!(toRemoveEnd.includes(i))){
+                console.log (allEndTimes[i]);
                 var test = document.createElement("option"); 
                 test.innerHTML = allEndTimes[i]; 
                 var split = allEndTimes[i].split(":"); 
@@ -303,6 +316,7 @@ $(document).ready (() => {
                 openEndTimes.push(allEndTimes[i]); 
             }
         }
+        console.log (openEndTimes);
 
     });
 
