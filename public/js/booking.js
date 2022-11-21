@@ -189,15 +189,6 @@ $(document).ready (() => {
                     if (startTempMin % 60 == 0)
                         startTempHourVal += 1;
                     startInDBArr.push(new Date(year,month,date,startTempHour,startTempMin));
-                    // if(startTempMin == 0){ 
-                    //     startTempMin = startTempMin + 30; 
-                    // }
-                    // else if(startTempMin == 30){
-                    //     startTempMin = 0; 
-                    //     startTempHour = startTempHour + 1; 
-                    //     startInDBArr.push(new Date(year,month,date,startTempHour,startTempMin)); 
-                    //     startTempHourVal = startTempHourVal + 1; 
-                    // }
                 }
 
                 //offsets time for 1pm - 6pm 
@@ -218,21 +209,10 @@ $(document).ready (() => {
 
                     if (endTempMin % 60 != 0)
                         endTempHourVal -= 1;
-                    endInDBArr.push(new Date(year,month,date,endTempHour,endTempMin)); 
-                    // if(endTempMin == 0){ 
-                    //     endTempMin = endTempMin + 30; 
-                    //     endTempHour = endTempHour - 1; 
-                    //     endTempHourVal = endTempHourVal - 1; 
-                    //     endInDBArr.push(new Date(year,month,date,endTempHour,endTempMin)); 
-                    // }
-                    // else if(endTempMin == 30){
-                    //     endTempMin = 0; 
-                    //     endInDBArr.push(new Date(year,month,date,endTempHour,endTempMin)); 
-                    // }
+                    endInDBArr.push(new Date(year,month,date,endTempHour,endTempMin));
                 }
             }
         }
-        //endInDBArr.shift(); ////////////
        
         //PART 12: compare start/endTimes that already exist in DB and all start/endTimes possible and makes array the conatins what exists (based on index)
         //         makes sure that times that are booked arent shown 
