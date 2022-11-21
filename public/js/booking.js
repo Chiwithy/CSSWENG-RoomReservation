@@ -150,6 +150,7 @@ $(document).ready (() => {
             var endInDBMin = endInDBArr[i].getMinutes(); 
             var check; 
 
+
             if((startInDBHour == endInDBHour) && (startInDBMin + 30 == endInDBMin)){
                 check = true; 
             }
@@ -182,17 +183,21 @@ $(document).ready (() => {
                 }
 
                 //gets all start times in between and pushes it to startInDBArr
-                while(startTempHourVal < endInDBHourVal){  
-                    if(startTempMin == 0){ 
-                        startTempMin = startTempMin + 30; 
-                        startInDBArr.push(new Date(year,month,date,startTempHour,startTempMin)); 
-                    }
-                    else if(startTempMin == 30){
-                        startTempMin = 0; 
-                        startTempHour = startTempHour + 1; 
-                        startInDBArr.push(new Date(year,month,date,startTempHour,startTempMin)); 
-                        startTempHourVal = startTempHourVal + 1; 
-                    }
+                while((startTempHourVal * 100 + (startTempMin % 60)) < (endInDBHourVal * 100 - ((endInDBMin % 60 ? 0 : 70)))){
+                    startTempMin += 30;
+
+                    if (startTempMin % 60 == 0)
+                        startTempHourVal += 1;
+                    startInDBArr.push(new Date(year,month,date,startTempHour,startTempMin));
+                    // if(startTempMin == 0){ 
+                    //     startTempMin = startTempMin + 30; 
+                    // }
+                    // else if(startTempMin == 30){
+                    //     startTempMin = 0; 
+                    //     startTempHour = startTempHour + 1; 
+                    //     startInDBArr.push(new Date(year,month,date,startTempHour,startTempMin)); 
+                    //     startTempHourVal = startTempHourVal + 1; 
+                    // }
                 }
 
                 //offsets time for 1pm - 6pm 
@@ -208,21 +213,26 @@ $(document).ready (() => {
                 }
 
                 //gets all start times in between and pushes it to startInDBArr
-                while(endTempHourVal > startInDBHourVal){  
-                    if(endTempMin == 0){ 
-                        endTempMin = endTempMin + 30; 
-                        endTempHour = endTempHour - 1; 
-                        endTempHourVal = endTempHourVal - 1; 
-                        endInDBArr.push(new Date(year,month,date,endTempHour,endTempMin)); 
-                    }
-                    else if(endTempMin == 30){
-                        endTempMin = 0; 
-                        endInDBArr.push(new Date(year,month,date,endTempHour,endTempMin)); 
-                    }
+                while((endTempHourVal * 100 + Math.abs(endTempMin % 60)) > (startInDBMin % 60 ? (startInDBHourVal + 1) * 100 : startInDBHourVal * 100 + 30)){ 
+                    endTempMin -= 30;
+
+                    if (endTempMin % 60 != 0)
+                        endTempHourVal -= 1;
+                    endInDBArr.push(new Date(year,month,date,endTempHour,endTempMin)); 
+                    // if(endTempMin == 0){ 
+                    //     endTempMin = endTempMin + 30; 
+                    //     endTempHour = endTempHour - 1; 
+                    //     endTempHourVal = endTempHourVal - 1; 
+                    //     endInDBArr.push(new Date(year,month,date,endTempHour,endTempMin)); 
+                    // }
+                    // else if(endTempMin == 30){
+                    //     endTempMin = 0; 
+                    //     endInDBArr.push(new Date(year,month,date,endTempHour,endTempMin)); 
+                    // }
                 }
             }
         }
-        endInDBArr.shift(); ////////////
+        //endInDBArr.shift(); ////////////
        
         //PART 12: compare start/endTimes that already exist in DB and all start/endTimes possible and makes array the conatins what exists (based on index)
         //         makes sure that times that are booked arent shown 
