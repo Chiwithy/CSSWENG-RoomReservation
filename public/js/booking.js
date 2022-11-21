@@ -294,7 +294,6 @@ $(document).ready (() => {
 
         for(i=0; i<allEndTimes.length; i++){  //all endTimes minus the ones found in meetings array 
             if(!(toRemoveEnd.includes(i))){
-                console.log (allEndTimes[i]);
                 var test = document.createElement("option"); 
                 test.innerHTML = allEndTimes[i]; 
                 var split = allEndTimes[i].split(":"); 
@@ -316,7 +315,6 @@ $(document).ready (() => {
                 openEndTimes.push(allEndTimes[i]); 
             }
         }
-        console.log (openEndTimes);
 
     });
 
