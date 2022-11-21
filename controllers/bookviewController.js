@@ -107,9 +107,9 @@ const bookviewController = {
         })
     },
 
-    postMeeting: (req,res) => {
+    postMeeting: async (req,res) => {
         try {
-            var meetingID = req.query.meetingID; 
+            var meetingID = (await Meeting.find ({})).length;
             var username = req.query.username;
 			var startTime = req.query.startTime;
 			var endTime = req.query.endTime;
