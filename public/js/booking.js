@@ -228,8 +228,6 @@ $(document).ready (() => {
             for(x=0; x<allStartTimes.length; x++){
                 var inDBHour = startInDBArr[i].getHours(); 
                 var inDBMin = startInDBArr[i].getMinutes();
-                bookDate.setHours (inDBHour);
-                bookDate.setMinutes (inDBMin);
 
                 if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm 
                     inDBHour = inDBHour - 12; 
@@ -239,6 +237,8 @@ $(document).ready (() => {
                 var allStartHour = parseInt(split1[0]); 
                 var split2 = split1[1].split(" "); 
                 var allStartMin = parseInt(split2[0]);
+                bookDate.setHours (split2[1] == 'PM' ? allStartHour + 12 : allStartHour);
+                bookDate.setMinutes (allStartMin);
                 
                 if(bookDate < new Date () || (inDBHour == allStartHour && inDBMin == allStartMin)){
                     toRemoveStart.push(x); 
@@ -249,8 +249,6 @@ $(document).ready (() => {
             for(x=0; x<allEndTimes.length; x++){
                 var inDBHour = endInDBArr[i].getHours(); 
                 var inDBMin = endInDBArr[i].getMinutes(); 
-                bookDate.setHours (inDBHour);
-                bookDate.setMinutes (inDBMin);
 
                 if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm
                     inDBHour = inDBHour - 12; 
@@ -260,7 +258,9 @@ $(document).ready (() => {
                 var allEndHour = parseInt(split1[0]); 
                 var split2 = split1[1].split(" "); 
                 var allEndMin = parseInt(split2[0]);
-                
+                bookDate.setHours (split2[1] == 'PM' ? allEndHour + 12 : allEndHour);
+                bookDate.setMinutes (allEndMin);
+
                 if(bookDate < new Date () || (inDBHour == allEndHour && inDBMin == allEndMin)){
                     toRemoveEnd.push(x); 
                 }
