@@ -26,9 +26,13 @@ $(document).ready (() => {
     
     $.get('/getAccountType', (accType) => {
         accountType = accType;
-        if (accType == "R") {
+        if (accType != 'H') {
             $("#attendeesModalRow").remove ();
-            $("#requestsModalRow").remove ();
+
+            if (accType == 'M')
+                $("#usernameModalRow").remove ();
+            else
+                $("#requestsModalRow").remove ();
         }
     });
 
@@ -526,16 +530,18 @@ $(document).ready (() => {
         let fullDate = meeting.startTime.getDate () + " " + months[meeting.startTime.getMonth ()] + " " + meeting.startTime.getFullYear () + ", " + days[meeting.startTime.getDay ()];
 
         $("#dateModal")[0].innerHTML = fullDate;
-        $("#usernameModal")[0].innerHTML = meeting.username;
         $("#startTimeModal")[0].innerHTML = formatTime (meeting.startTime);
         $("#endTimeModal")[0].innerHTML = formatTime (meeting.endTime);
         $("#roomModal")[0].innerHTML = meeting.meetingRoom;
+
+        if (accountType != 'M')
+        $("#usernameModal")[0].innerHTML = meeting.username;
         
         if (accountType != "R") {
-            if (meeting.attendeeList) $("#attendeesModal")[0].innerHTML= meeting.attendeeList;
-            else $("#attendeesModal")[0].innerHTML = "";
+            if (meeting.attendeeList && accountType == 'H')
+                $("#attendeesModal")[0].innerHTML= meeting.attendeeList;
 
-            if (meeting.marketingRequest) $("#requestsModal")[0].innerHTML = meeting.marketingRequest;
+            if (meeting.marketingRequest && accountType == 'M') $("#requestsModal")[0].innerHTML = meeting.marketingRequest;
             else $("#requestsModal")[0].innerHTML = "";
         }
 

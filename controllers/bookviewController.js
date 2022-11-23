@@ -31,8 +31,10 @@ const bookviewController = {
                 if (meetings[i].username != req.user.username)
                     meetings[i].username = "";
         }
-            
-        else 
+        else if (accountType == "M") {
+            meetings = await Meeting.find ({startTime: {$gte: start, $lt: end}}, {_id: 0, username: 0, attendeeList: 0});
+        }
+        else if (accountType == 'H') 
             meetings = await Meeting.find ({startTime: {$gte: start, $lt: end}}, {_id: 0})
 
         res.send (meetings);
