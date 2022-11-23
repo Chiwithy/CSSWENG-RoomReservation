@@ -224,15 +224,31 @@ $(document).ready (() => {
         let bookDate = new Date (curYear, curMonth, curDate);
         //PART 12: compare start/endTimes that already exist in DB and all start/endTimes possible and makes array the conatins what exists (based on index)
         //         makes sure that times that are booked arent shown 
-        for(i=0; i<startInDBArr.length; i++){   //compares start times in DB vs all start times (and makes array with indexes to remove ie. taken up classes)
-            for(x=0; x<allStartTimes.length; x++){
-                var inDBHour = startInDBArr[i].getHours(); 
-                var inDBMin = startInDBArr[i].getMinutes();
+        if (startInDBArr.length != 0) {
+            for(i=0; i<startInDBArr.length; i++){   //compares start times in DB vs all start times (and makes array with indexes to remove ie. taken up classes)
+                for(x=0; x<allStartTimes.length; x++){
+                    var inDBHour = startInDBArr[i].getHours(); 
+                    var inDBMin = startInDBArr[i].getMinutes();
 
-                if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm 
-                    inDBHour = inDBHour - 12; 
+                    if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm 
+                        inDBHour = inDBHour - 12; 
+                    }
+
+                    var split1 = allStartTimes[x].split(":"); 
+                    var allStartHour = parseInt(split1[0]); 
+                    var split2 = split1[1].split(" "); 
+                    var allStartMin = parseInt(split2[0]);
+                    bookDate.setHours (split2[1] == 'PM' ? allStartHour + 12 : allStartHour);
+                    bookDate.setMinutes (allStartMin);
+                    
+                    if(bookDate < new Date () || (inDBHour == allStartHour && inDBMin == allStartMin)){
+                        toRemoveStart.push(x); 
+                    }
                 }
-
+            }
+        }
+        else {
+            for(x=0; x<allStartTimes.length; x++){
                 var split1 = allStartTimes[x].split(":"); 
                 var allStartHour = parseInt(split1[0]); 
                 var split2 = split1[1].split(" "); 
@@ -240,20 +256,36 @@ $(document).ready (() => {
                 bookDate.setHours (split2[1] == 'PM' ? allStartHour + 12 : allStartHour);
                 bookDate.setMinutes (allStartMin);
                 
-                if(bookDate < new Date () || (inDBHour == allStartHour && inDBMin == allStartMin)){
+                if(bookDate < new Date ()){
                     toRemoveStart.push(x); 
                 }
             }
         }
-        for(i=0; i<endInDBArr.length; i++){   //compares end times in DB vs all end times 
-            for(x=0; x<allEndTimes.length; x++){
-                var inDBHour = endInDBArr[i].getHours(); 
-                var inDBMin = endInDBArr[i].getMinutes(); 
+        if (endInDBArr.length != 0) {
+            for(i=0; i<endInDBArr.length; i++){   //compares end times in DB vs all end times 
+                for(x=0; x<allEndTimes.length; x++){
+                    var inDBHour = endInDBArr[i].getHours(); 
+                    var inDBMin = endInDBArr[i].getMinutes(); 
 
-                if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm
-                    inDBHour = inDBHour - 12; 
+                    if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm
+                        inDBHour = inDBHour - 12; 
+                    }
+
+                    var split1 = allEndTimes[x].split(":"); 
+                    var allEndHour = parseInt(split1[0]); 
+                    var split2 = split1[1].split(" "); 
+                    var allEndMin = parseInt(split2[0]);
+                    bookDate.setHours (split2[1] == 'PM' ? allEndHour + 12 : allEndHour);
+                    bookDate.setMinutes (allEndMin);
+
+                    if(bookDate < new Date () || (inDBHour == allEndHour && inDBMin == allEndMin)){
+                        toRemoveEnd.push(x); 
+                    }
                 }
-
+            }
+        }
+        else {
+            for(x=0; x<allEndTimes.length; x++){
                 var split1 = allEndTimes[x].split(":"); 
                 var allEndHour = parseInt(split1[0]); 
                 var split2 = split1[1].split(" "); 
@@ -261,11 +293,11 @@ $(document).ready (() => {
                 bookDate.setHours (split2[1] == 'PM' ? allEndHour + 12 : allEndHour);
                 bookDate.setMinutes (allEndMin);
 
-                if(bookDate < new Date () || (inDBHour == allEndHour && inDBMin == allEndMin)){
+                if(bookDate < new Date ()){
                     toRemoveEnd.push(x); 
                 }
             }
-        } 
+        }
 
         //PART  12: makes new options based on meetings that already exist -- dynamic time (based on allStartTimes array and toRemoveStart)
         for(i=0; i<allStartTimes.length; i++){  //all startTimes minus the ones found in meetings array 
