@@ -541,7 +541,7 @@ $(document).ready (() => {
             if (meeting.attendeeList && accountType == 'H')
                 $("#attendeesModal")[0].innerHTML= meeting.attendeeList;
 
-            if (meeting.marketingRequest && accountType == 'M') $("#requestsModal")[0].innerHTML = meeting.marketingRequest;
+            if (meeting.marketingRequest && accountType != 'R') $("#requestsModal")[0].innerHTML = meeting.marketingRequest;
             else $("#requestsModal")[0].innerHTML = "";
         }
 
