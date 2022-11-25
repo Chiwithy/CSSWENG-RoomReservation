@@ -26,14 +26,6 @@ $(document).ready (() => {
     
     $.get('/getAccountType', (accType) => {
         accountType = accType;
-        if (accType != 'H') {
-            $("#attendeesModalRow").remove ();
-
-            if (accType == 'M')
-                $("#usernameModalRow").remove ();
-            else
-                $("#requestsModalRow").remove ();
-        }
     });
 
     $('#logout').click (() => {
@@ -512,7 +504,7 @@ $(document).ready (() => {
     function clickableSlots () {
         for (let i = 0; i < rooms.length; i++) {
             for (let j = 0; j < meetings[i].length; j++) {
-                if (meetings[i][j].username != "") {
+                if (meetings[i][j].username != "" || accountType != "R") {
                     $('#' + rooms[i] + "_" + j).click (clickRoom);
                     $('#' + rooms[i] + "_" + j).css ('cursor', "pointer");
                 }
@@ -534,16 +526,22 @@ $(document).ready (() => {
         $("#endTimeModal")[0].innerHTML = formatTime (meeting.endTime);
         $("#roomModal")[0].innerHTML = meeting.meetingRoom;
 
-        if (accountType != 'M')
-        $("#usernameModal")[0].innerHTML = meeting.username;
-        
-        if (accountType != "R") {
-            if (meeting.attendeeList && accountType == 'H')
-                $("#attendeesModal")[0].innerHTML= meeting.attendeeList;
-
-            if (meeting.marketingRequest && accountType != 'R') $("#requestsModal")[0].innerHTML = meeting.marketingRequest;
-            else $("#requestsModal")[0].innerHTML = "";
+        if (meeting.username == "") {
+            $("#attendeesModalRow").remove ();
+            $("#usernameModalRow").remove ();
         }
+        else {
+            if ($("#usernameModalRow").length > 0)
+                $("#usernameModal")[0].innerHTML = meeting.username;
+            else
+                createModalRow ("username", "date", "Booked by:", meeting.username);
+
+            if ($("#attendeesModalRow").length > 0)
+                $("#attendeesModal")[0].innerHTML = meeting.attendeeList;
+            else
+                createModalRow ("attendees", "room", "Attendees:", meeting.attendeeList);
+        }
+        $("#requestsModal")[0].innerHTML = meeting.marketingRequest;
 
         $("#modal").css ('display', 'block');
     }
@@ -566,4 +564,18 @@ function formatTime (date) {
     timeString = hours + ":" + minutes + " " + ampm;
 
     return timeString;
+}
+
+function createModalRow (elementToCreate, elementAfter, titleText, elementData) {
+    let newModalRow = document.createElement ("tr");
+    let newTitle = document.createElement ("td");
+    let newModal = document.createElement ("td");
+
+    newTitle.innerHTML = titleText;
+    newModal.innerHTML = elementData;
+    newModal.setAttribute ("id", elementToCreate + "Modal");
+    newModalRow.appendChild (newTitle);
+    newModalRow.appendChild (newModal);
+    newModalRow.setAttribute ("id", elementToCreate + "ModalRow");
+    $("#" + elementAfter + "ModalRow")[0].parentNode.insertBefore (newModalRow, $("#" + elementAfter + "ModalRow")[0].nextSibling);
 }

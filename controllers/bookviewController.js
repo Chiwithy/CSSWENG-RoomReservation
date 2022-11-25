@@ -23,19 +23,22 @@ const bookviewController = {
         const accountType = req.user.accountType;
         let meetings = [];
         
-        if (accountType == "R") {
-            let i;
-            meetings = await Meeting.find ({startTime: {$gte: start, $lt: end}}, {_id: 0, username: 1, meetingID: 1, startTime: 1, endTime: 1, meetingRoom: 1});
+        meetings = await Meeting.find ({startTime: {$gte: start, $lt: end}, meetingStatus: {$ne: 'C'}}, {_id: 0});
 
-            for (i = 0; i < meetings.length; i++)
-                if (meetings[i].username != req.user.username)
+        if (accountType != "H") {
+            for (let i = 0; i < meetings.length; i++) {
+                if (meetings[i].username != req.user.username) {
                     meetings[i].username = "";
+                    meetings[i].attendeeList = "";
+
+                    if (accountType == "R") {
+                        meetings[i].username = "";
+                        meetings[i].marketingRequest = "";
+                        meetings[i].marketingStatus = "";
+                    }
+                }
+            }
         }
-        else if (accountType == "M") {
-            meetings = await Meeting.find ({startTime: {$gte: start, $lt: end}}, {_id: 0, username: 0, attendeeList: 0});
-        }
-        else if (accountType == 'H') 
-            meetings = await Meeting.find ({startTime: {$gte: start, $lt: end}}, {_id: 0})
 
         res.send (meetings);
     },
@@ -140,7 +143,7 @@ const bookviewController = {
                 console.log(">>>   postBookedMeetings: Successfully added to DB");
             })
         } catch {}
-    }
+    }   
 
 };
 
