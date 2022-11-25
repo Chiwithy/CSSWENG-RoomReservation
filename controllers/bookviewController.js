@@ -143,7 +143,11 @@ const bookviewController = {
                 console.log(">>>   postBookedMeetings: Successfully added to DB");
             })
         } catch {}
-    }   
+    },
+
+    postCancelMeeting: async (req, res) => {
+        await Meeting.updateOne ({meetingID: req.query.meetingID}, {meetingStatus: "C"});
+    }
 
 };
 
