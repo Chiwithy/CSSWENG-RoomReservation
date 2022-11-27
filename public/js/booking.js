@@ -501,7 +501,7 @@ $(document).ready (() => {
             if (slots[i].classList.contains ("own"))
                 slots[i].style.backgroundColor = "#3159BC";    
             else
-                slots[i].style.backgroundColor = "#C0C0C0";     //TEMPORARY NOT MY MEETING COLOR
+                slots[i].style.backgroundColor = "#808080";     //TEMPORARY NOT MY MEETING COLOR
             
             if (slots[i].classList.contains ("own") || accountType == "H") {
                 slots[i].innerHTML = '<i class="fa-solid fa-pen-to-square" style="font-size:12px;"></i>'
