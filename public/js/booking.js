@@ -4,6 +4,7 @@ const rooms =  ["Integrity", "Innovation", "Teamwork"];
 let meetings = [];  
 let openEndTimes = [];
 let openStartTimes = [];
+let toKeep = []; 
 let accountType;
 const allStartTimes = [ "08:00 AM", "08:30 AM", "09:00 AM",
                       "09:30 AM", "10:00 AM", "10:30 AM",
@@ -123,6 +124,7 @@ $(document).ready (() => {
         
         if(document.querySelector('#book') != null)
             document.querySelector('#book').disabled = false;
+
 
         $("#startTime").empty(); 
         $("#endTime").empty(); 
@@ -352,30 +354,47 @@ $(document).ready (() => {
 
     //PART  12: onclick of start time -- allow only end times after it that are consecutive (no gaps) in dropdown options for endtime 
     $("#startTime").on('change', function(){
-        //console.log(openEndTimes); 
-        finalChangeTimeOptions("endTime", $("#startTime"), openEndTimes); 
+        if(document.querySelector('#update') != null)
+            document.querySelector('#update').disabled = false;
+        finalChangeTimeOptions("endTime", $("#startTime"), openEndTimes, null); 
     })
 
     //PART  13: onclick of end time -- allow only start times after it that are consecutive (no gaps) in dropdown options for startTime 
     $("#endTime").on('change', function(){
-        finalChangeTimeOptions("startTime", $("#endTime"), openStartTimes); 
+        if(document.querySelector('#update') != null)
+            document.querySelector('#update').disabled = false;
+        finalChangeTimeOptions("startTime", $("#endTime"), openStartTimes, null); 
     })
 
     //before the current form info can be added to the database, it checks if an existing meeting overlaps with it
-    function checkIfSuccessful(startTime, endTime, meetingRoom){
+    function checkIfSuccessful(startTime, endTime, meetingRoom, toSkipMeetingIndex){
         var i;
         var flag = 0; 
         var roomIndex = rooms.indexOf(meetingRoom); 
         var roomMeetings = meetings[roomIndex]; 
         
         for(i=0; i<roomMeetings.length;i++){
-            if(Number(roomMeetings[i].startTime) <= Number(startTime) && Number(roomMeetings[i].endTime) > Number(startTime)){
-                console.log("Error: start is inside an existing meeting");  
-                flag = 1; 
+            if(toSkipMeetingIndex != null){
+                if(i != toSkipMeetingIndex){
+                    if(Number(roomMeetings[i].startTime) <= Number(startTime) && Number(roomMeetings[i].endTime) > Number(startTime)){
+                        console.log("Error: start is inside an existing meeting");  
+                        flag = 1; 
+                    }
+                    if(Number(roomMeetings[i].startTime) < Number(endTime) && Number(roomMeetings[i].endTime) >= Number(endTime)){
+                        console.log("Error: end is inside an existing meeting"); 
+                        flag = 1;  
+                    }   
+                }
             }
-            if(Number(roomMeetings[i].startTime) < Number(endTime) && Number(roomMeetings[i].endTime) >= Number(endTime)){
-                console.log("Error: end is inside an existing meeting"); 
-                flag = 1;  
+            else{
+                if(Number(roomMeetings[i].startTime) <= Number(startTime) && Number(roomMeetings[i].endTime) > Number(startTime)){
+                    console.log("Error: start is inside an existing meeting");  
+                    flag = 1; 
+                }
+                if(Number(roomMeetings[i].startTime) < Number(endTime) && Number(roomMeetings[i].endTime) >= Number(endTime)){
+                    console.log("Error: end is inside an existing meeting"); 
+                    flag = 1;  
+                }   
             }
         }
         if(flag){
@@ -390,7 +409,6 @@ $(document).ready (() => {
     function finalChangeTimeOptions(id, origin, openSlots){
         var i,x;
         var selected = $(origin).children(":selected").attr("id"); 
-        var toKeep = []; 
 
         //given one, change the other 
         var previous = selected; 
@@ -576,46 +594,72 @@ $(document).ready (() => {
     }
 
     function editClicked(event){
-        event.stopPropagation();
+        event.stopPropagation(); 
 
         //change the book button to an update button 
         changeBookToUpdate();
+        document.querySelector('#update').disabled = true;
 
-        //find meeting ib meetings array  
+        //find meeting in meetings array  
         var clickedMeetingID = $(this).closest(".takenSlot").attr("id");
         var meeting = getMeeting(clickedMeetingID);
+
+        //get the index of the meeting realtive to the meeting room 
+        var roomIndex = rooms.indexOf(meeting.meetingRoom); 
+        var meetingIndex = meetings[roomIndex].indexOf(meeting); 
+
+        /////
+        /////
+        /////
+        /// i need to be able to remove the meeting being edited from the meeting array 
+        /// or at least remove it in such a way that it will change the values being update in the 
+        /// start time stuffs 
+        /////
+        /////
+        /////
 
         //autofill the infomration based on the original booking 
         var room = meeting.meetingRoom.toLowerCase(); 
         var attendees = meeting.attendeeList; 
+        var marketingRequest = meeting.marketingRequest; 
+        var start = formatTime(new Date (meeting.startTime)); 
+        var end = formatTime(new Date (meeting.endTime));
+
+        var startVal = getStartEndVal(start); 
+        var endVal = getStartEndVal(end);
 
         $("#room").val(room).attr("selected", "selected"); 
-        //$("#attendees").val(attendees); 
+        $('#room').trigger("change"); 
+         
+        //for start
+        var newOption = $("<option>").text(start); 
+        newOption.attr('id', startVal); 
+        $("#startTime").prepend(newOption); 
 
+        //for end 
+        var newOption = $("<option>").text(end); 
+        newOption.attr('id', endVal); 
+        $("#endTime").prepend(newOption);
         
- 
+        //NOTE: THIS DOES NOT AUTO FILL THESE TIME FIELDS 
+        //$("#startTime").remove("#select"); 
 
+        $("#attendees").val(attendees); //autofills marketing requests 
+        $("#marketingReqs").val(marketingRequest); //autofulls attendees 
+
+
+        var success = checkIfSuccessful(new Date (meeting.startTime), new Date (meeting.endTime), meeting.meetingRoom, meetingIndex);
         //changes update button back into the book button 
         //changeUpdateToBook(); 
     }
 
-    ////////////////////////////////////////
-    function changeToTimeFormat(hour, min){
-        if(min == 0){
-            min ="00"; 
-        }
-
-        if(hour > 12){
-            hour = hour - 12; 
-            time = hour + ":" + min + " PM"
-        }
-        else if(hour == 12){
-            time = hour + ":" + min + " NN"
-        }
-        else
-            time = hour + ":" + min + " AM"
-
-        return time; 
+    function getStartEndVal(startend){
+        var arr = startend.split(":"); 
+        var arr2 = arr[1].split(" "); 
+        var val = parseInt(arr[0]); 
+        if(arr2[0] > 0)
+            val = val + 0.5
+        return val; 
     }
 
     //gets meeting ID in db from meetings array after being passed the slot id (ie. Integrity_1 etc)
