@@ -21,6 +21,7 @@ const allEndTimes =   [ "08:30 AM", "09:00 AM",
                       "05:00 PM", "05:30 PM", "06:00 PM" ];
 
 $(document).ready (() => {
+    //$.ajaxSetup({async: false}); 
     for (let i = 0; i < rooms.length; i++)
         meetings.push ([]);
     
@@ -45,7 +46,7 @@ $(document).ready (() => {
 	getMeetings ();
 
     //PART  1: DISABLE BOOK BUTTON UNTIL ALL REQUIRED FIELDS ARE FILLED (specifically room)
-    document.querySelector('#book').disabled = true; 
+    document.querySelector('#book').disabled = true;  
 
     //PART  2: get year,month,day, start and end times and turn them into DATE objects 
     var currDate = $("#date").text();
@@ -127,7 +128,10 @@ $(document).ready (() => {
     $("#room").on('change', function(){
         openEndTimes = [];
         openStartTimes = [];
-        document.querySelector('#book').disabled = false;
+        
+        if(document.querySelector('#book') != null)
+            document.querySelector('#book').disabled = false;
+
         $("#startTime").empty(); 
         $("#endTime").empty(); 
         $("#startTime").append("<option value='' disabled selected class='select'>Select</option>");  
@@ -365,7 +369,6 @@ $(document).ready (() => {
         finalChangeTimeOptions("startTime", $("#endTime"), openStartTimes); 
     })
 
-    
     //before the current form info can be added to the database, it checks if an existing meeting overlaps with it
     function checkIfSuccessful(startTime, endTime, meetingRoom){
         var i;
@@ -493,20 +496,34 @@ $(document).ready (() => {
             $("#schedDetails")[0].innerHTML = html;
             colorBookedSlots ();
             clickableSlots ();
+            clickableEdit();  
         });
     }
 
-    function colorBookedSlots () {
+    function colorBookedSlots () { //now only shows edit and delete if its the meeting of the current user
         let slots = $('.takenSlot');
         let i;
-
+        var currUsername = $("#username").text().trim();
         for (let i = 0; i < slots.length; i++) {
+            var usernameInDB = getUsernameInDB(slots[i].id).trim();
+
             slots[i].style.backgroundColor = "#3159BC";
-            /*slots[i].innerHTML = '<i class="fa-solid fa-pen-to-square" style="font-size:12px;"></i>'
-            slots[i].innerHTML += '<div class="px-1 inline"></div><div class="px-1 inline"></div><div class="px-1 inline"></div>'
-            slots[i].innerHTML += '<i class="fa-solid fa-x" style="font-size:12px;"></i><br>'//*/
+            if(currUsername.localeCompare(usernameInDB) == 0){
+                slots[i].innerHTML = '<i id="edit' + i +'" class="fa-solid fa-pen-to-square" style="font-size:12px;"></i>'
+                slots[i].innerHTML += '<div class="px-1 inline"></div><div class="px-1 inline"></div><div class="px-1 inline"></div>'
+                slots[i].innerHTML += '<i class="fa-solid fa-x" style="font-size:12px;"></i><br>'
+            }
             slots[i].innerHTML += '<b>Booked</b>';
         }
+    }
+
+    //gets username in db from meetings array after being given the slot id (ie. Ingerity_0 etc)
+    function getUsernameInDB(slotID){
+        var split = slotID.split('_')
+        var room = split[0]
+        var meetingIndex = split[1]; 
+        var usernameInDB = meetings[rooms.indexOf(room)][meetingIndex].username; 
+        return usernameInDB; 
     }
 
     function clickableSlots () {
@@ -547,6 +564,82 @@ $(document).ready (() => {
 
         $("#modal").css ('display', 'block');
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    function clickableEdit(){
+        let slots = $('.takenSlot');
+        let i;
+        for (let i = 0; i < slots.length; i++) {
+            if (slots[i] != "") {
+                $('#edit'+i).css('cursor', "pointer");
+                $('#edit'+i).click(editClicked);
+            }
+        }
+    }
+
+    function editClicked(event){
+        event.stopPropagation();
+
+        //change the book button to an update button 
+        changeBookToUpdate();
+
+        //find meeting ib meetings array  
+        var clickedMeetingID = $(this).closest(".takenSlot").attr("id");
+        var meeting = getMeeting(clickedMeetingID);
+
+        //autofill the infomration based on the original booking 
+        var room = meeting.meetingRoom.toLowerCase(); 
+        var attendees = meeting.attendeeList; 
+
+        $("#room").val(room).attr("selected", "selected"); 
+        //$("#attendees").val(attendees); 
+
+        
+ 
+
+        //changes update button back into the book button 
+        //changeUpdateToBook(); 
+    }
+
+    ////////////////////////////////////////
+    function changeToTimeFormat(hour, min){
+        if(min == 0){
+            min ="00"; 
+        }
+
+        if(hour > 12){
+            hour = hour - 12; 
+            time = hour + ":" + min + " PM"
+        }
+        else if(hour == 12){
+            time = hour + ":" + min + " NN"
+        }
+        else
+            time = hour + ":" + min + " AM"
+
+        return time; 
+    }
+
+    //gets meeting ID in db from meetings array after being passed the slot id (ie. Integrity_1 etc)
+    function getMeeting(slotID){
+        var split = slotID.split('_')
+        var room = split[0]
+        var meetingIndex = split[1]; 
+        var meeting = meetings[rooms.indexOf(room)][meetingIndex]; 
+        return meeting; 
+    }
+
+    //both below can be made into one, CHANGE BUTTON function 
+    //changes the book button into an update button 
+    function changeBookToUpdate(){
+        $("#book").replaceWith("<button id='update' class='update'>UPDATE</button>"); 
+    }
+
+    //changes the update button into the book button 
+    function changeUpdateToBook(){
+        $("#update").replaceWith("<button id='book' class='book'>BOOK</button>"); 
+    }
+    ///////////////////////////////////////////////////////////////////////////////////
 });
 
 function formatTime (date) {

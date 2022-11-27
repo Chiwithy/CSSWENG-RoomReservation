@@ -14,6 +14,11 @@ const bookviewController = {
         res.render ("booking", {date: req.query.date, month: months[req.query.month], year: req.query.year, username: req.user.username});
     },
 
+    getMeetingById: async (req, res) => {
+        var foundMeeting = await Meeting.findOne({meetingID:req.query.id}); 
+        res.send(foundMeeting); 
+    }, 
+
     getMeetings: async (req, res) => {
         const year = parseInt (req.query.year);
         const month = parseInt (req.query.month);
