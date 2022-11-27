@@ -461,6 +461,11 @@ $(document).ready (() => {
         let year = parseInt (params.get ("year"));
         let month = parseInt (params.get ("month"));
         let date = parseInt (params.get ("date"));
+        meetings = [];
+
+        for (let i = 0; i < rooms.length; i++)
+            meetings.push ([]);
+
         $.get ("/getMeetings", {year: year, month: month, date: date}, (meetingInfos) => {
             let i;
 
@@ -490,15 +495,40 @@ $(document).ready (() => {
 
     function colorBookedSlots () {
         let slots = $('.takenSlot');
-        let i;
+        let own = $('.own');
 
         for (let i = 0; i < slots.length; i++) {
-            slots[i].style.backgroundColor = "#3159BC";
-            /*slots[i].innerHTML = '<i class="fa-solid fa-pen-to-square" style="font-size:12px;"></i>'
-            slots[i].innerHTML += '<div class="px-1 inline"></div><div class="px-1 inline"></div><div class="px-1 inline"></div>'
-            slots[i].innerHTML += '<i class="fa-solid fa-x" style="font-size:12px;"></i><br>'//*/
+            if (slots[i].classList.contains ("own"))
+                slots[i].style.backgroundColor = "#3159BC";    
+            else
+                slots[i].style.backgroundColor = "#C0C0C0";     //TEMPORARY NOT MY MEETING COLOR
+            
+            if (slots[i].classList.contains ("own") || accountType == "H") {
+                slots[i].innerHTML = '<i class="fa-solid fa-pen-to-square" style="font-size:12px;"></i>'
+                slots[i].innerHTML += '<div class="px-1 inline"></div><div class="px-1 inline"></div><div class="px-1 inline"></div>'
+                slots[i].innerHTML += '<i class="fa-solid fa-x cancelMeeting" style="font-size:12px;"></i><br>'//*/
+            }
             slots[i].innerHTML += '<b>Booked</b>';
         }
+        $(".cancelMeeting").click (cancelMeeting);
+    }
+
+
+    function cancelMeeting () {
+        let splitID = $(this)[0].parentNode.id.split ("_");
+        let roomInd = rooms.indexOf (splitID[0]);
+        let meetingInd = splitID[1];
+        let meeting = meetings[roomInd][meetingInd];
+
+        $.post ("/cancelMeeting?" + new URLSearchParams({meetingID: meeting.meetingID, username: meeting.username}), (success) => {
+            if (success)
+                getMeetings ();
+            else
+                console.log ("Cancel unsuccessful");
+
+        });
+
+        event.stopPropagation ();
     }
 
     function clickableSlots () {
