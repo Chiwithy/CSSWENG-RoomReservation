@@ -36,7 +36,7 @@ $(document).ready (() => {
         })
     });
     
-	getMeetings ();
+	getMeetings();
 
     //PART  1: DISABLE BOOK BUTTON UNTIL ALL REQUIRED FIELDS ARE FILLED (specifically room)
     document.querySelector('#book').disabled = true;  
@@ -604,53 +604,71 @@ $(document).ready (() => {
         var clickedMeetingID = $(this).closest(".takenSlot").attr("id");
         var meeting = getMeeting(clickedMeetingID);
 
-        //get the index of the meeting realtive to the meeting room 
-        var roomIndex = rooms.indexOf(meeting.meetingRoom); 
-        var meetingIndex = meetings[roomIndex].indexOf(meeting); 
+        console.log(meeting); 
 
-        /////
-        /////
-        /////
-        /// i need to be able to remove the meeting being edited from the meeting array 
-        /// or at least remove it in such a way that it will change the values being update in the 
-        /// start time stuffs 
-        /////
-        /////
-        /////
+        if(meeting != undefined){//checks to see if the meeting trying to be edited was already removed 
+            console.log(meeting); 
 
-        //autofill the infomration based on the original booking 
-        var room = meeting.meetingRoom.toLowerCase(); 
-        var attendees = meeting.attendeeList; 
-        var marketingRequest = meeting.marketingRequest; 
-        var start = formatTime(new Date (meeting.startTime)); 
-        var end = formatTime(new Date (meeting.endTime));
+            //get the index of the meeting realtive to the meeting room 
+            var roomIndex = rooms.indexOf(meeting.meetingRoom); 
+            var meetingIndex = meetings[roomIndex].indexOf(meeting);
+            // meetings.splice(meetingIndex, 1);  //remove meeting from meetings array 
 
-        var startVal = getStartEndVal(start); 
-        var endVal = getStartEndVal(end);
+            
 
-        $("#room").val(room).attr("selected", "selected"); 
-        $('#room').trigger("change"); 
-         
-        //for start
-        var newOption = $("<option>").text(start); 
-        newOption.attr('id', startVal); 
-        $("#startTime").prepend(newOption); 
+            /////
+            /////
+            /////
+            /// i need to be able to remove the meeting being edited from the meeting array 
+            /// or at least remove it in such a way that it will change the values being update in the 
+            /// start time stuffs 
+            /// the meeting you want to edit really needs to be removed from meetings 
+            /////
+            /////
+            /////
 
-        //for end 
-        var newOption = $("<option>").text(end); 
-        newOption.attr('id', endVal); 
-        $("#endTime").prepend(newOption);
-        
-        //NOTE: THIS DOES NOT AUTO FILL THESE TIME FIELDS 
-        //$("#startTime").remove("#select"); 
+            ////
+            ////
+            //// okay so removing meetings isnt the best idea, what if the user is indecisive 
+            //// and keeps switch between meetings they want to edit 
+            ////
+            ////
+            ////
 
-        $("#attendees").val(attendees); //autofills marketing requests 
-        $("#marketingReqs").val(marketingRequest); //autofulls attendees 
+            //autofill the infomration based on the original booking 
+            var room = meeting.meetingRoom.toLowerCase(); 
+            var attendees = meeting.attendeeList; 
+            var marketingRequest = meeting.marketingRequest; 
+            var start = formatTime(new Date (meeting.startTime)); 
+            var end = formatTime(new Date (meeting.endTime));
+
+            var startVal = getStartEndVal(start); 
+            var endVal = getStartEndVal(end);
+
+            $("#room").val(room).attr("selected", "selected"); 
+            $('#room').trigger("change"); 
+            
+            //for start
+            var newOption = $("<option>").text(start); 
+            newOption.attr('id', startVal); 
+            $("#startTime").prepend(newOption); 
+
+            //for end 
+            var newOption = $("<option>").text(end); 
+            newOption.attr('id', endVal); 
+            $("#endTime").prepend(newOption);
+            
+            //NOTE: THIS DOES NOT AUTO FILL THESE TIME FIELDS 
+            //$("#startTime").remove("#select"); 
+
+            $("#attendees").val(attendees); //autofills marketing requests 
+            $("#marketingReqs").val(marketingRequest); //autofulls attendees 
 
 
-        var success = checkIfSuccessful(new Date (meeting.startTime), new Date (meeting.endTime), meeting.meetingRoom, meetingIndex);
-        //changes update button back into the book button 
-        //changeUpdateToBook(); 
+            //var success = checkIfSuccessful(new Date (meeting.startTime), new Date (meeting.endTime), meeting.meetingRoom, null /*meetingIndex*/);
+            //changes update button back into the book button 
+            //changeUpdateToBook(); 
+        }
     }
 
     function getStartEndVal(startend){
@@ -667,7 +685,8 @@ $(document).ready (() => {
         var split = slotID.split('_')
         var room = split[0]
         var meetingIndex = split[1]; 
-        var meeting = meetings[rooms.indexOf(room)][meetingIndex]; 
+        var newMeetings = meetings.slice() 
+        var meeting = newMeetings[rooms.indexOf(room)][meetingIndex]; 
         return meeting; 
     }
 
