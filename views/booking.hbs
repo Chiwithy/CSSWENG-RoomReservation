@@ -107,5 +107,24 @@
 		
 		<!-- Modal Box -->
 		{{> bookview_modal}}
+		
+		<!-- Confirmation Box -->
+		<div id="confirmation" class="modal">
+			<div class="modal-box">
+				<!-- Modal Header -->
+				<div class="modal-header">
+					<h2>Confirmation</h2>
+				</div>
+				<!-- Modal Body -->
+				<div class="modal-body confirmation-content">
+					<div class="message">Do you really wish to delete this meeting?</div>
+					<div class="confirmation-buttons">
+						<button type="button" class="cancel-button">Cancel</button>
+						<div class="px-1 inline"></div><!-- Division between Squares-->
+						<button type="button" class="delete-button">Delete</button>
+					</div>
+				</div>
+			</div>
+		</div>			
 	</body>
 </html>

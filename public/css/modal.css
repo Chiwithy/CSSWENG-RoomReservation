@@ -65,3 +65,27 @@
 	border-color: black;
 	border-collapse: collapse;
 }
+
+/* Confirmation Box */
+.message {
+	font-family: 'Nunito';
+	font-size: 24px;
+	text-align: center;
+}
+
+.confirmation-buttons {
+	margin-top: 24px;
+	display: flex;
+	justify-content: center;
+}
+
+.cancel-button {
+	font-size: 1.2vw;
+	width: 25%;
+}
+
+.delete-button {
+	font-size: 1.2vw;
+	width: 25%;
+	background-color: #B62303;
+}
