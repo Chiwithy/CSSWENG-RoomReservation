@@ -76,16 +76,22 @@ const bookviewController = {
                                             meeting.integSlots = roomCurrentSlots[j];
                                             meeting.integID = m;
                                             meeting.integSlotTaken = true;
+                                            if (meetings[k][m].username == req.user.username)
+                                                meeting.integOwn = true;
                                         }
                                         else if (j == 1) {
                                             meeting.innovSlots = roomCurrentSlots[j];
                                             meeting.innovID = m;
                                             meeting.innovSlotTaken = true;
+                                            if (meetings[k][m].username == req.user.username)
+                                                meeting.innovOwn = true;
                                         }
                                         else if (j == 2) {
                                             meeting.teamSlots = roomCurrentSlots[j];
                                             meeting.teamID = m;
                                             meeting.teamSlotTaken = true;
+                                            if (meetings[k][m].username == req.user.username)
+                                                meeting.teamOwn = true;
                                         }
 
                                         roomCurrentSlots[j] -= 1;
@@ -146,7 +152,11 @@ const bookviewController = {
     },
 
     postCancelMeeting: async (req, res) => {
-        await Meeting.updateOne ({meetingID: req.query.meetingID}, {meetingStatus: "C"});
+        if (req.user.username == req.query.username || req.user.accountType == "H")
+            await Meeting.updateOne ({meetingID: parseInt (req.query.meetingID)}, {meetingStatus: "C"}, (err, result) => {
+                if (err) throw err;
+                else res.send (result);
+            }).clone ().catch ((err) => { console.log (err)});
     }
 
 };
