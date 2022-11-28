@@ -16,6 +16,7 @@
 		<script src="https://ajax.googleapis.com/ajax/libs/jquery/3.6.0/jquery.min.js"></script>
 		<script language="JavaScript" type="text/javascript" src="js/booking.js"></script>
 		<script language="JavaScript" type="text/javascript" src="js/modal.js"></script>
+		<script language="JavaScript" type="text/javascript" src="js/confirm.js"></script>
 	</head>
 	
 	<body>
@@ -109,22 +110,6 @@
 		{{> bookview_modal}}
 		
 		<!-- Confirmation Box -->
-		<div id="confirmation" class="modal">
-			<div class="modal-box">
-				<!-- Modal Header -->
-				<div class="modal-header">
-					<h2>Confirmation</h2>
-				</div>
-				<!-- Modal Body -->
-				<div class="modal-body confirmation-content">
-					<div class="message">Do you really wish to delete this meeting?</div>
-					<div class="confirmation-buttons">
-						<button type="button" class="cancel-button">Cancel</button>
-						<div class="px-1 inline"></div><!-- Division between Squares-->
-						<button type="button" class="delete-button">Delete</button>
-					</div>
-				</div>
-			</div>
-		</div>			
+		{{> bookview_confirm}}
 	</body>
 </html>
