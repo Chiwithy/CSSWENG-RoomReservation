@@ -640,8 +640,8 @@ $(document).ready (() => {
 
             $("#room").val(room).attr("selected", "selected"); 
             $('#room').trigger("change"); 
-            $("#attendees").val(attendees); //autofills marketing requests 
-            $("#marketingReqs").val(marketingRequest); //autofulls attendees 
+            $("#attendees").val(attendees); //autofills attendees  
+            $("#marketingReqs").val(marketingRequest); //autofulls marketing requests 
         }
 
         editButtonClicked(); 
@@ -665,7 +665,15 @@ $(document).ready (() => {
         $("#room").css("background-color", "#cfcfcf"); 
         $("#startTime").css("background-color", "#cfcfcf"); 
         $("#endTime").css("background-color", "#cfcfcf"); 
-        $("#marketingReqs").css("background-color", "#cfcfcf"); 
+        $("#marketingReqs").css("background-color", "#cfcfcf");
+        
+        var clickedMeetingID = $(this).closest(".takenSlot").attr("id");
+        var meeting = getMeeting(clickedMeetingID);
+
+        var attendees = meeting.attendeeList;
+        $("#attendees").val(attendees); 
+
+
         ///FILL THIS FUNCTION IN FOR HR EDITING ABILITY 
         //disable selecting room, start and end time, and disable typing inside marketing requests 
     }
