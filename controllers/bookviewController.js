@@ -181,6 +181,21 @@ const bookviewController = {
                 console.log(">>>   getEditMeeting: Successfully edited meeting");
             })
         } catch {}
+    }, 
+
+    getEditMeetingHR: async (req,res) =>{
+        try {
+            var meetingID = req.query.meetingID;
+			var	attendeeList = req.query.attendeeList; 
+
+            Meeting.updateOne({meetingID: meetingID}, {attendeeList: attendeeList}, err => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                console.log(">>>   getEditMeetingHR: Successfully edited meeting");
+            })
+        } catch {}
     }
 };
 
