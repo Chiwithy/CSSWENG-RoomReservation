@@ -657,8 +657,15 @@ $(document).ready (() => {
     ////
     function editClickedHR(event){
         event.stopPropagation();
+        changeBookToUpdate(); 
         $("#room").attr('disabled', 'disabled'); 
-
+        $("#startTime").attr('disabled', 'disabled'); 
+        $("#endTime").attr('disabled', 'disabled'); 
+        $("#marketingReqs").attr('disabled', 'disabled'); 
+        $("#room").css("background-color", "#cfcfcf"); 
+        $("#startTime").css("background-color", "#cfcfcf"); 
+        $("#endTime").css("background-color", "#cfcfcf"); 
+        $("#marketingReqs").css("background-color", "#cfcfcf"); 
         ///FILL THIS FUNCTION IN FOR HR EDITING ABILITY 
         //disable selecting room, start and end time, and disable typing inside marketing requests 
     }
