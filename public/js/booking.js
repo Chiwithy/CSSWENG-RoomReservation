@@ -576,6 +576,7 @@ $(document).ready (() => {
         $("#startTimeModal")[0].innerHTML = formatTime (meeting.startTime);
         $("#endTimeModal")[0].innerHTML = formatTime (meeting.endTime);
         $("#roomModal")[0].innerHTML = meeting.meetingRoom;
+        $("#requestsModal")[0].innerHTML = meeting.marketingRequest;
 
         if (meeting.username == "") {
             $("#attendeesModalRow").remove ();
@@ -592,7 +593,10 @@ $(document).ready (() => {
             else
                 createModalRow ("attendees", "room", "Attendees:", meeting.attendeeList);
         }
-        $("#requestsModal")[0].innerHTML = meeting.marketingRequest;
+        if ($(this)[0].classList.contains ("own") || accountType == "H")
+            $("#details-buttons").css ('display', 'flex');
+        else
+            $("#details-buttons").css ('display', 'none');
 
         $("#modal").css ('display', 'block');
     }
