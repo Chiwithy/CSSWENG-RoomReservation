@@ -701,7 +701,10 @@ $(document).ready (() => {
         ///
         /// this issue also exits in the regular user edit stuffs 
         /// why does this happen omg 
-        console.log(meeting.meetingID); 
+        ///
+        ///
+        /// this is almost certainly happening inside editClicked and editClickedHR i just dk what 
+        /// console.log(meeting.meetingID); 
 
         updateButtonClickedHR(meeting); 
     }
