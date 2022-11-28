@@ -501,31 +501,50 @@ $(document).ready (() => {
             if (slots[i].classList.contains ("own"))
                 slots[i].style.backgroundColor = "#3159BC";    
             else
-                slots[i].style.backgroundColor = "#808080";     //TEMPORARY NOT MY MEETING COLOR
+                slots[i].style.backgroundColor = "#808080";
             
             if (slots[i].classList.contains ("own") || accountType == "H") {
                 slots[i].innerHTML = '<i class="fa-solid fa-pen-to-square" style="font-size:12px;"></i>'
                 slots[i].innerHTML += '<div class="px-1 inline"></div><div class="px-1 inline"></div><div class="px-1 inline"></div>'
-                slots[i].innerHTML += '<i class="fa-solid fa-x cancelMeeting" style="font-size:12px;"></i><br>'//*/
+                slots[i].innerHTML += '<i class="fa-solid fa-x cancelModal" style="font-size:12px;"></i><br>'
             }
             slots[i].innerHTML += '<b>Booked</b>';
         }
-        $(".cancelMeeting").click (cancelMeeting);
+        $(".cancelModal").click (cancelModal);
     }
 
+    function cancelModal () {
+        let meeting;
+        let curParent = $(this)[0].parentNode;
+        
+        while (!meeting && curParent.tagName.toUpperCase () != "BODY") {
+            let splitID = curParent.id.split ("_");
+            let roomInd = rooms.indexOf (splitID[0]);
+            let meetingInd = splitID[1];
 
-    function cancelMeeting () {
-        let splitID = $(this)[0].parentNode.id.split ("_");
-        let roomInd = rooms.indexOf (splitID[0]);
-        let meetingInd = splitID[1];
-        let meeting = meetings[roomInd][meetingInd];
+            try {
+                meeting = meetings[roomInd][meetingInd];
+            } catch (err) {
+                curParent = curParent.parentNode;
+            }
+        }
 
+        $("#confirmation").css ("display", "block");
+
+        $("#confirmCancel").on ("click", () => {
+            $("#confirmation").css ("display", "none");
+            $("#modal").css ("display", "none");
+            cancelMeeting (meeting);
+        });
+        event.stopPropagation ();
+    }
+
+    function cancelMeeting (meeting) {
         $.post ("/cancelMeeting?" + new URLSearchParams({meetingID: meeting.meetingID, username: meeting.username}), (success) => {
             if (success)
                 getMeetings ();
             else
                 console.log ("Cancel unsuccessful");
-
         });
 
         event.stopPropagation ();
@@ -551,6 +570,8 @@ $(document).ready (() => {
         const meeting = meetings[roomInd][ind];
         let fullDate = meeting.startTime.getDate () + " " + months[meeting.startTime.getMonth ()] + " " + meeting.startTime.getFullYear () + ", " + days[meeting.startTime.getDay ()];
 
+
+        $("#meetingDetails").parent ().attr ("id", bookingID);
         $("#dateModal")[0].innerHTML = fullDate;
         $("#startTimeModal")[0].innerHTML = formatTime (meeting.startTime);
         $("#endTimeModal")[0].innerHTML = formatTime (meeting.endTime);
