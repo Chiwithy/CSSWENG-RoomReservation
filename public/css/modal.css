@@ -73,19 +73,17 @@
 	text-align: center;
 }
 
-.confirmation-buttons {
+.confirmation-buttons-holder {
 	margin-top: 24px;
 	display: flex;
 	justify-content: center;
 }
 
-.cancel-button {
+.confirmation-button {
 	font-size: 1.2vw;
 	width: 25%;
 }
 
-.delete-button {
-	font-size: 1.2vw;
-	width: 25%;
+.red-button {
 	background-color: #B62303;
 }
