@@ -607,13 +607,20 @@ $(document).ready (() => {
         console.log(meeting); 
 
         if(meeting != undefined){//checks to see if the meeting trying to be edited was already removed 
-            console.log(meeting); 
+            //console.log(meeting); 
 
             //get the index of the meeting realtive to the meeting room 
             var roomIndex = rooms.indexOf(meeting.meetingRoom); 
             var meetingIndex = meetings[roomIndex].indexOf(meeting);
-            // meetings.splice(meetingIndex, 1);  //remove meeting from meetings array 
+            //meetings[roomIndex].splice(meetingIndex, 1);  //remove meeting from meetings array 
+            //NOTE for above -- when a meeting is delete, if you click the edit button again 
+            //                  it'll find the closest taken slot (which is the next meeting present in that room)
+            //                  make sure that a meeting isn't permanently deleted from meetings array until update (replacement for book button) is clicked 
 
+            // console.log("-------");
+            // console.log(meetings); 
+            // console.log("++++++++");
+            // console.log(meetings); 
             
 
             /////
@@ -645,21 +652,25 @@ $(document).ready (() => {
             var startVal = getStartEndVal(start); 
             var endVal = getStartEndVal(end);
 
+            // console.log("-------");
+            // console.log(openStartTimes); 
             $("#room").val(room).attr("selected", "selected"); 
             $('#room').trigger("change"); 
-            
-            //for start
-            var newOption = $("<option>").text(start); 
-            newOption.attr('id', startVal); 
-            $("#startTime").prepend(newOption); 
+            // console.log("++++++++");
+            // console.log(openStartTimes); 
 
-            //for end 
-            var newOption = $("<option>").text(end); 
-            newOption.attr('id', endVal); 
-            $("#endTime").prepend(newOption);
-            
+            //THIS WHOLE CHUNK HERE CAN BE REMOVED-----------(START)
+            //for start -- CAN REMOVE 
+            // var newOption = $("<option>").text(start); 
+            // newOption.attr('id', startVal); 
+            // $("#startTime").prepend(newOption); 
+            // //for end -- CAN REMOVE 
+            // var newOption = $("<option>").text(end); 
+            // newOption.attr('id', endVal); 
+            // $("#endTime").prepend(newOption);
             //NOTE: THIS DOES NOT AUTO FILL THESE TIME FIELDS 
             //$("#startTime").remove("#select"); 
+            //THIS WHOLE CHUNK HERE CAN BE REMOVED-----------(END)
 
             $("#attendees").val(attendees); //autofills marketing requests 
             $("#marketingReqs").val(marketingRequest); //autofulls attendees 
