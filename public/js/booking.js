@@ -603,7 +603,7 @@ $(document).ready (() => {
 
     function editClicked(event){
         event.stopPropagation(); 
-        //$(".takenSlot").css("background-color", "#3159BC"); 
+        $(".takenSlot").css("background-color", "#3159BC"); ///CHANGES MEETINGS BACK TO DEFAULT COLOR -- blue
 
         //change the book button to an update button 
         changeBookToUpdate();
@@ -617,7 +617,7 @@ $(document).ready (() => {
         }
 
         //find meeting in meetings array  
-        //$(this).closest(".takenSlot").css("background-color", "#FF2636"); ///CHANGES SELECTED MEETING COLOR
+        $(this).closest(".takenSlot").css("background-color", "#FF2636"); ///CHANGES SELECTED MEETING COLOR
         var clickedMeetingID = $(this).closest(".takenSlot").attr("id");
         var meeting = getMeeting(clickedMeetingID);
 
@@ -700,45 +700,40 @@ $(document).ready (() => {
                 renderMeetings();
             }
         }) 
-        //note: when user clicks update, remove all conetnts from temp meeting 
-        //var success = checkIfSuccessful(new Date (meeting.startTime), new Date (meeting.endTime), meeting.meetingRoom, null /*meetingIndex*/);
-        //changes update button back into the book button 
-        //changeUpdateToBook(); 
     }
 
-    ///////////////////////////////////////////////////////////////////////////
     function editClickedHR(event){
-        // event.stopPropagation();
-        // changeBookToUpdate(); 
-        // $("#room").attr('disabled', 'disabled'); 
-        // $("#startTime").attr('disabled', 'disabled'); 
-        // $("#endTime").attr('disabled', 'disabled'); 
-        // $("#marketingReqs").attr('disabled', 'disabled'); 
-        // $("#room").css("background-color", "#cfcfcf"); 
-        // $("#startTime").css("background-color", "#cfcfcf"); 
-        // $("#endTime").css("background-color", "#cfcfcf"); 
-        // $("#marketingReqs").css("background-color", "#cfcfcf");
+        event.stopPropagation();
+        changeBookToUpdate(); 
+        $("#room").attr('disabled', 'disabled'); 
+        $("#startTime").attr('disabled', 'disabled'); 
+        $("#endTime").attr('disabled', 'disabled'); 
+        $("#marketingReqs").attr('disabled', 'disabled'); 
+        $("#room").css("background-color", "#cfcfcf"); 
+        $("#startTime").css("background-color", "#cfcfcf"); 
+        $("#endTime").css("background-color", "#cfcfcf"); 
+        $("#marketingReqs").css("background-color", "#cfcfcf");
         
-        // var clickedMeetingID = $(this).closest(".takenSlot").attr("id");
-        // var meeting = getMeeting(clickedMeetingID);
+        var clickedMeetingID = $(this).closest(".takenSlot").attr("id");
+        var meeting = getMeeting(clickedMeetingID);
 
-        // var attendees = meeting.attendeeList;
-        // $("#attendees").val(attendees); 
+        var attendees = meeting.attendeeList;
+        $("#attendees").val(attendees); 
 
-        // var meetingID = meeting.meetingID; 
-        // updateButtonClickedHR(meetingID); 
+        var meetingID = meeting.meetingID; 
+        updateButtonClickedHR(meetingID); 
     }
 
     function updateButtonClickedHR(meetingID){
-        // $("#update").on('click', function(){
-        //     var attendeeList = $('#attendees').val(); 
+        $("#update").on('click', function(){
+            var attendeeList = $('#attendees').val(); 
 
-        //     fetch("/editMeetingHR?" + new URLSearchParams({
-        //         meetingID: meetingID,
-        //         attendeeList: attendeeList
-        //     }), {method: 'GET',})
-        //     window.location.reload(); 
-        // })
+            fetch("/editMeetingHR?" + new URLSearchParams({
+                meetingID: meetingID,
+                attendeeList: attendeeList
+            }), {method: 'GET',})
+            window.location.reload(); 
+        })
     }
 
     
