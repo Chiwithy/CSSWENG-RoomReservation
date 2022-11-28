@@ -6,6 +6,7 @@ let openEndTimes = [];
 let openStartTimes = [];
 let toKeep = []; 
 let accountType;
+let tempMeeting = []; 
 const allStartTimes = [ "08:00 AM", "08:30 AM", "09:00 AM",
                       "09:30 AM", "10:00 AM", "10:30 AM",
                       "11:00 AM", "11:30 AM", "12:00 NN",
@@ -56,26 +57,9 @@ $(document).ready (() => {
         var endSelect = document.getElementById("endTime"); //endTime 
         var end = endSelect.options[endSelect.selectedIndex].text; 
 
-        //PART  5: turn start and end time into dates 
-        var startSplit = start.split(":"); 
-        var startHour = parseInt(startSplit[0]); 
-        var reSplit = startSplit[1].split(" "); 
-        var startMin = parseInt(reSplit[0]); 
-        var endSplit = end.split(":"); 
-        var endHour = parseInt(endSplit[0]); 
-        var reSplit1 = endSplit[1].split(" "); 
-        var endMin = parseInt(reSplit1[0]); 
-
-        //PART  5.1: offset the times for PM  
-        if(startHour >= 1 && startHour <= 6){
-            startHour = startHour + 12; 
-        }
-        if(endHour >= 1 && endHour <= 6){
-            endHour = endHour + 12; 
-        }
-        
-        var startTimeDate = new Date(year, month, date, startHour, startMin); 
-        var endTimedate = new Date(year, month, date, endHour, endMin); 
+        //PART 5: get time as date 
+        var startTimeDate = getTimeAsDate(start, year, month, date); 
+        var endTimeDate = getTimeAsDate(end, year, month, date); 
 
         //PART  6: set up to get all the values from the form 
         var currRoom = document.getElementById("room"); 
@@ -87,7 +71,7 @@ $(document).ready (() => {
         var meetingID = numOfMeetingsInDB; 
         var username = $("#username").text();
         var startTime = startTimeDate; 
-        var endTime = endTimedate 
+        var endTime = endTimeDate 
         var meetingRoom = currRoomText; //meeting room is capitalized 
         var marketingRequest = $("#marketingReqs").val(); 
         var marketingStatus = false; 
@@ -115,7 +99,7 @@ $(document).ready (() => {
             getMeetings(); 
             renderMeetings();
         }
-    }); 
+    });
 
     //PART  9: have start and end change depending on click of 
     $("#room").on('change', function(){
@@ -366,6 +350,22 @@ $(document).ready (() => {
         finalChangeTimeOptions("startTime", $("#endTime"), openStartTimes, null); 
     })
 
+    function getTimeAsDate(time, year, month, date){
+        //PART  5: turn start and end time into dates 
+        var split = time.split(":"); 
+        var hour = parseInt(split[0]); 
+        var reSplit = split[1].split(" "); 
+        var min = parseInt(reSplit[0]); 
+        
+        //PART  5.1: offset the times for PM  
+        if(hour >= 1 && hour <= 6){
+            hour = hour + 12; 
+        }
+    
+        var timeDate = new Date(year, month, date, hour, min);
+        return timeDate;  
+    }
+
     //before the current form info can be added to the database, it checks if an existing meeting overlaps with it
     function checkIfSuccessful(startTime, endTime, meetingRoom, toSkipMeetingIndex){
         var i;
@@ -516,9 +516,13 @@ $(document).ready (() => {
         var currUsername = $("#username").text().trim();
         for (let i = 0; i < slots.length; i++) {
             var usernameInDB = getUsernameInDB(slots[i].id).trim();
-
             slots[i].style.backgroundColor = "#3159BC";
-            if(currUsername.localeCompare(usernameInDB) == 0){
+            if(accountType == "R" && currUsername.localeCompare(usernameInDB) == 0){
+                slots[i].innerHTML = '<i id="edit' + i +'" class="fa-solid fa-pen-to-square" style="font-size:12px;"></i>'
+                slots[i].innerHTML += '<div class="px-1 inline"></div><div class="px-1 inline"></div><div class="px-1 inline"></div>'
+                slots[i].innerHTML += '<i class="fa-solid fa-x" style="font-size:12px;"></i><br>'
+            }
+            if(accountType == "H"){
                 slots[i].innerHTML = '<i id="edit' + i +'" class="fa-solid fa-pen-to-square" style="font-size:12px;"></i>'
                 slots[i].innerHTML += '<div class="px-1 inline"></div><div class="px-1 inline"></div><div class="px-1 inline"></div>'
                 slots[i].innerHTML += '<i class="fa-solid fa-x" style="font-size:12px;"></i><br>'
@@ -588,7 +592,11 @@ $(document).ready (() => {
         for (let i = 0; i < slots.length; i++) {
             if (slots[i] != "") {
                 $('#edit'+i).css('cursor', "pointer");
-                $('#edit'+i).click(editClicked);
+
+                if(accountType == "R")
+                    $('#edit'+i).click(editClicked);
+                if(accountType == "H")
+                    $('#edit'+i).click(editClickedHR);
             }
         }
     }
@@ -600,97 +608,123 @@ $(document).ready (() => {
         changeBookToUpdate();
         document.querySelector('#update').disabled = true;
 
+        //if there is a meeting saved inside temporary meeting,
+        //add that meeting back to the meetings array and clears tempMeeting 
+        if(tempMeeting.length != 0){
+            meetings[tempMeeting[0]].splice(tempMeeting[1], 0, tempMeeting[2]); 
+            tempMeeting.splice(0, tempMeeting.length); 
+        }
+
         //find meeting in meetings array  
         var clickedMeetingID = $(this).closest(".takenSlot").attr("id");
         var meeting = getMeeting(clickedMeetingID);
 
-        console.log(meeting); 
 
         if(meeting != undefined){//checks to see if the meeting trying to be edited was already removed 
-            //console.log(meeting); 
-
             //get the index of the meeting realtive to the meeting room 
             var roomIndex = rooms.indexOf(meeting.meetingRoom); 
             var meetingIndex = meetings[roomIndex].indexOf(meeting);
-            //meetings[roomIndex].splice(meetingIndex, 1);  //remove meeting from meetings array 
-            //NOTE for above -- when a meeting is delete, if you click the edit button again 
-            //                  it'll find the closest taken slot (which is the next meeting present in that room)
-            //                  make sure that a meeting isn't permanently deleted from meetings array until update (replacement for book button) is clicked 
 
-            // console.log("-------");
-            // console.log(meetings); 
-            // console.log("++++++++");
-            // console.log(meetings); 
-            
+            //saves a temporary version of the meeting currently being edited 
+            tempMeeting[0] = roomIndex;
+            tempMeeting[1] = meetingIndex; 
+            tempMeeting[2] = meeting; 
 
-            /////
-            /////
-            /////
-            /// i need to be able to remove the meeting being edited from the meeting array 
-            /// or at least remove it in such a way that it will change the values being update in the 
-            /// start time stuffs 
-            /// the meeting you want to edit really needs to be removed from meetings 
-            /////
-            /////
-            /////
-
-            ////
-            ////
-            //// okay so removing meetings isnt the best idea, what if the user is indecisive 
-            //// and keeps switch between meetings they want to edit 
-            ////
-            ////
-            ////
+            //removes currently-being-edited meeting from meetings array
+            meetings[roomIndex].splice(meetingIndex, 1);   
 
             //autofill the infomration based on the original booking 
             var room = meeting.meetingRoom.toLowerCase(); 
             var attendees = meeting.attendeeList; 
             var marketingRequest = meeting.marketingRequest; 
-            var start = formatTime(new Date (meeting.startTime)); 
-            var end = formatTime(new Date (meeting.endTime));
 
-            var startVal = getStartEndVal(start); 
-            var endVal = getStartEndVal(end);
-
-            // console.log("-------");
-            // console.log(openStartTimes); 
             $("#room").val(room).attr("selected", "selected"); 
             $('#room').trigger("change"); 
-            // console.log("++++++++");
-            // console.log(openStartTimes); 
-
-            //THIS WHOLE CHUNK HERE CAN BE REMOVED-----------(START)
-            //for start -- CAN REMOVE 
-            // var newOption = $("<option>").text(start); 
-            // newOption.attr('id', startVal); 
-            // $("#startTime").prepend(newOption); 
-            // //for end -- CAN REMOVE 
-            // var newOption = $("<option>").text(end); 
-            // newOption.attr('id', endVal); 
-            // $("#endTime").prepend(newOption);
-            //NOTE: THIS DOES NOT AUTO FILL THESE TIME FIELDS 
-            //$("#startTime").remove("#select"); 
-            //THIS WHOLE CHUNK HERE CAN BE REMOVED-----------(END)
-
             $("#attendees").val(attendees); //autofills marketing requests 
             $("#marketingReqs").val(marketingRequest); //autofulls attendees 
-
-
-            //var success = checkIfSuccessful(new Date (meeting.startTime), new Date (meeting.endTime), meeting.meetingRoom, null /*meetingIndex*/);
-            //changes update button back into the book button 
-            //changeUpdateToBook(); 
         }
+
+        editButtonClicked(); 
     }
 
-    function getStartEndVal(startend){
-        var arr = startend.split(":"); 
-        var arr2 = arr[1].split(" "); 
-        var val = parseInt(arr[0]); 
-        if(arr2[0] > 0)
-            val = val + 0.5
-        return val; 
+    //TO DO 
+    ////
+    ///
+    ////
+    ////
+    ////
+    ////
+    ////
+    function editClickedHR(event){
+        event.stopPropagation();
+        $("#room").attr('disabled', 'disabled'); 
+
+        ///FILL THIS FUNCTION IN FOR HR EDITING ABILITY 
+        //disable selecting room, start and end time, and disable typing inside marketing requests 
     }
 
+
+    function editButtonClicked(){
+        $("#update").on('click', function(){
+            //get start and end time from the form 
+            var startSelect = document.getElementById("startTime"); //startTime
+            var start = startSelect.options[startSelect.selectedIndex].text; 
+            var endSelect = document.getElementById("endTime"); //endTime 
+            var end = endSelect.options[endSelect.selectedIndex].text; 
+
+            //get time as date 
+            var startTimeDate = getTimeAsDate(start, year, month, date); 
+            var endTimeDate = getTimeAsDate(end, year, month, date); 
+
+            //set up to get all the values from the form 
+            var currRoom = document.getElementById("room"); 
+            var currRoomText = currRoom.options[currRoom.selectedIndex].text;   
+            var indexOfRoom = rooms.indexOf(currRoomText); 
+            var numOfMeetingsInDB = meetings[indexOfRoom].length;
+
+            //get all the values from the form 
+            var meetingID = numOfMeetingsInDB; 
+            var username = $("#username").text();
+            var startTime = startTimeDate; 
+            var endTime = endTimeDate 
+            var meetingRoom = currRoomText; //meeting room is capitalized 
+            var marketingRequest = $("#marketingReqs").val(); 
+            var marketingStatus = false; 
+            var meetingStatus = "S"; 
+            var attendeeList = $('#attendees').val(); 
+
+            var success = checkIfSuccessful(startTime, endTime, meetingRoom);
+
+            console.log("checck")
+    
+            if(success){
+                //update DB meeting based on meetingID
+                fetch("/editMeetingReg?" + new URLSearchParams({
+                    meetingID: meetingID,
+                    username: username,
+                    startTime: startTime,
+                    endTime: endTime,
+                    meetingRoom: meetingRoom, 
+                    marketingRequest: marketingRequest, 
+                    marketingStatus: marketingStatus, 
+                    meetingStatus: meetingStatus, 
+                    attendeeList: attendeeList,
+                }), {method: 'GET',})
+                window.location.reload(); 
+                tempMeeting.splice(0, tempMeeting.length); 
+            }
+            else{
+                getMeetings(); 
+                renderMeetings();
+            }
+        }) 
+        //note: when user clicks update, remove all conetnts from temp meeting 
+        //var success = checkIfSuccessful(new Date (meeting.startTime), new Date (meeting.endTime), meeting.meetingRoom, null /*meetingIndex*/);
+        //changes update button back into the book button 
+        //changeUpdateToBook(); 
+    }
+
+    
     //gets meeting ID in db from meetings array after being passed the slot id (ie. Integrity_1 etc)
     function getMeeting(slotID){
         var split = slotID.split('_')
@@ -708,9 +742,9 @@ $(document).ready (() => {
     }
 
     //changes the update button into the book button 
-    function changeUpdateToBook(){
-        $("#update").replaceWith("<button id='book' class='book'>BOOK</button>"); 
-    }
+    // function changeUpdateToBook(){
+    //     $("#update").replaceWith("<button id='book' class='book'>BOOK</button>"); 
+    // }
     ///////////////////////////////////////////////////////////////////////////////////
 });
 

@@ -148,8 +148,40 @@ const bookviewController = {
                 console.log(">>>   postBookedMeetings: Successfully added to DB");
             })
         } catch {}
-    }   
+    },
 
+    getEditMeetingReg: async (req,res) =>{
+        try {
+            var meetingID = req.query.meetingID;
+            var username = req.user.username;
+			var startTime = req.query.startTime;
+			var endTime = req.query.endTime;
+			var meetingRoom = req.query.meetingRoom; 
+			var	marketingRequest = req.query.marketingRequest; 
+			var marketingStatus = req.query.marketingStatus; 
+			var meetingStatus = req.query.meetingStatus; 
+			var	attendeeList = req.query.attendeeList; 
+
+            Meeting.updateOne({meetingID: meetingID}, 
+                {
+                    meetingID: meetingID, 
+                    username: username,
+                    startTime: startTime,
+                    endTime: endTime,
+                    meetingRoom: meetingRoom, 
+                    marketingRequest: marketingRequest, 
+                    marketingStatus: marketingStatus, 
+                    meetingStatus: meetingStatus, 
+                    attendeeList: attendeeList
+                }, err => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                console.log(">>>   getEditMeeting: Successfully edited meeting");
+            })
+        } catch {}
+    }
 };
 
 export default bookviewController;
