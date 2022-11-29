@@ -711,8 +711,8 @@ $(document).ready (() => {
 
     function updateButtonClickedHR(meeting){
         $("#update").on('click', function(){
-            var attendeeList = $('#attendees').val(); 
             var meetingID = meeting.meetingID; 
+            var attendeeList = $('#attendees').val(); 
 
             fetch("/editMeetingHR?" + new URLSearchParams({
                 meetingID: meetingID,
