@@ -588,7 +588,7 @@ $(document).ready (() => {
         }
 
         //find meeting in meetings array  
-        $(this).closest(".takenSlot").css("background-color", "#FF2636"); ///CHANGES SELECTED MEETING COLOR
+        $(this).closest(".takenSlot").css("background-color", "#002e70"); ///CHANGES SELECTED MEETING COLOR
         var clickedMeetingID = $(this).closest(".takenSlot").attr("id");
         var meeting = getMeeting(clickedMeetingID);
 
