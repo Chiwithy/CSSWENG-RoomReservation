@@ -97,7 +97,6 @@ $(document).ready (() => {
         }
         else{
             getMeetings(); 
-            renderMeetings();
         }
     });
 
@@ -105,11 +104,13 @@ $(document).ready (() => {
 
     //have start and end change depending on click of 
     $("#room").on('change', function(){
-        // openEndTimes = [];
-        // openStartTimes = [];
-        
+        openEndTimes = [];
+        openStartTimes = [];
+
         if(document.querySelector('#book') != null)
-            document.querySelector('#book').disabled = false;
+            document.querySelector('#book').disabled = true;
+
+        document.querySelector("#endTime").disabled = true; 
 
         $("#startTime").empty(); 
         $("#endTime").empty(); 
@@ -292,6 +293,9 @@ $(document).ready (() => {
 
     //onclick of start time -- allow only end times after it that are consecutive (no gaps) in dropdown options for endtime 
     $("#startTime").on('change', function(){
+        document.querySelector("#endTime").disabled = false; 
+        if(document.querySelector('#book') != null)
+            document.querySelector('#book').disabled = false;
         if(document.querySelector('#update') != null)
             document.querySelector('#update').disabled = false;
         finalChangeTimeOptions("endTime", $("#startTime"), openEndTimes, null); 
@@ -299,6 +303,8 @@ $(document).ready (() => {
 
     //onclick of end time -- allow only start times after it that are consecutive (no gaps) in dropdown options for startTime 
     $("#endTime").on('change', function(){
+        if(document.querySelector('#book') != null)
+            document.querySelector('#book').disabled = false;
         if(document.querySelector('#update') != null)
             document.querySelector('#update').disabled = false;
         finalChangeTimeOptions("startTime", $("#endTime"), openStartTimes, null); 
@@ -561,11 +567,7 @@ $(document).ready (() => {
         for (let i = 0; i < slots.length; i++) {
             if (slots[i] != "") {
                 $('#edit'+i).css('cursor', "pointer");
-
-                if(accountType == "R")
-                    $('#edit'+i).click(editClicked);
-                if(accountType == "H")
-                    $('#edit'+i).click(editClickedHR);
+                $('#edit'+i).click(editClicked);
             }
         }
     }
@@ -618,7 +620,7 @@ $(document).ready (() => {
     }
 
     function updateButtonClicked(meeting){
-        $("#update").on('click', function(){
+        $("#update").off().on('click', function(){
             //get start and end time from the form 
             var startSelect = document.getElementById("startTime"); //startTime
             var start = startSelect.options[startSelect.selectedIndex].text; 
@@ -659,69 +661,16 @@ $(document).ready (() => {
                     marketingStatus: marketingStatus, 
                     meetingStatus: meetingStatus, 
                     attendeeList: attendeeList,
-                }), {method: 'GET',})
+                }), {method: 'POST',})
                 window.location.reload(); 
                 tempMeeting.splice(0, tempMeeting.length); 
             }
             else{
                 getMeetings(); 
-                renderMeetings();
             }
         }) 
     }
 
-    function editClickedHR(event){
-        event.stopPropagation();
-        $(".takenSlot").css("background-color", "#3159BC"); ///CHANGES MEETINGS BACK TO DEFAULT COLOR -- blue
-        changeBookToUpdate();
-
-        $("#room").attr('disabled', 'disabled'); 
-        $("#startTime").attr('disabled', 'disabled'); 
-        $("#endTime").attr('disabled', 'disabled'); 
-        $("#marketingReqs").attr('disabled', 'disabled'); 
-        $("#room").css("background-color", "#cfcfcf"); 
-        $("#startTime").css("background-color", "#cfcfcf"); 
-        $("#endTime").css("background-color", "#cfcfcf"); 
-        $("#marketingReqs").css("background-color", "#cfcfcf");
-        
-        $(this).closest(".takenSlot").css("background-color", "#FF2636"); ///CHANGES SELECTED MEETING COLOR
-        var clickedMeetingID = $(this).closest(".takenSlot").attr("id");
-        var meeting = getMeeting(clickedMeetingID);
-
-        var attendees = meeting.attendeeList;
-        $("#attendees").val(attendees);
-        
-        //ISSUE FOUND 
-        ///
-        ///
-        ///
-        /// if you click edit on one meeting, and then dont click update
-        /// and click edit on another meeting, the edits will be applied to both meetings 
-        ///
-        ///
-        /// this issue also exits in the regular user edit stuffs 
-        /// why does this happen omg 
-        ///
-        ///
-        /// this is almost certainly happening inside editClicked and editClickedHR i just dk what 
-        /// console.log(meeting.meetingID); 
-
-        updateButtonClickedHR(meeting); 
-    }
-
-    function updateButtonClickedHR(meeting){
-        $("#update").on('click', function(){
-            var meetingID = meeting.meetingID; 
-            var attendeeList = $('#attendees').val(); 
-
-            fetch("/editMeetingHR?" + new URLSearchParams({
-                meetingID: meetingID,
-                attendeeList: attendeeList
-            }), {method: 'GET',})
-            window.location.reload(); 
-        })
-    }
-    
     //gets meeting ID in db from meetings array after being passed the slot id (ie. Integrity_1 etc)
     function getMeeting(slotID){
         var split = slotID.split('_')

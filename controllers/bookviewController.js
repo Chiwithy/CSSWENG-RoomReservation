@@ -150,7 +150,7 @@ const bookviewController = {
         } catch {}
     },
 
-    getEditMeetingReg: async (req,res) =>{
+    postEditMeetingReg: async (req,res) =>{
         try {
             var meetingID = req.query.meetingID;
             var username = req.user.username;
@@ -183,7 +183,7 @@ const bookviewController = {
         } catch {}
     }, 
 
-    getEditMeetingHR: async (req,res) =>{
+    postEditMeetingHR: async (req,res) =>{
         try {
             var meetingID = req.query.meetingID;
 			var	attendeeList = req.query.attendeeList; 
