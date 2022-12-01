@@ -10,13 +10,13 @@
 		{{#each meetingRows}} <tr>
 			<td>{{time}}</td>
 			{{#unless integTaken}}
-				<td rowspan={{integSlots}} id="Integrity_{{integID}}" class="{{#if integSlotTaken}}takenSlot{{/if}} {{#if integOwn}}own{{/if}}"></td>
+				<td rowspan={{integSlots}} class="{{#if integSlotTaken}}takenSlot{{/if}} {{#if integOwn}}own{{/if}} {{#if integID includeZero=true}}Integrity_{{integID}}{{/if}}"></td>
 			{{/unless}}
 			{{#unless innovTaken}}
-				<td rowspan={{innovSlots}} id="Innovation_{{innovID}}" class="{{#if innovSlotTaken}}takenSlot{{/if}} {{#if innovOwn}}own{{/if}}"></td>
+				<td rowspan={{innovSlots}} class="{{#if innovSlotTaken}}takenSlot{{/if}} {{#if innovOwn}}own{{/if}} {{#if innovID includeZero=true}}Innovation_{{innovID}}{{/if}}"></td>
 			{{/unless}}
 			{{#unless teamTaken}}
-				<td rowspan={{teamSlots}} id="Teamwork_{{teamID}}" class="{{#if teamSlotTaken}}takenSlot{{/if}} {{#if teamOwn}}own{{/if}}"></td>
+				<td rowspan={{teamSlots}} class="{{#if teamSlotTaken}}takenSlot{{/if}} {{#if teamOwn}}own{{/if}} {{#if teamID includeZero=true}}Teamwork_{{teamID}}{{/if}}"></td>
 			{{/unless}}
 		</tr> {{/each}}
 	</tbody>
