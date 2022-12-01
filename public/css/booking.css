@@ -55,6 +55,17 @@ textarea, select {
 	background-color: #3159BC;
 }
 
+.update {
+	font-family: 'Nunito';
+	display:block;
+	width: 23%;
+	text-align: center;
+	margin: 0 auto;
+	background-color: #3159BC;
+}
+
+
+
 .line-break {
 	display: block;
 	height: 15px;

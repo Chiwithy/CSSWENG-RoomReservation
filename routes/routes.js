@@ -26,4 +26,7 @@ router.get ('/renderMeetingRows', userController.isLoggedIn, bookviewController.
 
 router.post('/addBookedMeeting', userController.isLoggedIn, bookviewController.postMeeting); 
 router.post ('/cancelMeeting', userController.isLoggedIn, bookviewController.postCancelMeeting);
+router.get('/getMeetingByID', userController.isLoggedIn, bookviewController.getMeetingById)
+router.post('/editMeetingReg', userController.isLoggedIn, bookviewController.postEditMeetingReg); 
+router.post('/editMeetingHR', userController.isLoggedIn, bookviewController.postEditMeetingHR); 
 export default router;

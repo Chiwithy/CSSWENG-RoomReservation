@@ -14,6 +14,11 @@ const bookviewController = {
         res.render ("booking", {date: req.query.date, month: months[req.query.month], year: req.query.year, username: req.user.username});
     },
 
+    getMeetingById: async (req, res) => {
+        var foundMeeting = await Meeting.findOne({meetingID:req.query.id}); 
+        res.send(foundMeeting); 
+    }, 
+
     getMeetings: async (req, res) => {
         const year = parseInt (req.query.year);
         const month = parseInt (req.query.month);
@@ -157,8 +162,55 @@ const bookviewController = {
                 if (err) throw err;
                 else res.send (result);
             }).clone ().catch ((err) => { console.log (err)});
-    }
+    },
 
+    postEditMeetingReg: async (req,res) =>{
+        try {
+            var meetingID = req.query.meetingID;
+            var username = req.user.username;
+			var startTime = req.query.startTime;
+			var endTime = req.query.endTime;
+			var meetingRoom = req.query.meetingRoom; 
+			var	marketingRequest = req.query.marketingRequest; 
+			var marketingStatus = req.query.marketingStatus; 
+			var meetingStatus = req.query.meetingStatus; 
+			var	attendeeList = req.query.attendeeList; 
+
+            Meeting.updateOne({meetingID: meetingID}, 
+                {
+                    meetingID: meetingID, 
+                    username: username,
+                    startTime: startTime,
+                    endTime: endTime,
+                    meetingRoom: meetingRoom, 
+                    marketingRequest: marketingRequest, 
+                    marketingStatus: marketingStatus, 
+                    meetingStatus: meetingStatus, 
+                    attendeeList: attendeeList
+                }, err => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                console.log(">>>   getEditMeeting: Successfully edited meeting");
+            })
+        } catch {}
+    }, 
+
+    postEditMeetingHR: async (req,res) =>{
+        try {
+            var meetingID = req.query.meetingID;
+			var	attendeeList = req.query.attendeeList; 
+
+            Meeting.updateOne({meetingID: meetingID}, {attendeeList: attendeeList}, err => {
+                if (err) {
+                    console.log(err);
+                    return;
+                }
+                console.log(">>>   getEditMeetingHR: Successfully edited meeting");
+            })
+        } catch {}
+    }
 };
 
 export default bookviewController;
