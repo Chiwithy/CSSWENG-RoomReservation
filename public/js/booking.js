@@ -117,8 +117,7 @@ $(document).ready (() => {
         $("#startTime").append("<option value='' disabled selected class='select'>Select</option>");  
         $("#endTime").append("<option value='' disabled selected class='select'>Select</option>"); 
         var currRoom = $("#room").val(); //value of room
-        var currRoomCap = currRoom.charAt(0).toUpperCase() + currRoom.slice(1); 
-        var indexOfRoom = rooms.indexOf(currRoomCap); 
+        var indexOfRoom = rooms.indexOf(currRoom);
        
         //get a list of all possible start and times (global variables -- allStartTimes, allEndTimes)
         //get a list of all start/endtimes in db (including the ones that hide under big meetings)
@@ -482,96 +481,36 @@ $(document).ready (() => {
         $.get ("/renderMeetingRows", {meetings: meetings, year: year, month: month, date: date}, (html) => {
             $("#schedDetails")[0].innerHTML = html;
             colorBookedSlots ();
+            addSlotControls ()
             clickableSlots ();
-            clickableEdit();  
         });
     }
 
     //shows all booked slots for all meetings
     //shows edit and delete button depending on accountType 
-    function colorBookedSlots () { 
+
+    function addSlotControls () {
         let slots = $('.takenSlot');
-        let own = $('.own');
 
         for (let i = 0; i < slots.length; i++) {
-            if (slots[i].classList.contains ("own"))
-                slots[i].style.backgroundColor = "#3159BC";    
-            else
-                slots[i].style.backgroundColor = "#808080";
-            
             if (slots[i].classList.contains ("own") || accountType == "H") {
                 slots[i].innerHTML = '<i class="fa-solid fa-pen-to-square editMeeting" style="font-size:12px;"></i>'
                 slots[i].innerHTML += '<div class="px-1 inline"></div><div class="px-1 inline"></div><div class="px-1 inline"></div>'
-                slots[i].innerHTML += '<i class="fa-solid fa-x cancelModal" style="font-size:12px;"></i><br>'
+                slots[i].innerHTML += '<i class="fa-solid fa-x cancelMeeting" style="font-size:12px;"></i><br>'
             }
             slots[i].innerHTML += '<b>Booked</b>';
         }
-        $(".cancelModal").click (cancelModal);
+
+        $(".cancelMeeting").click (cancelModal);
         $(".editMeeting").click (prepareEditMeeting);
-    }
-
-    function cancelModal () {
-        let meeting;
-        let curParent = $(this)[0].parentNode;
-        
-        while (!meeting && curParent.tagName.toUpperCase () != "BODY") {
-            let splitID = curParent.id.split ("_");
-            let roomInd = rooms.indexOf (splitID[0]);
-            let meetingInd = splitID[1];
-
-            try {
-                meeting = meetings[roomInd][meetingInd];
-            } catch (err) {
-                curParent = curParent.parentNode;
-            }
-        }
-
-        $("#confirmation").css ("display", "block");
-
-        $("#confirmCancel").on ("click", () => {
-            $("#confirmation").css ("display", "none");
-            $("#modal").css ("display", "none");
-            cancelMeeting (meeting);
-        });
-        event.stopPropagation ();
-    }
-
-    function cancelMeeting (meeting) {
-        $.post ("/cancelMeeting?" + new URLSearchParams({meetingID: meeting.meetingID, username: meeting.username}), (success) => {
-            if (success)
-                getMeetings ();
-            else
-                console.log ("Cancel unsuccessful");
-        });
-
-        event.stopPropagation ();
-    }
-
-    function prepareEditMeeting () {
-        let meeting;
-        let curParent = $(this)[0].parentNode;
-        
-        while (!meeting && curParent.tagName.toUpperCase () != "BODY") {
-            let splitID = curParent.id.split ("_");
-            let roomInd = rooms.indexOf (splitID[0]);
-            let meetingInd = splitID[1];
-
-            try {
-                meeting = meetings[roomInd][meetingInd];
-            } catch (err) {
-                curParent = curParent.parentNode;
-            }
-        }
-
-
     }
 
     function clickableSlots () {
         for (let i = 0; i < rooms.length; i++) {
             for (let j = 0; j < meetings[i].length; j++) {
                 if (meetings[i][j].username != "" || accountType != "R") {
-                    $('#' + rooms[i] + "_" + j).click (clickRoom);
-                    $('#' + rooms[i] + "_" + j).css ('cursor', "pointer");
+                    $("td." + rooms[i] + "_" + j).click (clickRoom);
+                    $("td." + rooms[i] + "_" + j).css ('cursor', "pointer");
                 }
             }
         }
@@ -580,14 +519,17 @@ $(document).ready (() => {
     function clickRoom () {
         const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
         const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        const bookingID = $(this).attr ("id");
-        const roomInd = rooms.indexOf (bookingID.split ("_")[0]);
-        const ind = parseInt (bookingID.split ("_")[1]);
+        const bookingID = getMeetingIDFromClassList ($(this)[0].classList);
+        const splitID = bookingID.split ("_");
+        const roomInd = rooms.indexOf (splitID[0]);
+        const ind = parseInt (splitID[1]);
         const meeting = meetings[roomInd][ind];
+        let meetingParent = $("#meetingDetails").parent ();
         let fullDate = meeting.startTime.getDate () + " " + months[meeting.startTime.getMonth ()] + " " + meeting.startTime.getFullYear () + ", " + days[meeting.startTime.getDay ()];
 
 
-        $("#meetingDetails").parent ().attr ("id", bookingID);
+        meetingParent.removeClass (meetingParent[0].classList[meetingParent[0].classList.length - 1]);
+        meetingParent.addClass (bookingID);
         $("#dateModal")[0].innerHTML = fullDate;
         $("#startTimeModal")[0].innerHTML = formatTime (meeting.startTime);
         $("#endTimeModal")[0].innerHTML = formatTime (meeting.endTime);
@@ -609,7 +551,7 @@ $(document).ready (() => {
             else
                 createModalRow ("attendees", "room", "Attendees:", meeting.attendeeList);
         }
-        
+
         if ($(this)[0].classList.contains ("own") || accountType == "H")
             $("#details-buttons").css ('display', 'flex');
         else
@@ -618,65 +560,98 @@ $(document).ready (() => {
         $("#modal").css ('display', 'block');
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////
-    //this is where the main edits for: EDIT (for reg and hr user) starts 
-    function clickableEdit(){
-        let slots = $('.takenSlot');
-        let i;
-        for (let i = 0; i < slots.length; i++) {
-            if (slots[i] != "") {
-                $('#edit'+i).css('cursor', "pointer");
-                $('#edit'+i).click(editClicked);
+    function cancelModal () {
+        let meeting, meetingID;
+        let curParent = $(this)[0].parentNode;
+        let slots = $(".takenSlot");
+        
+        while (!meeting && curParent.tagName.toUpperCase () != "BODY") {
+            try {
+                meeting = getMeetingFromClassList (curParent.classList);
+            } catch (err) {
+                curParent = curParent.parentNode;
             }
         }
+
+        $("#confirmation").css ("display", "block");
+
+        $("#confirmCancel").on ("click", () => {
+            $("#confirmation").css ("display", "none");
+            $("#modal").css ("display", "none");
+            cancelMeeting (meeting);
+        });
+
+        for (let i = 0; i < slots.length; i++) {
+            if (slots[i].classList.contains ("own"))
+                slots[i].style.backgroundColor = "#3159BC";    
+            else
+                slots[i].style.backgroundColor = "#808080";
+        }
+
+        meetingID = getMeetingIDFromClassList (curParent.classList);
+        $("td." + meetingID).css ("background-color", "#B62303");
+
+        event.stopPropagation ();
     }
 
-    function editClicked(event){
-        event.stopPropagation(); 
-        $(".takenSlot").css("background-color", "#3159BC"); ///CHANGES MEETINGS BACK TO DEFAULT COLOR -- blue
+    function cancelMeeting (meeting) {
+        $.post ("/cancelMeeting?" + new URLSearchParams({meetingID: meeting.meetingID, username: meeting.username}), (success) => {
+            if (success)
+                getMeetings ();
+            else
+                console.log ("Cancel unsuccessful");
+        });
+    }
 
-        //change the book button to an update button 
-        changeBookToUpdate();
-        document.querySelector('#update').disabled = true;
+    function prepareEditMeeting () {
+        let meeting, meetingID;
+        let curParent = $(this)[0].parentNode;
+        let slots = $(".takenSlot");
+        
+        while (!meeting && curParent.tagName.toUpperCase () != "BODY") {
+            try {
+                meeting = getMeetingFromClassList (curParent.classList);
+            } catch (err) {
+                curParent = curParent.parentNode;
+            }
+        }
 
-        //if there is a meeting saved inside temporary meeting,
-        //add that meeting back to the meetings array and clears tempMeeting 
+        colorBookedSlots ();
+
         if(tempMeeting.length != 0){
             meetings[tempMeeting[0]].splice(tempMeeting[1], 0, tempMeeting[2]); 
             tempMeeting.splice(0, tempMeeting.length); 
         }
 
-        //find meeting in meetings array  
-        $(this).closest(".takenSlot").css("background-color", "#1c73ed"); ///CHANGES SELECTED MEETING COLOR
-        var clickedMeetingID = $(this).closest(".takenSlot").attr("id");
-        var meeting = getMeeting(clickedMeetingID);
+        changeFormButton ("update");
+        document.querySelector('#update').disabled = true;
+        meetingID = getMeetingIDFromClassList (curParent.classList);
+        $("td." + meetingID).css ("background-color", "#1c73ed");
 
+        var roomIndex = rooms.indexOf(meeting.meetingRoom); 
+        var meetingIndex = meetings[roomIndex].indexOf(meeting);
 
-        if(meeting != undefined){//checks to see if the meeting trying to be edited was already removed 
-            //get the index of the meeting realtive to the meeting room 
-            var roomIndex = rooms.indexOf(meeting.meetingRoom); 
-            var meetingIndex = meetings[roomIndex].indexOf(meeting);
+        //saves a temporary version of the meeting currently being edited 
+        tempMeeting[0] = roomIndex;
+        tempMeeting[1] = meetingIndex; 
+        tempMeeting[2] = meeting; 
 
-            //saves a temporary version of the meeting currently being edited 
-            tempMeeting[0] = roomIndex;
-            tempMeeting[1] = meetingIndex; 
-            tempMeeting[2] = meeting; 
+        //removes currently-being-edited meeting from meetings array
+        meetings[roomIndex].splice(meetingIndex, 1);
 
-            //removes currently-being-edited meeting from meetings array
-            meetings[roomIndex].splice(meetingIndex, 1);   
+        $("#room").val(meeting.meetingRoom).attr("selected", "selected"); 
+        $('#room').trigger("change"); 
+        $("#attendees").val(meeting.attendeeList); //autofills attendees  
+        $("#marketingReqs").val(meeting.marketingRequest); //autofulls marketing requests
 
-            //autofill the infomration based on the original booking 
-            var room = meeting.meetingRoom.toLowerCase(); 
-            var attendees = meeting.attendeeList; 
-            var marketingRequest = meeting.marketingRequest; 
+        $("#modal").css ("display", "none");
 
-            $("#room").val(room).attr("selected", "selected"); 
-            $('#room').trigger("change"); 
-            $("#attendees").val(attendees); //autofills attendees  
-            $("#marketingReqs").val(marketingRequest); //autofulls marketing requests 
-        }
         updateButtonClicked(meeting); 
+        event.stopPropagation ();
     }
+
+    ////////////////////////////////////////////////////////////////////////////////////
+    //this is where the main edits for: EDIT (for reg and hr user) starts       EDITSTART
 
     function updateButtonClicked(meeting){
         $("#update").off().on('click', function(){
@@ -740,6 +715,9 @@ $(document).ready (() => {
         return meeting; 
     }
 
+    function changeFormButton (changeTo) {
+        $("#book").replaceWith ("<button id='" + changeTo + "' class='" + changeTo + "'>" + changeTo.toUpperCase () + "</button>");
+    }
     //changes the book button into an update button 
     function changeBookToUpdate(){
         $("#book").replaceWith("<button id='update' class='update'>UPDATE</button>"); 
@@ -747,37 +725,68 @@ $(document).ready (() => {
 
     //this is where the main edits for: EDIT (for reg and hr user) ends  
     ///////////////////////////////////////////////////////////////////////////////////
+
+    function createModalRow (elementToCreate, elementAfter, titleText, elementData) {
+        let newModalRow = document.createElement ("tr");
+        let newTitle = document.createElement ("td");
+        let newModal = document.createElement ("td");
+
+        newTitle.innerHTML = titleText;
+        newModal.innerHTML = elementData;
+        newModal.setAttribute ("id", elementToCreate + "Modal");
+        newModalRow.appendChild (newTitle);
+        newModalRow.appendChild (newModal);
+        newModalRow.setAttribute ("id", elementToCreate + "ModalRow");
+        $("#" + elementAfter + "ModalRow")[0].parentNode.insertBefore (newModalRow, $("#" + elementAfter + "ModalRow")[0].nextSibling);
+    }
+
+    function formatTime (date) {
+        let hours = date.getHours ();
+        let minutes = date.getMinutes ();
+        let ampm = hours >= 12 ? "PM" : "AM";
+        let timeString;
+
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        minutes = minutes == 0 ? "00" : minutes;
+
+        if (hours == 12)
+            ampm = "NN";
+
+        hours = hours < 10 ? "0" + hours : hours;
+        timeString = hours + ":" + minutes + " " + ampm;
+
+        return timeString;
+    }
+
+    function getMeetingIDFromClassList (classList) {
+        for (let i = 0; i < classList.length; i++)
+            if (classList[i].indexOf ("_") != -1)
+                return classList[i];
+
+        return "noMeeting"
+    }
+
+    function getMeetingFromClassList (classList) {
+        return getMeetingFromMeetingID (getMeetingIDFromClassList (classList));
+    }
+
+    function getMeetingFromMeetingID (meetingID) {
+        const splitID = meetingID.split ("_");
+        const roomInd = rooms.indexOf (splitID[0]);
+        const meetingInd = parseInt (splitID[1]);
+
+        return meetings[roomInd][meetingInd];
+    }
 });
 
-function formatTime (date) {
-    let hours = date.getHours ();
-    let minutes = date.getMinutes ();
-    let ampm = hours >= 12 ? "PM" : "AM";
-    let timeString;
+function colorBookedSlots () { 
+    let slots = $('.takenSlot');
 
-    hours = hours % 12;
-    hours = hours ? hours : 12;
-    minutes = minutes == 0 ? "00" : minutes;
-
-    if (hours == 12)
-        ampm = "NN";
-
-    hours = hours < 10 ? "0" + hours : hours;
-    timeString = hours + ":" + minutes + " " + ampm;
-
-    return timeString;
-}
-
-function createModalRow (elementToCreate, elementAfter, titleText, elementData) {
-    let newModalRow = document.createElement ("tr");
-    let newTitle = document.createElement ("td");
-    let newModal = document.createElement ("td");
-
-    newTitle.innerHTML = titleText;
-    newModal.innerHTML = elementData;
-    newModal.setAttribute ("id", elementToCreate + "Modal");
-    newModalRow.appendChild (newTitle);
-    newModalRow.appendChild (newModal);
-    newModalRow.setAttribute ("id", elementToCreate + "ModalRow");
-    $("#" + elementAfter + "ModalRow")[0].parentNode.insertBefore (newModalRow, $("#" + elementAfter + "ModalRow")[0].nextSibling);
+    for (let i = 0; i < slots.length; i++) {
+        if (slots[i].classList.contains ("own"))
+            slots[i].style.backgroundColor = "#3159BC";    
+        else
+            slots[i].style.backgroundColor = "#808080";
+    }
 }
