@@ -589,7 +589,6 @@ $(document).ready (() => {
         }
 
         meetingID = getMeetingIDFromClassList (curParent.classList);
-        $("td." + meetingID).css ("background-color", "#B62303");
 
         event.stopPropagation ();
     }
