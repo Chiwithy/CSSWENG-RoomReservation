@@ -1,17 +1,61 @@
 import Meeting from "../models/Meeting.js";
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const times = [ "08:00 AM", "08:30 AM", "09:00 AM",
-                "09:30 AM", "10:00 AM", "10:30 AM",
-                "11:00 AM", "11:30 AM", "12:00 NN",
-                "12:30 PM", "01:00 PM", "01:30 PM",
-                "02:00 PM", "02:30 PM", "03:00 PM",
-                "03:30 PM", "04:00 PM", "04:30 PM",
-                "05:00 PM", "05:30 PM", "06:00 PM" ];
-const interval = 30;
+const firstOpenTime = 8;    //Hour in military time
+const lastClosedTime = 18;
+const interval = 30;    //interval in minutes
+
+const suppFuncs = {
+    getTimeSlots: (start, end) => {
+        let startTime = new Date (start);
+        let endTime = new Date (end);
+        let timeDiffInMinutes = Math.abs (endTime - startTime) / 60000;
+        let slots = timeDiffInMinutes / interval;
+    
+        return slots;
+    },
+
+    formatTimeToString: (time) => {
+        let hours = time.getHours ();
+        let minutes = time.getMinutes ();
+        let ampm = hours >= 12 ? "PM" : "AM";
+        let timeString;
+
+        hours = hours % 12;
+        hours = hours ? hours : 12;
+        minutes = minutes == 0 ? "00" : minutes;
+
+        if (hours == 12)
+            ampm = "NN";
+
+        hours = hours < 10 ? "0" + hours : hours;
+        timeString = hours + ":" + minutes + " " + ampm;
+
+        return timeString;
+    }
+};
 
 const bookviewController = {
     getBookview: (req, res) => {
         res.render ("booking", {date: req.query.date, month: months[req.query.month], year: req.query.year, username: req.user.username});
+    },
+
+    checkTimeSlot: async (req, res) => {
+        let start = new Date (req.query.startTime);
+        let end = new Date (req.query.endTime);
+        let room = req.query.meetingRoom;
+        let meetings = [];
+
+        meetings = await Meeting.find ({meetingRoom: room, meetingStatus: {$ne: 'C'},
+                                        $or: [{startTime: {$gte: start, $lt: end}}, {endTime: {$gt: start, $lte: end}},
+                                        {$and: [{startTime: {$lte: start}}, {endTime: {$gte: end}}]} ]});
+
+        if (meetings.length != 0) {
+            res.send (String (meetings[0].meetingID));
+            return;
+        }
+
+        res.send ("-1");
+        return;
     },
 
     getMeetingById: async (req, res) => {
@@ -56,15 +100,19 @@ const bookviewController = {
         let meetings = req.query.meetings;
         let meetingRows = [];
         let roomCurrentSlots = [];
-        let curTime = new Date (year, month, date, 8, 0, 0);
+        let curTime = new Date (year, month, date, firstOpenTime, 0, 0);
+        let lastTime = new Date (year, month, date, lastClosedTime, 0, 0);
         let i;
 
         for (i = 0; i < rooms.length; i++)
             roomCurrentSlots.push (0);
 
-        for (i = 0; i < times.length - 1; i++) {
-            let meeting = {
-                time: times[i] + " - " + times[i + 1]
+        while (curTime.getTime () != lastTime.getTime ()) {
+            let meeting;
+            let slotEnd = new Date (year, month, date, curTime.getHours (), curTime.getMinutes () + interval, 0);
+
+            meeting = {
+                time: suppFuncs.formatTimeToString (curTime) + " - " + suppFuncs.formatTimeToString (slotEnd)
             };
 
             if (meetings != undefined) {
@@ -73,9 +121,8 @@ const bookviewController = {
                         for (let k = 0; k < meetings.length; k++) {
                             for (let m = 0; m < meetings[k].length; m++) {
                                 if (meetings[k][m].meetingRoom == rooms[j]) {
-                                    if (meetings[k][m].startTime == curTime) {
-                                        let timeDiffInMinutes = Math.abs (new Date (meetings[k][m].endTime) - new Date (meetings[k][m].startTime)) / 60000;
-                                        roomCurrentSlots[j] = timeDiffInMinutes / interval;
+                                    if (new Date (meetings[k][m].startTime).getTime () == curTime.getTime ()) {
+                                        roomCurrentSlots[j] = suppFuncs.getTimeSlots (new Date (meetings[k][m].startTime), new Date (meetings[k][m].endTime))
 
                                         if (j == 0) {
                                             meeting.integSlots = roomCurrentSlots[j];
@@ -123,20 +170,20 @@ const bookviewController = {
         })
     },
 
-    postMeeting: async (req,res) => {
+    postInsertMeeting: async (req,res) => {
         try {
             var meetingID = (await Meeting.find ({})).length;
             var username = req.user.username;
-			var startTime = req.query.startTime;
-			var endTime = req.query.endTime;
+			var startTime = new Date (req.query.startTime);
+			var endTime = new Date (req.query.endTime);
 			var meetingRoom = req.query.meetingRoom; 
 			var	marketingRequest = req.query.marketingRequest; 
-			var marketingStatus = req.query.marketingStatus; 
-			var meetingStatus = req.query.meetingStatus; 
+			var marketingStatus = false;
+			var meetingStatus = "S";
 			var	attendeeList = req.query.attendeeList; 
 
             var newBookedMeeting = {
-                meetingID: meetingID, 
+                meetingID: meetingID,
                 username: username,
 				startTime: startTime,
 				endTime: endTime,
@@ -164,28 +211,21 @@ const bookviewController = {
             }).clone ().catch ((err) => { console.log (err)});
     },
 
-    postEditMeetingReg: async (req,res) =>{
+    postUpdateMeeting: async (req,res) =>{
         try {
-            var meetingID = req.query.meetingID;
-            var username = req.user.username;
-			var startTime = req.query.startTime;
-			var endTime = req.query.endTime;
+            var meetingID = parseInt (req.query.meetingID);
+			var startTime = new Date (req.query.startTime);
+			var endTime = new Date (req.query.endTime);
 			var meetingRoom = req.query.meetingRoom; 
-			var	marketingRequest = req.query.marketingRequest; 
-			var marketingStatus = req.query.marketingStatus; 
-			var meetingStatus = req.query.meetingStatus; 
+			var	marketingRequest = req.query.marketingRequest;
 			var	attendeeList = req.query.attendeeList; 
 
             Meeting.updateOne({meetingID: meetingID}, 
                 {
-                    meetingID: meetingID, 
-                    username: username,
                     startTime: startTime,
                     endTime: endTime,
                     meetingRoom: meetingRoom, 
-                    marketingRequest: marketingRequest, 
-                    marketingStatus: marketingStatus, 
-                    meetingStatus: meetingStatus, 
+                    marketingRequest: marketingRequest,
                     attendeeList: attendeeList
                 }, err => {
                 if (err) {
@@ -193,21 +233,6 @@ const bookviewController = {
                     return;
                 }
                 console.log(">>>   getEditMeeting: Successfully edited meeting");
-            })
-        } catch {}
-    }, 
-
-    postEditMeetingHR: async (req,res) =>{
-        try {
-            var meetingID = req.query.meetingID;
-			var	attendeeList = req.query.attendeeList; 
-
-            Meeting.updateOne({meetingID: meetingID}, {attendeeList: attendeeList}, err => {
-                if (err) {
-                    console.log(err);
-                    return;
-                }
-                console.log(">>>   getEditMeetingHR: Successfully edited meeting");
             })
         } catch {}
     }
