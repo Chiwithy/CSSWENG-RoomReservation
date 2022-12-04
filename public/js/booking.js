@@ -1,26 +1,15 @@
 //Parallel arrays || {rooms} array is parallel to {meetings} array || rooms[0] = "Integrity" => meetings[0][n] = meetings in Integrity
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
 const rooms =  ["Integrity", "Innovation", "Teamwork"];
-let meetings = [];  
-let openEndTimes = [];
-let openStartTimes = [];
-let toKeep = []; 
+
+let meetings = [];  //meetings array used when retrieving meeting data
+let tempMeetings = [];  //temp meetings array used when manipulating the meetings array (without affecting meetings)
+let tempMeeting = [];
 let accountType;
-let tempMeeting = []; 
-const allStartTimes = [ "08:00 AM", "08:30 AM", "09:00 AM",
-                      "09:30 AM", "10:00 AM", "10:30 AM",
-                      "11:00 AM", "11:30 AM", "12:00 NN",
-                      "12:30 PM", "01:00 PM", "01:30 PM",
-                      "02:00 PM", "02:30 PM", "03:00 PM",
-                      "03:30 PM", "04:00 PM", "04:30 PM",
-                      "05:00 PM", "05:30 PM" ];
-const allEndTimes =   [ "08:30 AM", "09:00 AM",
-                      "09:30 AM", "10:00 AM", "10:30 AM",
-                      "11:00 AM", "11:30 AM", "12:00 NN",
-                      "12:30 PM", "01:00 PM", "01:30 PM",
-                      "02:00 PM", "02:30 PM", "03:00 PM",
-                      "03:30 PM", "04:00 PM", "04:30 PM",
-                      "05:00 PM", "05:30 PM", "06:00 PM" ];
+const startTime = "8:00 AM";    //first open start time string
+const endTime = "06:00 PM";     //last open end time string
+const interval = 30;            //interval per slot (in minutes)
+
 
 $(document).ready (() => {
     for (let i = 0; i < rooms.length; i++)
@@ -39,413 +28,74 @@ $(document).ready (() => {
 	getMeetings();
 
     //disable book button until all required fields are filled (specifically room)
-    document.querySelector('#book').disabled = true;  
+    $('#submitBtn')[0].disabled = true;
 
-    //get year,month,day, start and end times and turn them into DATE objects 
-    var currDate = $("#date").text();
-    var splitDate = currDate.split(" "); 
-    var year = splitDate[2]; 
-    var month = months.indexOf(splitDate[1]); 
-    var date = splitDate[0]; 
+    //disable time dropdowns until a room is selected
+    $("#startTime")[0].disabled = true;
+    $("#endTime")[0].disabled = true;
 
-    //when book is clicked, get info 
-    $("#book").on('click', function(){
-        //get start and end time from the form 
-        var startSelect = document.getElementById("startTime"); //startTime
-        var start = startSelect.options[startSelect.selectedIndex].text; 
-        var endSelect = document.getElementById("endTime"); //endTime 
-        var end = endSelect.options[endSelect.selectedIndex].text; 
-
-        //get time as date 
-        var startTimeDate = getTimeAsDate(start, year, month, date); 
-        var endTimeDate = getTimeAsDate(end, year, month, date); 
-
-        //set up to get all the values from the form 
-        var currRoom = document.getElementById("room"); 
-        var currRoomText = currRoom.options[currRoom.selectedIndex].text;   
-        var indexOfRoom = rooms.indexOf(currRoomText); 
-        var numOfMeetingsInDB = meetings[indexOfRoom].length;
-
-        //get all the values from the form 
-        var meetingID = numOfMeetingsInDB; 
-        var username = $("#username").text();
-        var startTime = startTimeDate; 
-        var endTime = endTimeDate 
-        var meetingRoom = currRoomText; //meeting room is capitalized 
+    //merged update and book meeting
+    $("#submitBtn").on ('click', function () {
+        let option = $("#submitBtn")[0].classList[0];
+        let meetingID = $("#submitBtn").parent ()[0].classList[1];
+        var startTime = formatTimeToDate ($("#startTime").val ()); 
+        var endTime = formatTimeToDate ($("#endTime").val ());
+        var meetingRoom = $("#room").val ();
         var marketingRequest = $("#marketingReqs").val(); 
-        var marketingStatus = false; 
-        var meetingStatus = "S"; 
         var attendeeList = $('#attendees').val(); 
 
-        //check if meeting already exists 
-        var success = checkIfSuccessful(startTime, endTime, meetingRoom);
- 
-        if(success){
-            //add meetings to DB 
-            fetch("/addBookedMeeting?" + new URLSearchParams({
-                meetingID: meetingID,
-                username: username,
-                startTime: startTime,
-                endTime: endTime,
-                meetingRoom: meetingRoom, 
-                marketingRequest: marketingRequest, 
-                marketingStatus: marketingStatus, 
-                meetingStatus: meetingStatus, 
-                attendeeList: attendeeList,
-            }), {method: 'POST',})
-            window.location.reload(); 
-        }
-        else{
-            getMeetings(); 
-        }
-    });
-
-    
+        //checks the database if the planned time slot is available for that room
+        $.get ("/checkTimeSlot", {startTime: startTime, endTime: endTime, meetingRoom: meetingRoom}, (avail) => {
+            //avail -> meetingID from of the conflicting meeting (from the database) if there is one
+            //proceed with book if avail returns -1 (no conflict) || proceed with update if -1 or if conflict is itself
+            if (parseInt (avail) == -1 || parseInt (avail) == parseInt (meetingID)) {
+                //post url changes based on option ("book" or "update")
+                $.post ("/" + option + "Meeting?" + new URLSearchParams ({
+                    meetingID: meetingID,
+                    startTime: startTime,
+                    endTime: endTime,
+                    meetingRoom: meetingRoom,
+                    marketingRequest: marketingRequest,
+                    attendeeList: attendeeList
+                }));
+                window.location.reload ();
+            }
+            else
+                console.log ("Slot taken");
+        });
+    })
 
     //have start and end change depending on click of 
     $("#room").on('change', function(){
-        openEndTimes = [];
-        openStartTimes = [];
+        $("#submitBtn")[0].disabled = true;
+        $("#submitBtn").css ("cursor", "default");
 
-        if(document.querySelector('#book') != null)
-            document.querySelector('#book').disabled = true;
+        $("#startTime").empty();
+        $("#startTime")[0].disabled = false;
+        $("#startTime").append("<option value='' disabled selected class='select'>Select a start time</option>");  
 
-        document.querySelector("#endTime").disabled = true; 
+        $("#endTime").empty();
+        $("#endTime")[0].disabled = true;
+        $("#endTime").append("<option value='' disabled selected class='select'>Select an end time</option>"); 
 
-        $("#startTime").empty(); 
-        $("#endTime").empty(); 
-        $("#startTime").append("<option value='' disabled selected class='select'>Select</option>");  
-        $("#endTime").append("<option value='' disabled selected class='select'>Select</option>"); 
-        var currRoom = $("#room").val(); //value of room
-        var indexOfRoom = rooms.indexOf(currRoom);
-       
-        //get a list of all possible start and times (global variables -- allStartTimes, allEndTimes)
-        //get a list of all start/endtimes in db (including the ones that hide under big meetings)
-        var currRoomArray = meetings[indexOfRoom]; 
-        var i;
-
-        var toRemoveStart = [];
-        var toRemoveEnd = []; 
-        var startInDBArr = currRoomArray.map(a => a.startTime); //gets an arrya of startTimes (for this room) from DB
-        var endInDBArr = currRoomArray.map(a => a.endTime);
-        var arrLength = startInDBArr.length; 
-
-		//deals with meetings that last more than 30 mins 
-        for(i=0; i<arrLength; i++){ //for start hours 
-            var startInDBHour = startInDBArr[i].getHours(); 
-            var startInDBMin = startInDBArr[i].getMinutes(); 
-
-            var endInDBHour = endInDBArr[i].getHours(); 
-            var endInDBMin = endInDBArr[i].getMinutes(); 
-            var check; 
-
-
-            if((startInDBHour == endInDBHour) && (startInDBMin + 30 == endInDBMin)){
-                check = true; 
-            }
-            else if((startInDBHour + 1 == endInDBHour) && (startInDBMin == endInDBMin + 30)){
-                check = true; 
-            }
-            else{
-                check = false;
-            }
-            
-            if(!check){
-                var startTempHour = startInDBHour; 
-                var startTempMin = startInDBMin; 
-                var endTempHour = endInDBHour; 
-                var endTempMin = endInDBMin; 
-
-                var startTempHourVal, endInDBHourVal; 
-                var endTempHourVal, startInDBHourVal; 
-
-                //offsets time for 1pm - 6pm 
-                if(startTempHour >= 1 && startTempHour <= 6){ 
-                    startTempHourVal = startTempHour + 12; 
-                }
-                if(endInDBHour >= 1 && endInDBHour <= 6){ 
-                    endInDBHourVal = endInDBHour + 12; 
-                }
-                else{
-                    startTempHourVal = startTempHour; 
-                    endInDBHourVal = endInDBHour; 
-                }
-
-                //gets all start times in between and pushes it to startInDBArr
-                while((startTempHourVal * 100 + (startTempMin % 60)) < (endInDBHourVal * 100 - ((endInDBMin % 60 ? 0 : 70)))){
-                    startTempMin += 30;
-                    if (startTempMin % 60 == 0)
-                        startTempHourVal += 1;
-                    startInDBArr.push(new Date(year,month,date,startTempHour,startTempMin));
-                }
-
-                //offsets time for 1pm - 6pm 
-                if(endTempHour >= 1 && endTempHour <= 6){ 
-                    endTempHourVal = endTempHour + 12; 
-                }
-                if(startInDBHour >= 1 && startInDBHour <= 6){ 
-                    startInDBHourVal = startInDBHour + 12; 
-                }
-                else{
-                    endTempHourVal = endTempHour; 
-                    startInDBHourVal = startInDBHour; 
-                }
-
-                //gets all start times in between and pushes it to startInDBArr
-                while((endTempHourVal * 100 + Math.abs(endTempMin % 60)) > (startInDBMin % 60 ? (startInDBHourVal + 1) * 100 : startInDBHourVal * 100 + 30)){ 
-                    endTempMin -= 30;
-                    if (endTempMin % 60 != 0)
-                        endTempHourVal -= 1;
-                    endInDBArr.push(new Date(year,month,date,endTempHour,endTempMin));
-                }
-            }
-        }
-       
-        
-        const params = new URLSearchParams (window.location.search);
-        let curYear = parseInt (params.get ("year"));
-        let curMonth = parseInt (params.get ("month"));
-        let curDate = parseInt (params.get ("date"));
-        let bookDate = new Date (curYear, curMonth, curDate);
-        //compare start/endTimes that already exist in DB and all start/endTimes possible and makes array the conatins what exists (based on index)
-        //makes sure that times that are booked arent shown 
-        if (startInDBArr.length != 0) {
-            for(i=0; i<startInDBArr.length; i++){   //compares start times in DB vs all start times (and makes array with indexes to remove ie. taken up classes)
-                for(x=0; x<allStartTimes.length; x++){
-                    var inDBHour = startInDBArr[i].getHours(); 
-                    var inDBMin = startInDBArr[i].getMinutes();
-
-                    if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm 
-                        inDBHour = inDBHour - 12; 
-                    }
-
-                    var split1 = allStartTimes[x].split(":"); 
-                    var allStartHour = parseInt(split1[0]); 
-                    var split2 = split1[1].split(" "); 
-                    var allStartMin = parseInt(split2[0]);
-                    bookDate.setHours (split2[1] == 'PM' ? allStartHour + 12 : allStartHour);
-                    bookDate.setMinutes (allStartMin);
-                    
-                    if(bookDate < new Date () || (inDBHour == allStartHour && inDBMin == allStartMin)){
-                        toRemoveStart.push(x); 
-                    }
-                }
-            }
-        }
-        else {
-            for(x=0; x<allStartTimes.length; x++){
-                var split1 = allStartTimes[x].split(":"); 
-                var allStartHour = parseInt(split1[0]); 
-                var split2 = split1[1].split(" "); 
-                var allStartMin = parseInt(split2[0]);
-                bookDate.setHours (split2[1] == 'PM' ? allStartHour + 12 : allStartHour);
-                bookDate.setMinutes (allStartMin);
-                
-                if(bookDate < new Date ()){
-                    toRemoveStart.push(x); //pushes index of start time to remove (relative to allStartTimes) 
-                }
-            }
-        }
-        if (endInDBArr.length != 0) {
-            for(i=0; i<endInDBArr.length; i++){   //compares end times in DB vs all end times 
-                for(x=0; x<allEndTimes.length; x++){
-                    var inDBHour = endInDBArr[i].getHours(); 
-                    var inDBMin = endInDBArr[i].getMinutes(); 
-
-                    if(inDBHour > 12 && inDBHour <= 18){ //offsets for 1pm-6pm
-                        inDBHour = inDBHour - 12; 
-                    }
-
-                    var split1 = allEndTimes[x].split(":"); 
-                    var allEndHour = parseInt(split1[0]); 
-                    var split2 = split1[1].split(" "); 
-                    var allEndMin = parseInt(split2[0]);
-                    bookDate.setHours (split2[1] == 'PM' ? allEndHour + 12 : allEndHour);
-                    bookDate.setMinutes (allEndMin);
-
-                    if(bookDate < new Date () || (inDBHour == allEndHour && inDBMin == allEndMin)){
-                        toRemoveEnd.push(x); //pushes index of end time to remove (relative to allEndTimes) 
-                    }
-                }
-            }
-        }
-        else {
-            for(x=0; x<allEndTimes.length; x++){
-                var split1 = allEndTimes[x].split(":"); 
-                var allEndHour = parseInt(split1[0]); 
-                var split2 = split1[1].split(" "); 
-                var allEndMin = parseInt(split2[0]);
-                bookDate.setHours (split2[1] == 'PM' ? allEndHour + 12 : allEndHour);
-                bookDate.setMinutes (allEndMin);
-
-                if(bookDate < new Date ()){
-                    toRemoveEnd.push(x); 
-                }
-            }
-        }
-
-        //make new options based on meetings that already exist -- dynamic time (based on allStartTimes array and toRemoveStart)
-        makeNewOptions(allStartTimes, toRemoveStart, openStartTimes, "startTime"); 
-        makeNewOptions(allEndTimes, toRemoveEnd, openEndTimes, "endTime"); 
-
+        editTimeOptions ("start", $("#room").val ());
+        editTimeOptions ("end", $("#room").val ());
     });
 
     //onclick of start time -- allow only end times after it that are consecutive (no gaps) in dropdown options for endtime 
     $("#startTime").on('change', function(){
-        document.querySelector("#endTime").disabled = false; 
-        if(document.querySelector('#book') != null)
-            document.querySelector('#book').disabled = false;
-        if(document.querySelector('#update') != null)
-            document.querySelector('#update').disabled = false;
-        finalChangeTimeOptions("endTime", $("#startTime"), openEndTimes, null); 
+        if ($("#endTime").val ())
+            adjustTimeOptions ("start");
+        else
+            $("#endTime")[0].disabled = false;
     })
 
     //onclick of end time -- allow only start times after it that are consecutive (no gaps) in dropdown options for startTime 
     $("#endTime").on('change', function(){
-        if(document.querySelector('#book') != null)
-            document.querySelector('#book').disabled = false;
-        if(document.querySelector('#update') != null)
-            document.querySelector('#update').disabled = false;
-        finalChangeTimeOptions("startTime", $("#endTime"), openStartTimes, null); 
+        adjustTimeOptions ("end");
+        $("#submitBtn")[0].disabled = false;
+        $("#submitBtn").css ("cursor", "pointer");
     })
-    
-    function makeNewOptions(allTimes, toRemove, openTimes, startEndTime){
-        for(i=0; i<allTimes.length; i++){  //all startTimes mtoRemoveinus the ones found in meetings array 
-            if(!(toRemove.includes(i))){
-                var test = document.createElement("option"); 
-                test.innerHTML = allTimes[i]; 
-                var split = allTimes[i].split(":"); 
-                var allHour = parseInt(split[0]);
-                var split1 = split[1].split(" ");  
-                var allMin = parseInt(split1[0]);
-                var all_ID; 
-                if(allHour >= 1 && allHour <= 6){
-                    allHour = allHour + 12; 
-                }
-                if(allMin == 30){
-                    all_ID = allHour + 0.5; 
-                }
-                else{ 
-                    all_ID = allHour; 
-                }
-                test.id = all_ID; 
-                document.getElementById(startEndTime).appendChild(test);
-                openTimes.push(allTimes[i]); 
-            }
-        }
-    }
-
-    function getTimeAsDate(time, year, month, date){
-        //turn start and end time into dates 
-        var split = time.split(":"); 
-        var hour = parseInt(split[0]); 
-        var reSplit = split[1].split(" "); 
-        var min = parseInt(reSplit[0]); 
-        
-        //offset the times for PM  
-        if(hour >= 1 && hour <= 6){
-            hour = hour + 12; 
-        }
-    
-        var timeDate = new Date(year, month, date, hour, min);
-        return timeDate;  
-    }
-
-    //before the current form info can be added to the database, it checks if an existing meeting overlaps with it
-    function checkIfSuccessful(startTime, endTime, meetingRoom){
-        var i;
-        var flag = 0; 
-        var roomIndex = rooms.indexOf(meetingRoom); 
-        var roomMeetings = meetings[roomIndex]; 
-        
-        for(i=0; i<roomMeetings.length;i++){
-            if(Number(roomMeetings[i].startTime) <= Number(startTime) && Number(roomMeetings[i].endTime) > Number(startTime)){
-                console.log("Error: start is inside an existing meeting");  
-                flag = 1; 
-            }
-            if(Number(roomMeetings[i].startTime) < Number(endTime) && Number(roomMeetings[i].endTime) >= Number(endTime)){
-                console.log("Error: end is inside an existing meeting"); 
-                flag = 1;  
-            }   
-        }
-        if(flag){
-            alert("That meeting time is already booked. Please choose another one."); 
-            return 0; 
-        }
-        else{
-            return 1; 
-        }
-    }
-
-    function finalChangeTimeOptions(id, origin, openSlots){
-        var i,x;
-        var selected = $(origin).children(":selected").attr("id"); 
-
-        //given one, change the other 
-        var previous = selected; 
-        for(i=0;i<openSlots.length;i++){
-            var arr = openSlots[i].split(":"); 
-            var hour = parseInt(arr[0]); 
-            var arr2 = arr[1].split(" "); 
-            var min = parseInt(arr2[0]);
-            var currVal; 
-
-            if(hour >= 1 && hour <= 6)
-                hour = hour + 12;
-            
-            if(min == 30)
-                currVal = hour + 0.5
-            else
-                currVal = hour; 
-
-            if(currVal > previous && id.localeCompare("endTime") == 0){ 
-                if(currVal - previous == 0.5){
-                    toKeep.push(currVal); 
-                    previous = parseFloat(previous) + 0.5; 
-                }
-            }
-            
-            if(currVal < previous && id.localeCompare("startTime") == 0){ 
-                if(previous - currVal == 0.5){
-                    toKeep.push(currVal); 
-                    previous = parseFloat(previous) + 0.5; 
-                }
-            }
-        }
-
-        if(id.localeCompare("endTime") == 0)
-            $("#" + id).empty();
-        
-        for(x=0; x<toKeep.length; x++){  //all endTimes minus the ones found in meetings array
-            var arr = toKeep[x].toString().split("."); 
-            var hour = arr[0]; 
-            var min; 
-
-            if(arr[1] == 5){
-                min = "30"; 
-            }
-            else{
-                min = "00"; 
-            }
-
-            if(hour > 12){
-                hour = hour - 12; 
-                hour = "0" + hour; 
-                min = min + " PM"
-            }
-            else if (hour == 12){
-                min = min + " NN"
-            }
-            else{
-                min = min + " AM"
-            }
-            var thisHour = hour + ":" + min; 
-            
-            var newOption = $("<option>").text(thisHour); 
-            newOption.attr('id',toKeep[x]); 
-            $("#" + id).append(newOption); 
-        }
-    }
 
     //gets all possible meetings for that day -- the ones booked already 
     function getMeetings () {
@@ -468,6 +118,7 @@ $(document).ready (() => {
             }
 
 			renderMeetings ();
+            copyTemp ();
         });
     }
 
@@ -486,14 +137,24 @@ $(document).ready (() => {
         });
     }
 
-    //shows all booked slots for all meetings
-    //shows edit and delete button depending on accountType 
+    //colors the slots, own meetings have a diff color
+    function colorBookedSlots () { 
+        let slots = $('.takenSlot');
 
+        for (let i = 0; i < slots.length; i++) {
+            if (slots[i].classList.contains ("own"))
+                slots[i].style.backgroundColor = "#3159BC";    
+            else
+                slots[i].style.backgroundColor = "#808080";
+        }
+    }
+
+    //adds the edit/delete buttons on the table
     function addSlotControls () {
         let slots = $('.takenSlot');
 
         for (let i = 0; i < slots.length; i++) {
-            if (slots[i].classList.contains ("own") || accountType == "H") {
+            if (slots[i].classList.contains ("own") || accountType == "H") {    //put controls if its your own meeting or if you're HR
                 slots[i].innerHTML = '<i class="fa-solid fa-pen-to-square editMeeting" style="font-size:12px;"></i>'
                 slots[i].innerHTML += '<div class="px-1 inline"></div><div class="px-1 inline"></div><div class="px-1 inline"></div>'
                 slots[i].innerHTML += '<i class="fa-solid fa-x cancelMeeting" style="font-size:12px;"></i><br>'
@@ -505,6 +166,7 @@ $(document).ready (() => {
         $(".editMeeting").click (prepareEditMeeting);
     }
 
+    //allow slots to be clickable for their details
     function clickableSlots () {
         for (let i = 0; i < rooms.length; i++) {
             for (let j = 0; j < meetings[i].length; j++) {
@@ -516,42 +178,46 @@ $(document).ready (() => {
         }
     }
 
+    //show the modal of the meeting details
     function clickRoom () {
         const days = ["Sunday", "Monday", "Tuesday", "Wednesday", "Thursday", "Friday", "Saturday"];
-        const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-        const bookingID = getMeetingIDFromClassList ($(this)[0].classList);
+        const bookingID = getMeetingIDFromClassList ($(this)[0].classList);     //gets the meetings array ID from its class
         const splitID = bookingID.split ("_");
         const roomInd = rooms.indexOf (splitID[0]);
         const ind = parseInt (splitID[1]);
         const meeting = meetings[roomInd][ind];
-        let meetingParent = $("#meetingDetails").parent ();
+        let meetingParent = $("#meetingDetails").parent (); //parent element of the meeting details element || to store meetings array ID
+        //full date string
         let fullDate = meeting.startTime.getDate () + " " + months[meeting.startTime.getMonth ()] + " " + meeting.startTime.getFullYear () + ", " + days[meeting.startTime.getDay ()];
 
 
+        //remove previously viewed meetings array ID from the class list of the parent
         meetingParent.removeClass (meetingParent[0].classList[meetingParent[0].classList.length - 1]);
-        meetingParent.addClass (bookingID);
+        meetingParent.addClass (bookingID); //add meetings array ID of meeting being viewed currently
         $("#dateModal")[0].innerHTML = fullDate;
-        $("#startTimeModal")[0].innerHTML = formatTime (meeting.startTime);
-        $("#endTimeModal")[0].innerHTML = formatTime (meeting.endTime);
+        $("#startTimeModal")[0].innerHTML = formatTimeToString (meeting.startTime);
+        $("#endTimeModal")[0].innerHTML = formatTimeToString (meeting.endTime);
         $("#roomModal")[0].innerHTML = meeting.meetingRoom;
         $("#requestsModal")[0].innerHTML = meeting.marketingRequest;
 
         if (meeting.username == "") {
+            //If it isn't your meeting remove attendeesList and username details
             $("#attendeesModalRow").remove ();
             $("#usernameModalRow").remove ();
         }
         else {
-            if ($("#usernameModalRow").length > 0)
+            if ($("#usernameModalRow").length > 0)  //If the username modal row exists (not removed by above), just insert
                 $("#usernameModal")[0].innerHTML = meeting.username;
-            else
+            else    //If it was deleted, create it again
                 createModalRow ("username", "date", "Booked by:", meeting.username);
 
-            if ($("#attendeesModalRow").length > 0)
+            if ($("#attendeesModalRow").length > 0) //Same as above but for attendeeList
                 $("#attendeesModal")[0].innerHTML = meeting.attendeeList;
             else
                 createModalRow ("attendees", "room", "Attendees:", meeting.attendeeList);
         }
 
+        //If it's your own meeting or you're HR, show buttons for editing of deleting
         if ($(this)[0].classList.contains ("own") || accountType == "H")
             $("#details-buttons").css ('display', 'flex');
         else
@@ -560,15 +226,18 @@ $(document).ready (() => {
         $("#modal").css ('display', 'block');
     }
 
+    //Displays cancel confirmation box
     function cancelModal () {
-        let meeting, meetingID;
+        let meeting, meetingID, i = 0;
         let curParent = $(this)[0].parentNode;
         let slots = $(".takenSlot");
         
-        while (!meeting && curParent.tagName.toUpperCase () != "BODY") {
+        while (!meeting && curParent.tagName.toUpperCase () != "BODY" && i < 15) {
             try {
                 meeting = getMeetingFromClassList (curParent.classList);
+                i = 15;
             } catch (err) {
+                i++;
                 curParent = curParent.parentNode;
             }
         }
@@ -589,10 +258,12 @@ $(document).ready (() => {
         }
 
         meetingID = getMeetingIDFromClassList (curParent.classList);
+        $("td." + meetingID).css ("background-color", "#B62303");
 
         event.stopPropagation ();
     }
 
+    //cancels the meeting
     function cancelMeeting (meeting) {
         $.post ("/cancelMeeting?" + new URLSearchParams({meetingID: meeting.meetingID, username: meeting.username}), (success) => {
             if (success)
@@ -602,14 +273,17 @@ $(document).ready (() => {
         });
     }
 
+    //prepares to edit the meeting
     function prepareEditMeeting () {
         let meeting, meetingID;
         let curParent = $(this)[0].parentNode;
-        let slots = $(".takenSlot");
+        let submitParent = $("#submitBtn").parent ();
         
         while (!meeting && curParent.tagName.toUpperCase () != "BODY") {
             try {
                 meeting = getMeetingFromClassList (curParent.classList);
+                submitParent.removeClass (submitParent[0].classList[1]);
+                submitParent.addClass (String(meeting.meetingID));
             } catch (err) {
                 curParent = curParent.parentNode;
             }
@@ -618,14 +292,14 @@ $(document).ready (() => {
         colorBookedSlots ();
 
         if(tempMeeting.length != 0){
-            meetings[tempMeeting[0]].splice(tempMeeting[1], 0, tempMeeting[2]); 
+            tempMeetings[tempMeeting[0]].splice(tempMeeting[1], 0, tempMeeting[2]); 
             tempMeeting.splice(0, tempMeeting.length); 
         }
 
         changeFormButton ("update");
-        document.querySelector('#update').disabled = true;
+        document.querySelector('#submitBtn').disabled = true;
         meetingID = getMeetingIDFromClassList (curParent.classList);
-        $("td." + meetingID).css ("background-color", "#1c73ed");
+        $("td." + meetingID).css ("background-color", "#1c73ed");   //changes the color of meeting being edited atm
 
         var roomIndex = rooms.indexOf(meeting.meetingRoom); 
         var meetingIndex = meetings[roomIndex].indexOf(meeting);
@@ -635,96 +309,32 @@ $(document).ready (() => {
         tempMeeting[1] = meetingIndex; 
         tempMeeting[2] = meeting; 
 
-        //removes currently-being-edited meeting from meetings array
-        meetings[roomIndex].splice(meetingIndex, 1);
+        //removes currently-being-edited meeting from tempMeetings array
+        tempMeetings[roomIndex].splice(meetingIndex, 1);
 
         $("#room").val(meeting.meetingRoom).attr("selected", "selected"); 
-        $('#room').trigger("change"); 
+        $('#room').trigger("change");
+        $("#startTime").val (formatTimeToString (meeting.startTime)).attr ("selected", "selected");
+        $("#startTime").trigger ("change");
+
+        $("#endTime").val (formatTimeToString (meeting.endTime)).attr ("selected", "selected");
+        $("#endTime").trigger ("change");
         $("#attendees").val(meeting.attendeeList); //autofills attendees  
         $("#marketingReqs").val(meeting.marketingRequest); //autofulls marketing requests
 
-        $("#modal").css ("display", "none");
+        $("#modal").css ("display", "none");    //closes modal incase edit came from modal buttons
 
-        updateButtonClicked(meeting); 
         event.stopPropagation ();
     }
 
-    ////////////////////////////////////////////////////////////////////////////////////
-    //this is where the main edits for: EDIT (for reg and hr user) starts       EDITSTART
-
-    function updateButtonClicked(meeting){
-        $("#update").off().on('click', function(){
-            //get start and end time from the form 
-            var startSelect = document.getElementById("startTime"); //startTime
-            var start = startSelect.options[startSelect.selectedIndex].text; 
-            var endSelect = document.getElementById("endTime"); //endTime 
-            var end = endSelect.options[endSelect.selectedIndex].text; 
-
-            //get time as date 
-            var startTimeDate = getTimeAsDate(start, year, month, date); 
-            var endTimeDate = getTimeAsDate(end, year, month, date); 
-
-            //set up to get all the values from the form 
-            var currRoom = document.getElementById("room"); 
-            var currRoomText = currRoom.options[currRoom.selectedIndex].text;   
-
-            //get all the values from the form 
-            var meetingID = meeting.meetingID; 
-            var username = $("#username").text();
-            var startTime = startTimeDate; 
-            var endTime = endTimeDate 
-            var meetingRoom = currRoomText; //meeting room is capitalized 
-            var marketingRequest = $("#marketingReqs").val(); 
-            var marketingStatus = false; 
-            var meetingStatus = "S"; 
-            var attendeeList = $('#attendees').val(); 
-
-            //console.log(meetingID); 
-            var success = checkIfSuccessful(startTime, endTime, meetingRoom);
-    
-            if(success){
-                //update DB meeting based on meetingID
-                fetch("/editMeetingReg?" + new URLSearchParams({
-                    meetingID: meetingID,
-                    username: username,
-                    startTime: startTime,
-                    endTime: endTime,
-                    meetingRoom: meetingRoom, 
-                    marketingRequest: marketingRequest, 
-                    marketingStatus: marketingStatus, 
-                    meetingStatus: meetingStatus, 
-                    attendeeList: attendeeList,
-                }), {method: 'POST',})
-                window.location.reload(); 
-                tempMeeting.splice(0, tempMeeting.length); 
-            }
-            else{
-                getMeetings(); 
-            }
-        }) 
-    }
-
-    //gets meeting ID in db from meetings array after being passed the slot id (ie. Integrity_1 etc)
-    function getMeeting(slotID){
-        var split = slotID.split('_')
-        var room = split[0]
-        var meetingIndex = split[1]; 
-        var newMeetings = meetings.slice() 
-        var meeting = newMeetings[rooms.indexOf(room)][meetingIndex]; 
-        return meeting; 
-    }
-
+    //changes the button from submit <-> book (same id but different class [functionality is based on class])
     function changeFormButton (changeTo) {
-        $("#book").replaceWith ("<button id='" + changeTo + "' class='" + changeTo + "'>" + changeTo.toUpperCase () + "</button>");
-    }
-    //changes the book button into an update button 
-    function changeBookToUpdate(){
-        $("#book").replaceWith("<button id='update' class='update'>UPDATE</button>"); 
+        $("#submitBtn").removeClass ($("#submitBtn")[0].classList[0]);
+        $("#submitBtn").addClass (changeTo);
+        $("#submitBtn")[0].innerHTML = changeTo.toUpperCase ();
     }
 
-    //this is where the main edits for: EDIT (for reg and hr user) ends  
-    ///////////////////////////////////////////////////////////////////////////////////
-
+    //creates a modal row for the details modal
     function createModalRow (elementToCreate, elementAfter, titleText, elementData) {
         let newModalRow = document.createElement ("tr");
         let newTitle = document.createElement ("td");
@@ -739,9 +349,10 @@ $(document).ready (() => {
         $("#" + elementAfter + "ModalRow")[0].parentNode.insertBefore (newModalRow, $("#" + elementAfter + "ModalRow")[0].nextSibling);
     }
 
-    function formatTime (date) {
-        let hours = date.getHours ();
-        let minutes = date.getMinutes ();
+    //formats a Date object to time string format (e.g., "08:00 AM")
+    function formatTimeToString (time) {
+        let hours = time.getHours ();
+        let minutes = time.getMinutes ();
         let ampm = hours >= 12 ? "PM" : "AM";
         let timeString;
 
@@ -758,18 +369,152 @@ $(document).ready (() => {
         return timeString;
     }
 
+    //Formats a time string (e.g., "08:00 AM", "12:00 NN", "02:30 PM")
+    //returns a date object set to selected date and time (of time string)
+    function formatTimeToDate (timeString) {
+        const timeSplit = timeString.split (" ");
+        const params = new URLSearchParams (window.location.search);
+
+        let year = parseInt (params.get ("year"));
+        let month = parseInt (params.get ("month"));
+        let date = parseInt (params.get ("date"));
+        let ampm = timeSplit[1];
+        let hour = parseInt (timeSplit[0].split (":")[0]);
+        let minute = parseInt (timeSplit[0].split (":")[1]);
+
+        if (hour == 12 && ampm == "AM")
+            hour = 0;
+        else
+            hour = ampm == "PM" ? hour + 12 : hour;
+
+        return new Date (year, month, date, hour, minute, 0);
+    }
+
+    //Edits the start/end time options of the room
+    //option : "start" -> startTime || "end" -> end
+    function editTimeOptions (option, room) {
+        let openTimes = getOpenTimes (option, room);
+        addTimeOptions (openTimes, option);
+    }
+
+    //Gets the open start/end time options of the room
+    //Returns string array of open time slots (in format like "08:00 AM")
+    function getOpenTimes (option, room) {
+        const isStart = (option == "start");
+
+        //If editing startTimes (option == "start"), interval is positive (it'll count up)
+        //If editing endTimes (option == "end"), interval is negative (it'll count down)
+        const intervalCrement = isStart ? interval : interval * -1;
+        let openTimes = [];
+        let roomInd = rooms.indexOf (room);
+        let roomMeetings = tempMeetings[roomInd];
+        let curOpenTime = isStart ? formatTimeToDate (startTime) : formatTimeToDate (endTime);      //startTimes -> begin from first start time, endTimes -> begin from last end time
+        let lastOpenTime = isStart ? formatTimeToDate (endTime) : formatTimeToDate (startTime);     //startTimes -> end at last end time, endTimes -> end at first start time
+        let currentTime = new Date ();
+        let i, takenSlots = 0;  //takenSlots -> number of time slots to skip (cus it is [still] taken -> no point in checking)
+        
+        //if startTimes able to pick a startTime of even now
+        //if endTimes not able to pick endTime that is now (cant pick a 2:30 end time if it is alrdy 2:30 [or anywhere from 2:00 - 2:30])
+        isStart ? currentTime : currentTime.setMinutes (currentTime.getMinutes () + interval);
+
+        //while current time slot being checked isnt the last
+        while (curOpenTime.getTime () != lastOpenTime.getTime ()) {
+            //current time slot being checked is past current time && current time slot is not taken
+            if (curOpenTime.getTime () >= currentTime.getTime () && takenSlots == 0) {
+                //go through the meetings for that room
+                for (i = 0; i < roomMeetings.length; i++) {
+                    let timeToCompare = isStart ? roomMeetings[i].startTime : roomMeetings[i].endTime;
+                    
+                    //check if the timeslot is already taken
+                    if (curOpenTime.getTime () == timeToCompare.getTime ())
+                        takenSlots = getIntervalSlots (roomMeetings[i].startTime, roomMeetings[i].endTime);
+                }
+
+                if (takenSlots != 0)    //slot is not open
+                    takenSlots --;
+                else    //slot is open
+                    openTimes.push (formatTimeToString (curOpenTime));
+            }
+            else if (takenSlots != 0)
+                takenSlots--;   //decrement number of slots taken by the meeting
+
+            curOpenTime.setMinutes (curOpenTime.getMinutes () + intervalCrement);   //in/decrement the current open time based on interval
+        }
+
+        //endTimes get stored backwards (cus it counts down) so we do a lil reversing
+        if (!isStart) openTimes.reverse ();
+
+        return openTimes;
+    }
+
+    //Adds the open times to the start/endTime dropdowns
+    function addTimeOptions (openTimes, option) {
+        for (let i = 0; i < openTimes.length; i++) {
+            let newOption = document.createElement ("option");
+            let timeString = openTimes[i];
+            newOption.innerHTML = timeString;
+            newOption.value = timeString;
+
+            $("#" + option + "Time")[0].appendChild (newOption);
+        }
+    }
+
+    //Gets the number of slots a meeting takes
+    function getIntervalSlots (startTime, endTime) {
+        let timeDiffInMinutes = Math.abs (endTime - startTime) / 60000;     //get their difference in minutes
+        let slots = timeDiffInMinutes / interval;       //divide difference by interval
+
+        return slots;
+    }
+
+    //Checks if current selected start and end time is feasible (not conflicting with other meetings [in meeting array])
+    //returns boolean based on its availability
+    function checkIfTimeAvailable (room, startTime, endTime) {
+        let roomInd = rooms.indexOf (room);
+        let roomMeetings = tempMeetings [roomInd];
+
+        if (typeof (startTime) == "string") {   //if passed parameters are in string format, convert to date
+            startTime = formatTimeToDate (startTime);
+            endTime = formatTimeToDate (endTime);
+        }
+
+        if (startTime.getTime () >= endTime.getTime ())     //if startTime is past endTime || if endTime is before startTime
+            return false;
+        
+        for (let i = 0; i < roomMeetings.length; i++)   //Checks for meetings that may be inside current picked time slot
+            if (startTime.getTime () <= roomMeetings[i].startTime.getTime () && endTime.getTime () >= roomMeetings[i].endTime.getTime ())
+                return false;
+
+        return true;
+    }
+
+    //adjust time dropdown to nearest available time (reduces meeting too occupy one slot, if time is unavailable)
+    //option: timeSlot recently changed ("start" or "end")
+    function adjustTimeOptions (option) {
+        let mult = (option == "start") ? 1 : -1;    //interval multiplier (startTime : interval will increment, endTime : interval will decrement)
+        let optionToEdit = (option == "start") ? "end" : "start";   //start: edit endTime, end: edit startTime
+        let avail = checkIfTimeAvailable ($("#room").val (), $("#startTime").val (), $("#endTime").val ());
+
+        if (!avail) {
+            let newTime = formatTimeToDate ($("#" + option + "Time").val ());   //gets time as date of current time option
+            let strNewTime;
+            newTime.setMinutes (newTime.getMinutes () + (interval * mult));     //in/decrements picked time
+            strNewTime = formatTimeToString (newTime);  //converts the in/decremented time to string format
+
+            $("#" + optionToEdit + "Time")[0].value = strNewTime;   //assigns to the other time slot
+        }
+    }
+
+    //gets meetings array ID from classList
     function getMeetingIDFromClassList (classList) {
         for (let i = 0; i < classList.length; i++)
-            if (classList[i].indexOf ("_") != -1)
+            if (classList[i].indexOf ("_") != -1)   //meetings array ID has an underscore
                 return classList[i];
 
-        return "noMeeting"
+        return "noMeeting";
     }
 
-    function getMeetingFromClassList (classList) {
-        return getMeetingFromMeetingID (getMeetingIDFromClassList (classList));
-    }
-
+    //gets meeting object from meetings array ID
     function getMeetingFromMeetingID (meetingID) {
         const splitID = meetingID.split ("_");
         const roomInd = rooms.indexOf (splitID[0]);
@@ -777,15 +522,20 @@ $(document).ready (() => {
 
         return meetings[roomInd][meetingInd];
     }
-});
 
-function colorBookedSlots () { 
-    let slots = $('.takenSlot');
-
-    for (let i = 0; i < slots.length; i++) {
-        if (slots[i].classList.contains ("own"))
-            slots[i].style.backgroundColor = "#3159BC";    
-        else
-            slots[i].style.backgroundColor = "#808080";
+    //gets meeting object from classList
+    function getMeetingFromClassList (classList) {
+        return getMeetingFromMeetingID (getMeetingIDFromClassList (classList));
     }
-}
+
+    //copy meetings to tempMeetings
+    function copyTemp () {
+        tempMeetings = [];
+        
+        for (let i = 0; i < meetings.length; i++) {
+            tempMeetings.push ([]);
+            for (let j = 0; j < meetings[i].length; j++)
+                tempMeetings[i].push (meetings[i][j]);
+        }
+    }
+});
