@@ -46,16 +46,7 @@ textarea, select {
 	padding: 20px 20px;
 }
 
-.book {
-	font-family: 'Nunito';
-	display:block;
-	width: 20%;
-	text-align: center;
-	margin: 0 auto;
-	background-color: #3159BC;
-}
-
-.update {
+.book, .update {
 	font-family: 'Nunito';
 	display:block;
 	width: 23%;
