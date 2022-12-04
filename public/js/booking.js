@@ -275,16 +275,18 @@ $(document).ready (() => {
 
     //prepares to edit the meeting
     function prepareEditMeeting () {
-        let meeting, meetingID;
+        let meeting, meetingID, i = 0;
         let curParent = $(this)[0].parentNode;
         let submitParent = $("#submitBtn").parent ();
         
-        while (!meeting && curParent.tagName.toUpperCase () != "BODY") {
+        while (!meeting && curParent.tagName.toUpperCase () != "BODY" && i < 15) {
             try {
                 meeting = getMeetingFromClassList (curParent.classList);
                 submitParent.removeClass (submitParent[0].classList[1]);
                 submitParent.addClass (String(meeting.meetingID));
+                i = 15;
             } catch (err) {
+                i++;
                 curParent = curParent.parentNode;
             }
         }
