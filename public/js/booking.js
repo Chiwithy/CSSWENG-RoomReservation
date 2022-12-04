@@ -316,11 +316,13 @@ $(document).ready (() => {
 
         $("#room").val(meeting.meetingRoom).attr("selected", "selected"); 
         $('#room').trigger("change");
+
         $("#startTime").val (formatTimeToString (meeting.startTime)).attr ("selected", "selected");
         $("#startTime").trigger ("change");
 
         $("#endTime").val (formatTimeToString (meeting.endTime)).attr ("selected", "selected");
         $("#endTime").trigger ("change");
+        
         $("#attendees").val(meeting.attendeeList); //autofills attendees  
         $("#marketingReqs").val(meeting.marketingRequest); //autofulls marketing requests
 
