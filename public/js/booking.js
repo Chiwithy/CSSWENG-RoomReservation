@@ -115,6 +115,10 @@ $(document).ready (() => {
                 meetingInfos[i].startTime = new Date (meetingInfos[i].startTime);
                 meetingInfos[i].endTime = new Date (meetingInfos[i].endTime);
                 meetings[rooms.indexOf (meetingInfos[i].meetingRoom)].push (meetingInfos[i]);
+
+                if (i == 0)
+                    if (checkIfToday (meetingInfos[i].startTime))
+                        $("#editModalBtn").remove ();
             }
 
 			renderMeetings ();
@@ -151,11 +155,16 @@ $(document).ready (() => {
 
     //adds the edit/delete buttons on the table
     function addSlotControls () {
+        const now = new Date ();
         let slots = $('.takenSlot');
 
         for (let i = 0; i < slots.length; i++) {
+            meeting = getMeetingFromClassList (slots[i].classList);
             if (slots[i].classList.contains ("own") || accountType == "H") {    //put controls if its your own meeting or if you're HR
-                slots[i].innerHTML = '<i class="fa-solid fa-pen-to-square editMeeting" style="font-size:12px;"></i>'
+                if (!checkIfToday (meeting.startTime))
+                    slots[i].innerHTML = '<i class="fa-solid fa-pen-to-square editMeeting" style="font-size:12px;"></i>'
+                else
+                    slots[i].innerHTML = "";
                 slots[i].innerHTML += '<div class="px-1 inline"></div><div class="px-1 inline"></div><div class="px-1 inline"></div>'
                 slots[i].innerHTML += '<i class="fa-solid fa-x cancelMeeting" style="font-size:12px;"></i><br>'
             }
@@ -530,6 +539,12 @@ $(document).ready (() => {
     //gets meeting object from classList
     function getMeetingFromClassList (classList) {
         return getMeetingFromMeetingID (getMeetingIDFromClassList (classList));
+    }
+
+    function checkIfToday (date) {
+        const today = new Date ();
+
+        return (date.toDateString () == today.toDateString ());
     }
 
     //copy meetings to tempMeetings
