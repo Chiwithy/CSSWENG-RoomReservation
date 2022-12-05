@@ -117,7 +117,7 @@ $(document).ready (() => {
                 meetings[rooms.indexOf (meetingInfos[i].meetingRoom)].push (meetingInfos[i]);
 
                 if (i == 0)
-                    if (checkIfToday (meetingInfos[i].startTime))
+                    if (!checkIfBeyondToday (meetingInfos[i].startTime))
                         $("#editModalBtn").remove ();
             }
 
@@ -161,7 +161,7 @@ $(document).ready (() => {
         for (let i = 0; i < slots.length; i++) {
             meeting = getMeetingFromClassList (slots[i].classList);
             if (slots[i].classList.contains ("own") || accountType == "H") {    //put controls if its your own meeting or if you're HR
-                if (!checkIfToday (meeting.startTime))
+                if (checkIfBeyondToday (meeting.startTime))
                     slots[i].innerHTML = '<i class="fa-solid fa-pen-to-square editMeeting" style="font-size:12px;"></i>'
                 else
                     slots[i].innerHTML = "";
@@ -541,10 +541,10 @@ $(document).ready (() => {
         return getMeetingFromMeetingID (getMeetingIDFromClassList (classList));
     }
 
-    function checkIfToday (date) {
-        const today = new Date ();
-
-        return (date.toDateString () == today.toDateString ());
+    function checkIfBeyondToday (date) {
+        let today = new Date ();
+        today.setHours (23, 59, 59, 999);
+        return (date.getTime () > today.getTime ());
     }
 
     //copy meetings to tempMeetings
