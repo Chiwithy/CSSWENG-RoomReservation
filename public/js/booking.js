@@ -70,21 +70,13 @@ $(document).ready (() => {
         $("#submitBtn")[0].disabled = true;
         $("#submitBtn").css ("cursor", "default");
 
-        $("#startTime").empty();
-        $("#startTime")[0].disabled = false;
-        $("#startTime").append("<option value='' disabled selected class='select'>Select a start time</option>");  
-
-        $("#endTime").empty();
-        $("#endTime")[0].disabled = true;
-        $("#endTime").append("<option value='' disabled selected class='select'>Select an end time</option>"); 
-
         editTimeOptions ("start", $("#room").val ());
         editTimeOptions ("end", $("#room").val ());
     });
 
     //onclick of start time -- allow only end times after it that are consecutive (no gaps) in dropdown options for endtime 
     $("#startTime").on('change', function(){
-        if ($("#endTime").val ())
+        if ($("#endTime").val () != null)
             adjustTimeOptions ("start");
         else
             $("#endTime")[0].disabled = false;
@@ -275,8 +267,14 @@ $(document).ready (() => {
     //cancels the meeting
     function cancelMeeting (meeting) {
         $.post ("/cancelMeeting?" + new URLSearchParams({meetingID: meeting.meetingID, username: meeting.username}), (success) => {
-            if (success)
+            if (success) {
                 getMeetings ();
+                copyTemp ();
+                if ($("#room").val () != null) {
+                    editTimeOptions ("start", $("#room").val ());
+                    editTimeOptions ("end", $("#room").val ());
+                }
+            }
             else
                 console.log ("Cancel unsuccessful");
         });
@@ -407,6 +405,10 @@ $(document).ready (() => {
     //option : "start" -> startTime || "end" -> end
     function editTimeOptions (option, room) {
         let openTimes = getOpenTimes (option, room);
+
+        $("#" + option + "Time").empty();
+        $("#" + option + "Time")[0].disabled = (option == "start") ? false : ($("#startTime").val () == null);
+        $("#" + option + "Time").append("<option value='' disabled selected class='select'>Select a " + option + " start time</option>");
         addTimeOptions (openTimes, option);
     }
 
@@ -425,7 +427,6 @@ $(document).ready (() => {
         let lastOpenTime = isStart ? formatTimeToDate (endTime) : formatTimeToDate (startTime);     //startTimes -> end at last end time, endTimes -> end at first start time
         let currentTime = new Date ();
         let i, takenSlots = 0;  //takenSlots -> number of time slots to skip (cus it is [still] taken -> no point in checking)
-        
         //if startTimes able to pick a startTime of even now
         //if endTimes not able to pick endTime that is now (cant pick a 2:30 end time if it is alrdy 2:30 [or anywhere from 2:00 - 2:30])
         isStart ? currentTime : currentTime.setMinutes (currentTime.getMinutes () + interval);
