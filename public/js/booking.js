@@ -257,6 +257,8 @@ $(document).ready (() => {
 
             if ($("td." + meetingID)[0].classList.contains("own"))
 			    $("td." + meetingID).css ("background-color", "#3159BC");    
+            else if ($("#bookingDetails")[0].classList.contains (meetingID))
+            $("td." + meetingID).css ("background-color", "#1c73ed");
 		    else
 			    $("td." + meetingID).css ("background-color", "#808080");
         }); 
@@ -293,9 +295,10 @@ $(document).ready (() => {
         
         while (!meeting && curParent.tagName.toUpperCase () != "BODY" && i < 15) {
             try {
-                meeting = getMeetingFromClassList (curParent.classList);
+                meetingID = getMeetingIDFromClassList (curParent.classList);
+                meeting = getMeetingFromMeetingID (meetingID);
                 submitParent.removeClass (submitParent[0].classList[1]);
-                submitParent.addClass (String(meeting.meetingID));
+                submitParent.addClass (meetingID);
                 i = 15;
             } catch (err) {
                 i++;
@@ -312,7 +315,6 @@ $(document).ready (() => {
 
         changeFormButton ("update");
         document.querySelector('#submitBtn').disabled = true;
-        meetingID = getMeetingIDFromClassList (curParent.classList);
         $("td." + meetingID).css ("background-color", "#1c73ed");   //changes the color of meeting being edited atm
 
         var roomIndex = rooms.indexOf(meeting.meetingRoom); 
