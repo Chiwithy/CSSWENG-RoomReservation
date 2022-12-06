@@ -304,6 +304,7 @@ $(document).ready (() => {
         let meeting, meetingID, i = 0;
         let curParent = $(this)[0].parentNode;
         let submitParent = $("#submitBtn").parent ();
+        let roomIndex, meetingIndex;
 
         $('#cancelBtn').css("display", "block"); 
         
@@ -312,7 +313,7 @@ $(document).ready (() => {
                 meetingID = getMeetingIDFromClassList (curParent);
                 meeting = getMeetingFromMeetingID (meetingID);
                 submitParent.removeClass (submitParent[0].classList[1]);
-                submitParent.addClass (meetingID)
+                submitParent.addClass (meetingID);
                 console.log (curParent);
                 console.log (submitParent);
                 i = 15;
@@ -333,8 +334,8 @@ $(document).ready (() => {
         document.querySelector('#submitBtn').disabled = true;
         $("td." + meetingID).css ("background-color", "#1c73ed");   //changes the color of meeting being edited atm
 
-        var roomIndex = rooms.indexOf(meeting.meetingRoom); 
-        var meetingIndex = meetings[roomIndex].indexOf(meeting);
+        roomIndex = rooms.indexOf(meeting.meetingRoom); 
+        meetingIndex = meetings[roomIndex].indexOf(meeting);
 
         //saves a temporary version of the meeting currently being edited 
         tempMeeting[0] = roomIndex;
