@@ -267,7 +267,7 @@ $(document).ready (() => {
             if ($("td." + meetingID)[0].classList.contains("own"))
 			    $("td." + meetingID).css ("background-color", "#3159BC");    
             else if ($("#bookingDetails")[0].classList.contains (meetingID))
-            $("td." + meetingID).css ("background-color", "#1c73ed");
+                $("td." + meetingID).css ("background-color", "#1c73ed");
 		    else
 			    $("td." + meetingID).css ("background-color", "#808080");
         }); 
@@ -309,7 +309,8 @@ $(document).ready (() => {
                 meetingID = getMeetingIDFromClassList (curParent.classList);
                 meeting = getMeetingFromMeetingID (meetingID);
                 submitParent.removeClass (submitParent[0].classList[1]);
-                submitParent.addClass (meetingID);
+                submitParent.addClass (meetingID)
+                console.log (submitParent);
                 i = 15;
             } catch (err) {
                 i++;
