@@ -309,10 +309,9 @@ $(document).ready (() => {
         
         while (!meeting && curParent.tagName.toUpperCase () != "BODY" && i < 15) {
             try {
-                meetingID = getMeetingIDFromClassList (curParent.classList);
-                meeting = getMeetingFromMeetingID (meetingID);
+                meeting = getMeetingFromClassList (curParent.classList);
                 submitParent.removeClass (submitParent[0].classList[1]);
-                submitParent.addClass (meetingID);
+                submitParent.addClass (String(meeting.meetingID));
                 i = 15;
             } catch (err) {
                 i++;
@@ -329,6 +328,7 @@ $(document).ready (() => {
 
         changeFormButton ("update");
         document.querySelector('#submitBtn').disabled = true;
+        meetingID = getMeetingIDFromClassList (curParent.classList);
         $("td." + meetingID).css ("background-color", "#1c73ed");   //changes the color of meeting being edited atm
 
         var roomIndex = rooms.indexOf(meeting.meetingRoom); 
