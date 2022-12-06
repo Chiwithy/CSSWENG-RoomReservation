@@ -310,12 +310,12 @@ $(document).ready (() => {
         
         while (!meeting && curParent.tagName.toUpperCase () != "BODY" && i < 15) {
             try {
+                console.log (curParent);
+                console.log (submitParent);
                 meetingID = getMeetingIDFromClassList (curParent);
                 meeting = getMeetingFromMeetingID (meetingID);
                 submitParent.removeClass (submitParent[0].classList[1]);
                 submitParent.addClass (meetingID);
-                console.log (curParent);
-                console.log (submitParent);
                 i = 15;
             } catch (err) {
                 i++;
