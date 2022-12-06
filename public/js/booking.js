@@ -312,7 +312,7 @@ $(document).ready (() => {
             try {
                 console.log (curParent);
                 console.log (submitParent);
-                meetingID = getMeetingIDFromClassList (curParent);
+                meetingID = getMeetingIDFromClassList (curParent[0].classList);
                 meeting = getMeetingFromMeetingID (meetingID);
                 submitParent.removeClass (submitParent[0].classList[1]);
                 submitParent.addClass (meetingID);
