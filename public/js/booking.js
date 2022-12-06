@@ -331,7 +331,6 @@ $(document).ready (() => {
 
         changeFormButton ("update");
         document.querySelector('#submitBtn').disabled = true;
-        meetingID = getMeetingIDFromClassList (curParent.classList);
         $("td." + meetingID).css ("background-color", "#1c73ed");   //changes the color of meeting being edited atm
 
         var roomIndex = rooms.indexOf(meeting.meetingRoom); 
