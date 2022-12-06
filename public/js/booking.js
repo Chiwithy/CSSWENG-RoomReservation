@@ -260,17 +260,17 @@ $(document).ready (() => {
             cancelMeeting (meeting);
         });
 
-        $("#confirmClose").on("click", () => {
+        $("#confirmClose").off().on("click", () => {
             $("#confirmation").css ("display", "none");
             $("#modal").css ("display", "none");
 
-            console.log(meetingID)
-            console.log($("#bookingDetails")[0].classList)
+            // console.log(meetingID)
+            // console.log($("#bookingDetails")[0].classList)
 
-            if ($("td." + meetingID)[0].classList.contains("own"))
-			    $("td." + meetingID).css ("background-color", "#3159BC");    
-            else if ($("#bookingDetails")[0].classList.contains (meetingID))
+            if ($("#bookingDetails")[0].classList.contains (meetingID))
                 $("td." + meetingID).css ("background-color", "#1c73ed");
+            else if ($("td." + meetingID)[0].classList.contains("own"))
+			    $("td." + meetingID).css ("background-color", "#3159BC");    
 		    else
 			    $("td." + meetingID).css ("background-color", "#808080");
         }); 
@@ -303,7 +303,7 @@ $(document).ready (() => {
     function prepareEditMeeting () {
         let meeting, meetingID, i = 0;
         let curParent = $(this)[0].parentNode;
-        let submitParent = $("#submitBtn").parent ();
+        let submitParent = $("#submitBtn").parent ().parent();
         let roomIndex, meetingIndex;
 
         $('#cancelBtn').css("display", "block"); 
