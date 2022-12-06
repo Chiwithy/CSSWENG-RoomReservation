@@ -251,12 +251,17 @@ $(document).ready (() => {
             cancelMeeting (meeting);
         });
 
-        for (let i = 0; i < slots.length; i++) {
-            if (slots[i].classList.contains ("own"))
-                slots[i].style.backgroundColor = "#3159BC";    
-            else
-                slots[i].style.backgroundColor = "#808080";
-        }
+        $("#confirmClose").on("click", () => {
+            $("#confirmation").css ("display", "none");
+            $("#modal").css ("display", "none");
+
+            if ($("td." + meetingID)[0].classList.contains("own"))
+			    $("td." + meetingID).css ("background-color", "#3159BC");    
+		    else
+			    $("td." + meetingID).css ("background-color", "#808080");
+        }); 
+
+        //colorBookedSlots(); 
 
         meetingID = getMeetingIDFromClassList (curParent.classList);
         $("td." + meetingID).css ("background-color", "#B62303");
