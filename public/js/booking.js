@@ -264,10 +264,13 @@ $(document).ready (() => {
             $("#confirmation").css ("display", "none");
             $("#modal").css ("display", "none");
 
+            console.log(meetingID)
+            console.log($("#bookingDetails")[0].classList)
+
             if ($("td." + meetingID)[0].classList.contains("own"))
 			    $("td." + meetingID).css ("background-color", "#3159BC");    
             else if ($("#bookingDetails")[0].classList.contains (meetingID))
-            $("td." + meetingID).css ("background-color", "#1c73ed");
+                $("td." + meetingID).css ("background-color", "#1c73ed");
 		    else
 			    $("td." + meetingID).css ("background-color", "#808080");
         }); 
