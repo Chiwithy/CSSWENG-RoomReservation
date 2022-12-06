@@ -30,9 +30,18 @@ $(document).ready (() => {
     //disable book button until all required fields are filled (specifically room)
     $('#submitBtn')[0].disabled = true;
 
+    if ($('#submitBtn')[0].classList.contains("book")){
+        //$('#cancelBtn').css("visibility", "hidden");
+        $('#cancelBtn').css("display", "none");
+    }
+
     //disable time dropdowns until a room is selected
     $("#startTime")[0].disabled = true;
     $("#endTime")[0].disabled = true;
+
+    $("#cancelBtn").on("click", () => {
+        window.location.reload ();
+    }); 
 
     //merged update and book meeting
     $("#submitBtn").on ('click', function () {
@@ -290,6 +299,8 @@ $(document).ready (() => {
         let meeting, meetingID, i = 0;
         let curParent = $(this)[0].parentNode;
         let submitParent = $("#submitBtn").parent ();
+
+        $('#cancelBtn').css("display", "block"); 
         
         while (!meeting && curParent.tagName.toUpperCase () != "BODY" && i < 15) {
             try {
