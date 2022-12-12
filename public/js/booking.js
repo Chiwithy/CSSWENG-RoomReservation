@@ -40,7 +40,7 @@ $(document).ready (() => {
     $("#endTime")[0].disabled = true;
 
     $("#cancelBtn").on("click", () => {
-        window.location.reload ();
+        location.reload (true);
     }); 
 
     //merged update and book meeting
