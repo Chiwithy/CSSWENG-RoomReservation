@@ -134,8 +134,9 @@ $(document).ready (() => {
         let month = parseInt (params.get ("month"));
         let date = parseInt (params.get ("date"));
         
-        console.log (year);
         $.get ("/renderMeetingRows", {meetings: meetings, year: year, month: month, date: date}, (html) => {
+            console.log (html);
+            console.log ($("#schedDetails")[0]);
             $("#schedDetails")[0].innerHTML = html;
             colorBookedSlots ();
             addSlotControls ()
