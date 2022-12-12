@@ -40,13 +40,14 @@ $(document).ready (() => {
     $("#endTime")[0].disabled = true;
 
     $("#cancelBtn").on("click", () => {
-        window.location.reload ();
+        location.reload (true);
     }); 
 
     //merged update and book meeting
     $("#submitBtn").on ('click', function () {
         let option = $("#submitBtn")[0].classList[0];
-        let meetingID = $("#submitBtn").parent ()[0].classList[1];
+        let meeting = getMeetingFromClassList ($("#submitBtn").parent ().parent ()[0].classList);
+        let meetingID = meeting.meetingID;
         var startTime = formatTimeToDate ($("#startTime").val ()); 
         var endTime = formatTimeToDate ($("#endTime").val ());
         var meetingRoom = $("#room").val ();
@@ -67,7 +68,7 @@ $(document).ready (() => {
                     marketingRequest: marketingRequest,
                     attendeeList: attendeeList
                 }));
-                window.location.reload ();
+                location.reload (true);
             }
             else
                 console.log ("Slot taken");
@@ -240,7 +241,6 @@ $(document).ready (() => {
     function cancelModal () {
         let meeting, meetingID, i = 0;
         let curParent = $(this)[0].parentNode;
-        let slots = $(".takenSlot");
         
         while (!meeting && curParent.tagName.toUpperCase () != "BODY" && i < 15) {
             try {
@@ -263,9 +263,6 @@ $(document).ready (() => {
         $("#confirmClose").off().on("click", () => {
             $("#confirmation").css ("display", "none");
             $("#modal").css ("display", "none");
-
-            // console.log(meetingID)
-            // console.log($("#bookingDetails")[0].classList)
 
             if ($("#bookingDetails")[0].classList.contains (meetingID))
                 $("td." + meetingID).css ("background-color", "#1c73ed");
@@ -310,8 +307,6 @@ $(document).ready (() => {
         
         while (!meeting && curParent.tagName.toUpperCase () != "BODY" && i < 15) {
             try {
-                // console.log (curParent);
-                // console.log (submitParent);
                 meetingID = getMeetingIDFromClassList (curParent.classList);
                 meeting = getMeetingFromMeetingID (meetingID);
                 submitParent.removeClass (submitParent[0].classList[1]);
