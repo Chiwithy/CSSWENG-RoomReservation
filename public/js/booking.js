@@ -31,7 +31,6 @@ $(document).ready (() => {
     $('#submitBtn')[0].disabled = true;
 
     if ($('#submitBtn')[0].classList.contains("book")){
-        //$('#cancelBtn').css("visibility", "hidden");
         $('#cancelBtn').css("display", "none");
     }
 
@@ -46,14 +45,18 @@ $(document).ready (() => {
     //merged update and book meeting
     $("#submitBtn").on ('click', function () {
         let option = $("#submitBtn")[0].classList[0];
-        let meeting = getMeetingFromClassList ($("#submitBtn").parent ().parent ()[0].classList);
-        let meetingID = meeting.meetingID;
+        let arrayID = getMeetingIDFromClassList ($("#submitBtn").parent ().parent ()[0].classList)
+        let meetingID
         var startTime = formatTimeToDate ($("#startTime").val ()); 
         var endTime = formatTimeToDate ($("#endTime").val ());
         var meetingRoom = $("#room").val ();
         var marketingRequest = $("#marketingReqs").val(); 
         var attendeeList = $('#attendees').val(); 
 
+        if (arrayID == "noMeeting")
+            meetingID = -1;
+        else
+            meetingID = (getMeetingFromMeetingID (arrayID)).meetingID;
         //checks the database if the planned time slot is available for that room
         $.get ("/checkTimeSlot", {startTime: startTime, endTime: endTime, meetingRoom: meetingRoom}, (avail) => {
             //avail -> meetingID from of the conflicting meeting (from the database) if there is one
@@ -262,7 +265,6 @@ $(document).ready (() => {
 
         $("#confirmClose").off().on("click", () => {
             $("#confirmation").css ("display", "none");
-            $("#modal").css ("display", "none");
 
             if ($("#bookingDetails")[0].classList.contains (meetingID))
                 $("td." + meetingID).css ("background-color", "#1c73ed");
@@ -461,7 +463,7 @@ $(document).ready (() => {
                     //check if the timeslot is already taken
                     if (curOpenTime.getTime () == timeToCompare.getTime ())
                         takenSlots = getIntervalSlots (roomMeetings[i].startTime, roomMeetings[i].endTime);
-                    else if (curOpenTime.getTime () >= roomMeetings[i].startTime.getTime () && curOpenTime.getTime () < roomMeetings[i].endTime.getTime ())
+                    else if (curOpenTime.getTime () > roomMeetings[i].startTime.getTime () && curOpenTime.getTime () < roomMeetings[i].endTime.getTime ())
                         takenSlots = 1;
                 }
 
@@ -551,8 +553,6 @@ $(document).ready (() => {
 
     //gets meeting object from meetings array ID
     function getMeetingFromMeetingID (meetingID) {
-        if (meetingID == "noMeeting")
-            return {meetingID: -1};
         const splitID = meetingID.split ("_");
         const roomInd = rooms.indexOf (splitID[0]);
         const meetingInd = parseInt (splitID[1]);
