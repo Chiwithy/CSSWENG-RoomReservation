@@ -102,8 +102,8 @@ const bookviewController = {
         let meetings = req.query.meetings;
         let meetingRows = [];
         let roomCurrentSlots = [];
-        let curTime = new Date (year, month, date, firstOpenTime - timezoneOffset, 0, 0);
-        let lastTime = new Date (year, month, date, lastClosedTime - timezoneOffset, 0, 0);
+        let curTime = new Date (year, month, date, firstOpenTime, 0, 0);
+        let lastTime = new Date (year, month, date, lastClosedTime, 0, 0);
         let i;
 
         for (i = 0; i < rooms.length; i++)
