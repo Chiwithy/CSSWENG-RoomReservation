@@ -1,0 +1,54 @@
+<div class="square meetingFiller" id="bookingDetails">
+    <h2>Booking Details</h2>
+    <div class="line-break"></div><!-- Line Break -->
+    <table class="booking">
+        <tr>
+            <td>Date: </td>
+            <td id="date">{{date}} {{month}} {{year}}</td>
+        </tr>
+        <tr>
+            <td>Booked by: </td>
+            <td id="username">{{username}} </td>
+        </tr>
+        <tr>
+            <td>Room: </td>
+            <td>  
+                <select id="room">
+                    <option value="" disabled selected>Select a room</option>
+                    <option value="Integrity">Integrity</option>
+                    <option value="Innovation">Innovation</option>
+                    <option value="Teamwork">Teamwork</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Start Time: </td>
+            <td>  
+                <select id="startTime">
+                    <option value="" disabled selected id="select">Select a start time</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>End Time: </td>
+            <td>  
+                <select id="endTime">
+                    <option value="" disabled selected class="select">Select an end time</option>
+                </select>
+            </td>
+        </tr>
+        <tr>
+            <td>Attendees: </td>
+            <td><textarea id="attendees"></textarea></td>
+        </tr>
+        <tr>
+            <td>Requests: </td>
+            <td ><textarea id="marketingReqs"></textarea></td>
+        </tr>					
+    </table>
+    <div class="line-break"></div><!-- Line Break -->
+    <div style="display: flex">
+        <button id="submitBtn" class="book">BOOK</button>
+        <button id="cancelBtn" class="book">CANCEL</button>
+    </div>
+</div>
