@@ -46,7 +46,7 @@ $(document).ready (() => {
     //merged update and book meeting
     $("#submitBtn").on ('click', function () {
         let option = $("#submitBtn")[0].classList[0];
-        let meeting = getMeetingIDFromClassList ($("#submitBtn").parent ().parent ()[0].classList[1]);
+        let meeting = getMeetingFromClassList ($("#submitBtn").parent ().parent ()[0].classList[1]);
         let meetingID = meeting.meetingID;
         var startTime = formatTimeToDate ($("#startTime").val ());
         var endTime = formatTimeToDate ($("#endTime").val ());
