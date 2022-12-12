@@ -50,6 +50,8 @@ const bookviewController = {
         let room = req.query.meetingRoom;
         let meetings = [];
 
+        console.log (start);
+        console.log (end);
         meetings = await Meeting.find ({meetingRoom: room, meetingStatus: {$ne: 'C'},
                                         $or: [{startTime: {$gte: start, $lt: end}}, {endTime: {$gt: start, $lte: end}},
                                         {$and: [{startTime: {$lte: start}}, {endTime: {$gte: end}}]} ]});
