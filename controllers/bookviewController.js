@@ -1,6 +1,6 @@
 import Meeting from "../models/Meeting.js";
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const timezoneOffset = (new Date ().getTimezoneOffset () / 60);
+const timezoneOffset = 8;
 const firstOpenTime = 8 - timezoneOffset;    //Hour in military time
 const lastClosedTime = 18 - timezoneOffset;
 const interval = 30;    //interval in minutes
@@ -15,16 +15,13 @@ const suppFuncs = {
         return slots;
     },
 
-    formatTimeToString: async (time) => {
+    formatTimeToString: (time) => {
         let hours = time.getHours ();
         let minutes = time.getMinutes ();
         let ampm = hours >= 12 ? "PM" : "AM";
         let timeString;
 
-        console.log (time);
-        console.log (timezoneOffset);
-        console.log (hours);
-        console.log (hours + timezoneOffset);
+        hours += timezoneOffset;
         hours = hours % 12;
         hours = hours ? hours : 12;
         minutes = minutes == 0 ? "00" : minutes;
@@ -105,8 +102,8 @@ const bookviewController = {
         let meetings = req.query.meetings;
         let meetingRows = [];
         let roomCurrentSlots = [];
-        let curTime = new Date (year, month, date, firstOpenTime - 8, 0, 0);
-        let lastTime = new Date (year, month, date, lastClosedTime - 8, 0, 0);
+        let curTime = new Date (year, month, date, firstOpenTime - timezoneOffset, 0, 0);
+        let lastTime = new Date (year, month, date, lastClosedTime - timezoneOffset, 0, 0);
         let i;
 
         for (i = 0; i < rooms.length; i++)
@@ -117,7 +114,7 @@ const bookviewController = {
             let slotEnd = new Date (year, month, date, curTime.getHours (), curTime.getMinutes () + interval, 0);
 
             meeting = {
-                time: await suppFuncs.formatTimeToString (curTime) + " - " + await suppFuncs.formatTimeToString (slotEnd)
+                time: suppFuncs.formatTimeToString (curTime) + " - " + suppFuncs.formatTimeToString (slotEnd)
             };
 
             if (meetings != undefined) {
