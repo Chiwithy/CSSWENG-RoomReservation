@@ -38,7 +38,10 @@ const suppFuncs = {
 
 const bookviewController = {
     getBookview: (req, res) => {
-        res.render ("booking", {date: req.query.date, month: months[req.query.month], year: req.query.year, username: req.user.username});
+        let dateToView = new Date (req.query.year, req.query.month, req.query.date);
+        let today = new Date ();
+        let bookable = dateToView.toDateString () == today.toDateString () || dateToView.getTime () >= today.getTime ();
+        res.render ("booking", {date: req.query.date, month: months[req.query.month], year: req.query.year, username: req.user.username, bookable: bookable});
     },
 
     checkTimeSlot: async (req, res) => {
