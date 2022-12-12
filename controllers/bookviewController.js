@@ -15,7 +15,7 @@ const suppFuncs = {
         return slots;
     },
 
-    formatTimeToString: (time) => {
+    formatTimeToString: async (time) => {
         let hours = time.getHours () + timezoneOffset;
         let minutes = time.getMinutes ();
         let ampm = hours >= 12 ? "PM" : "AM";
@@ -113,7 +113,7 @@ const bookviewController = {
             let slotEnd = new Date (year, month, date, curTime.getHours (), curTime.getMinutes () + interval, 0);
 
             meeting = {
-                time: suppFuncs.formatTimeToString (curTime) + " - " + suppFuncs.formatTimeToString (slotEnd)
+                time: await suppFuncs.formatTimeToString (curTime) + " - " + await suppFuncs.formatTimeToString (slotEnd)
             };
 
             if (meetings != undefined) {
