@@ -551,6 +551,8 @@ $(document).ready (() => {
 
     //gets meeting object from meetings array ID
     function getMeetingFromMeetingID (meetingID) {
+        if (meetingID == "noMeeting")
+            return {meetingID: -1};
         const splitID = meetingID.split ("_");
         const roomInd = rooms.indexOf (splitID[0]);
         const meetingInd = parseInt (splitID[1]);
