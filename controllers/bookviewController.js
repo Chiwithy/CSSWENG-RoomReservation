@@ -22,6 +22,7 @@ const suppFuncs = {
         let timeString;
 
         console.log (time);
+        console.log (timezoneOffset);
         console.log (hours);
         console.log (hours + timezoneOffset);
         hours = hours % 12;
