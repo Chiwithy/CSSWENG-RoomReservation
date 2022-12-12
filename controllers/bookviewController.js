@@ -1,7 +1,7 @@
 import Meeting from "../models/Meeting.js";
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const firstOpenTime = 8;    //Hour in military time
-const lastClosedTime = 18;
+const firstOpenTime = 8 - (new Date().getTimezoneOffset() / 60);    //Hour in military time
+const lastClosedTime = 18 - (new Date().getTimezoneOffset() / 60);
 const interval = 30;    //interval in minutes
 
 const suppFuncs = {
@@ -104,8 +104,6 @@ const bookviewController = {
         let lastTime = new Date (year, month, date, lastClosedTime - 8, 0, 0);
         let i;
 
-        console.log (curTime);
-        console.log (lastTime);
         for (i = 0; i < rooms.length; i++)
             roomCurrentSlots.push (0);
 
@@ -124,8 +122,6 @@ const bookviewController = {
                             for (let m = 0; m < meetings[k].length; m++) {
                                 if (meetings[k][m].meetingRoom == rooms[j]) {
                                     if (new Date (meetings[k][m].startTime).getTime () == curTime.getTime ()) {
-                                        console.log (meetings[k][m].startTime);
-                                        console.log (new Date (meetings[k][m].startTime));
                                         roomCurrentSlots[j] = suppFuncs.getTimeSlots (new Date (meetings[k][m].startTime), new Date (meetings[k][m].endTime))
 
                                         if (j == 0) {
