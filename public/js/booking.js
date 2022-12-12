@@ -58,11 +58,6 @@ $(document).ready (() => {
         $.get ("/checkTimeSlot", {startTime: startTime, endTime: endTime, meetingRoom: meetingRoom}, (avail) => {
             //avail -> meetingID from of the conflicting meeting (from the database) if there is one
             //proceed with book if avail returns -1 (no conflict) || proceed with update if -1 or if conflict is itself
-            console.log (typeof avail);
-            console.log (avail);
-            console.log (typeof meetingID);
-            console.log (meetingID);
-            console.log (avail + ' vs ' + meetingID + " = " + (parseInt (avail) == parseInt (meetingID)));
             if (parseInt (avail) == -1 || parseInt (avail) == parseInt (meetingID)) {
                 //post url changes based on option ("book" or "update")
                 $.post ("/" + option + "Meeting?" + new URLSearchParams ({
@@ -73,7 +68,7 @@ $(document).ready (() => {
                     marketingRequest: marketingRequest,
                     attendeeList: attendeeList
                 }));
-                window.location.reload ();
+                location.reload (true);
             }
             else
                 console.log ("Slot taken");
@@ -246,7 +241,6 @@ $(document).ready (() => {
     function cancelModal () {
         let meeting, meetingID, i = 0;
         let curParent = $(this)[0].parentNode;
-        let slots = $(".takenSlot");
         
         while (!meeting && curParent.tagName.toUpperCase () != "BODY" && i < 15) {
             try {
@@ -313,7 +307,7 @@ $(document).ready (() => {
         
         while (!meeting && curParent.tagName.toUpperCase () != "BODY" && i < 15) {
             try {
-                
+
                 meetingID = getMeetingIDFromClassList (curParent.classList);
                 meeting = getMeetingFromMeetingID (meetingID);
                 submitParent.removeClass (submitParent[0].classList[1]);
