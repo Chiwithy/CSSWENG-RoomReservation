@@ -28,10 +28,14 @@ app.use (session ({
 app.use (passport.initialize ());
 app.use (passport.session ());
 
-
 app.set ('view engine', 'hbs');
 hbs.registerPartials ( './views/partials');
 app.use ('/', routes);
+
+
+app.use (function (req, res, next){
+    res.status (404).render ('error');
+});
 
 app.listen (port, hostname, function () {
     console.log ('Server is running at:');
