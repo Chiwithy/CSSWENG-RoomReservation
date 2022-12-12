@@ -134,6 +134,7 @@ $(document).ready (() => {
         let month = parseInt (params.get ("month"));
         let date = parseInt (params.get ("date"));
         
+        console.log (year);
         $.get ("/renderMeetingRows", {meetings: meetings, year: year, month: month, date: date}, (html) => {
             $("#schedDetails")[0].innerHTML = html;
             colorBookedSlots ();
