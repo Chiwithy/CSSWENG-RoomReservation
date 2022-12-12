@@ -1,7 +1,8 @@
 import Meeting from "../models/Meeting.js";
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const firstOpenTime = 8 - (new Date().getTimezoneOffset() / 60);    //Hour in military time
-const lastClosedTime = 18 - (new Date().getTimezoneOffset() / 60);
+const timezoneOffset = (new Date ().getTimezoneOffset () / 60);
+const firstOpenTime = 8 - timezoneOffset;    //Hour in military time
+const lastClosedTime = 18 - timezoneOffset;
 const interval = 30;    //interval in minutes
 
 const suppFuncs = {
@@ -20,6 +21,7 @@ const suppFuncs = {
         let ampm = hours >= 12 ? "PM" : "AM";
         let timeString;
 
+        hours += timezoneOffset;
         hours = hours % 12;
         hours = hours ? hours : 12;
         minutes = minutes == 0 ? "00" : minutes;
