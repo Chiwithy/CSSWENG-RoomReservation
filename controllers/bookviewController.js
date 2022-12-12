@@ -21,6 +21,8 @@ const suppFuncs = {
         let ampm = hours >= 12 ? "PM" : "AM";
         let timeString;
 
+        console.log (hours);
+        console.log (hours - timezoneOffset);
         hours = hours % 12;
         hours = hours ? hours : 12;
         minutes = minutes == 0 ? "00" : minutes;
