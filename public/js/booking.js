@@ -135,8 +135,6 @@ $(document).ready (() => {
         let date = parseInt (params.get ("date"));
         
         $.get ("/renderMeetingRows", {meetings: meetings, year: year, month: month, date: date}, (html) => {
-            console.log (html);
-            console.log ($("#schedDetails")[0]);
             $("#schedDetails")[0].innerHTML = html;
             colorBookedSlots ();
             addSlotControls ()
@@ -266,9 +264,6 @@ $(document).ready (() => {
             $("#confirmation").css ("display", "none");
             $("#modal").css ("display", "none");
 
-            // console.log(meetingID)
-            // console.log($("#bookingDetails")[0].classList)
-
             if ($("#bookingDetails")[0].classList.contains (meetingID))
                 $("td." + meetingID).css ("background-color", "#1c73ed");
             else if ($("td." + meetingID)[0].classList.contains("own"))
@@ -312,8 +307,6 @@ $(document).ready (() => {
         
         while (!meeting && curParent.tagName.toUpperCase () != "BODY" && i < 15) {
             try {
-                // console.log (curParent);
-                // console.log (submitParent);
                 meetingID = getMeetingIDFromClassList (curParent.classList);
                 meeting = getMeetingFromMeetingID (meetingID);
                 submitParent.removeClass (submitParent[0].classList[1]);
