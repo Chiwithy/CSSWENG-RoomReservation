@@ -466,6 +466,8 @@ $(document).ready (() => {
                     //check if the timeslot is already taken
                     if (curOpenTime.getTime () == timeToCompare.getTime ())
                         takenSlots = getIntervalSlots (roomMeetings[i].startTime, roomMeetings[i].endTime);
+                    else if (curOpenTime.getTime () >= roomMeetings[i].startTime.getTime () && curOpenTime.getTime () < roomMeetings[i].endTime.getTime ())
+                        takenSlots = 1;
                 }
 
                 if (takenSlots != 0)    //slot is not open
