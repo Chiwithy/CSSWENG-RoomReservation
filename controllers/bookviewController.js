@@ -16,12 +16,11 @@ const suppFuncs = {
     },
 
     formatTimeToString: (time) => {
-        let hours = time.getHours ();
+        let hours = time.getHours () + timezoneOffset;
         let minutes = time.getMinutes ();
         let ampm = hours >= 12 ? "PM" : "AM";
         let timeString;
 
-        hours += timezoneOffset;
         hours = hours % 12;
         hours = hours ? hours : 12;
         minutes = minutes == 0 ? "00" : minutes;
