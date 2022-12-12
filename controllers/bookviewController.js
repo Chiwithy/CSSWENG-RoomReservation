@@ -107,6 +107,7 @@ const bookviewController = {
         for (i = 0; i < rooms.length; i++)
             roomCurrentSlots.push (0);
 
+        console.log (req.query);
         while (curTime.getTime () != lastTime.getTime ()) {
             let meeting;
             let slotEnd = new Date (year, month, date, curTime.getHours (), curTime.getMinutes () + interval, 0);
@@ -161,6 +162,7 @@ const bookviewController = {
                     }
                 }
             }
+            console.log (meeting);
             curTime.setMinutes (curTime.getMinutes () + interval);
             meetingRows.push (meeting);
         }
