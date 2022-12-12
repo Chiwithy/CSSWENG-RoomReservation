@@ -1,7 +1,8 @@
 import Meeting from "../models/Meeting.js";
 const months = ["January", "February", "March", "April", "May", "June", "July", "August", "September", "October", "November", "December"];
-const firstOpenTime = 8;    //Hour in military time
-const lastClosedTime = 18;
+const timezoneOffset = 8;
+const firstOpenTime = 8 - timezoneOffset;    //Hour in military time
+const lastClosedTime = 18 - timezoneOffset;
 const interval = 30;    //interval in minutes
 
 const suppFuncs = {
@@ -20,6 +21,7 @@ const suppFuncs = {
         let ampm = hours >= 12 ? "PM" : "AM";
         let timeString;
 
+        hours += timezoneOffset;
         hours = hours % 12;
         hours = hours ? hours : 12;
         minutes = minutes == 0 ? "00" : minutes;
@@ -48,6 +50,8 @@ const bookviewController = {
         let room = req.query.meetingRoom;
         let meetings = [];
 
+        console.log (start);
+        console.log (end);
         meetings = await Meeting.find ({meetingRoom: room, meetingStatus: {$ne: 'C'},
                                         $or: [{startTime: {$gte: start, $lt: end}}, {endTime: {$gt: start, $lte: end}},
                                         {$and: [{startTime: {$lte: start}}, {endTime: {$gte: end}}]} ]});
