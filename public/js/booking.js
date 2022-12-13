@@ -39,7 +39,7 @@ $(document).ready (() => {
     $("#endTime")[0].disabled = true;
 
     $("#cancelBtn").on("click", () => {
-        location.reload (true);
+        window.location.href = window.location.href;
     }); 
 
     //merged update and book meeting
@@ -71,7 +71,7 @@ $(document).ready (() => {
                     marketingRequest: marketingRequest,
                     attendeeList: attendeeList
                 }));
-                location.reload (true);
+                window.location.href = window.location.href;
             }
             else
                 console.log ("Slot taken");
